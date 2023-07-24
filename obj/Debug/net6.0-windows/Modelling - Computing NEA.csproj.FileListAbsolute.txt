@@ -1,0 +1,52 @@
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\bin\Debug\net6.0-windows\Modelling - Computing NEA.exe
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\bin\Debug\net6.0-windows\Modelling - Computing NEA.deps.json
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\bin\Debug\net6.0-windows\Modelling - Computing NEA.runtimeconfig.json
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\bin\Debug\net6.0-windows\Modelling - Computing NEA.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\bin\Debug\net6.0-windows\Modelling - Computing NEA.pdb
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\bin\Debug\net6.0-windows\Microsoft.Win32.SystemEvents.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\bin\Debug\net6.0-windows\System.Drawing.Common.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.csproj.AssemblyReference.cache
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\MainWindow.g.cs
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\App.g.cs
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA_MarkupCompile.cache
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA_MarkupCompile.lref
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\MainWindow.baml
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.g.resources
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.GeneratedMSBuildEditorConfig.editorconfig
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.AssemblyInfoInputs.cache
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.AssemblyInfo.cs
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.csproj.CoreCompileInputs.cache
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.csproj.CopyComplete
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\refint\Modelling - Computing NEA.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.pdb
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.genruntimeconfig.cache
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling - Computing NEA\obj\Debug\net6.0-windows\ref\Modelling - Computing NEA.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\bin\Debug\net6.0-windows\Modelling - Computing NEA.exe
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\bin\Debug\net6.0-windows\Modelling - Computing NEA.deps.json
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\bin\Debug\net6.0-windows\Modelling - Computing NEA.runtimeconfig.json
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\bin\Debug\net6.0-windows\Modelling - Computing NEA.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\bin\Debug\net6.0-windows\Modelling - Computing NEA.pdb
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\bin\Debug\net6.0-windows\Microsoft.Win32.SystemEvents.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\bin\Debug\net6.0-windows\System.Drawing.Common.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.csproj.AssemblyReference.cache
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\MainWindow.g.cs
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\App.g.cs
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA_MarkupCompile.cache
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA_MarkupCompile.lref
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\MainWindow.baml
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.g.resources
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.GeneratedMSBuildEditorConfig.editorconfig
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.AssemblyInfoInputs.cache
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.AssemblyInfo.cs
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.csproj.CoreCompileInputs.cache
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.csproj.CopyComplete
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\refint\Modelling - Computing NEA.dll
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.pdb
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\Modelling - Computing NEA.genruntimeconfig.cache
+\\strs\dfs\Devs\Data\17NSKILJe\Modelling-For-Computing-NEA\obj\Debug\net6.0-windows\ref\Modelling - Computing NEA.dll
