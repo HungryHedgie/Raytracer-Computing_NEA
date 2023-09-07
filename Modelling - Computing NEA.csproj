@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="anti-AliasingShownInPerspective.jpg" />
     <None Remove="BlackCircle.jpg" />
+    <None Remove="Box, slanted.jpg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="anti-AliasingShownInPerspective.jpg" />
+    <Resource Include="Box, slanted.jpg" />
     <Resource Include="BlackCircle.jpg" />
   </ItemGroup>
 
