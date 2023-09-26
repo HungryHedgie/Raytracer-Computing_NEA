@@ -1,0 +1,37 @@
+FUNCTION determineIntersections(rayOrigin, rayDirection, previousShape)
+	rayDirection <= normalise(rayDirection)	#	We want to normalise rayDirection
+	
+	currPos <= rayOrigin
+	
+	searching <= true
+	iterationCount <= 0
+	exitCode <= NA
+	
+	WHILE searching is true THEN
+		#	Find closest surface
+		lowestDistance = tolerance.MaxDistance
+		FOR object IN all shapes and lights				#	SDF = Signed Distance Function
+			IF object is not previousShape THEN
+				newDistance = object.SDF(currPos)
+				IF newDistance is less than lowestDistance THEN
+					lowestDistance = newDistance
+				END IF
+		END FOR
+		#	Iteration count is used to determine
+		iterationCount <= iterationCount + 1
+		
+		#	Use closest surface to find new position
+		currPos <= currPos + rayDirection * lowestDistance
+		
+		#	Tolerance check, have we travelled over the max distance, or gone through too many iterations?
+		IF iterationCount > tolerance.MaxIterations OR lowestDistance equals tolerance.MaxDistance THEN
+			searching <= false
+			exitCode <= NO_INTERSECTION
+		ELSE IF lowestDistance <= tolerance.MinDistance THEN
+			searching <= false
+			exitCode <= INTERSECTION
+		END IF
+	END WHILE
+	
+	exitInfo
+	return
