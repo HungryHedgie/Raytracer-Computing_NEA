@@ -1,5 +1,3 @@
-#	Hard coded
-
 #	Required Shape info
 
 vec3 Normal := Normal for the shape at this point
