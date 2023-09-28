@@ -1,0 +1,13 @@
+FOREACH pixel IN screen
+	Create several new ray objects of slightly different directions
+	FOREACH ray IN currentPixelRays
+		WHILE ray has not hit a light source
+			FindIntersection
+			Save info from Hit
+			Find new direction
+		END WHILE
+		FOREACH hitInfo IN allIntersections
+			calculate effect on final colour
+		Combine all effects on final colour
+	Take the average of each colour every ray returned
+	Display that colour to the screen at that pixel coordinate
