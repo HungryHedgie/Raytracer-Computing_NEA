@@ -25,6 +25,7 @@ FUNCTION determineIntersections(rayOrigin, rayDirection, previousShape)
 					lowestDistance = newDistance
 					closestObject = object
 				END IF
+			END IF
 		END FOR
 		#	Iteration count is used to determine
 		iterationCount <= iterationCount + 1

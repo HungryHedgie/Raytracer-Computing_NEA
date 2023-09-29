@@ -8,6 +8,9 @@ FOREACH pixel IN screen
 		END WHILE
 		FOREACH hitInfo IN allIntersections
 			calculate effect on final colour
+		END FOREACH
 		Combine all effects on final colour
+	END FOREACH
 	Take the average of each colour every ray returned
 	Display that colour to the screen at that pixel coordinate
+END FOREACH
