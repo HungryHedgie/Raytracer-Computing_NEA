@@ -12,9 +12,11 @@ FUNCTION findPixelsRayDirection (x, y)	#	Runs on every pixel
     #	(0, 0) is the bottom left of the image
     #	res_x and res_y is the amount of pixels in the x and y directions
 
-    xScale <= ((x + 0.5) / res_x) - 0.5 	#	The + 0.5 means the ray is sent to the center of a pixel
-    yScale <= ((y + 0.5) / res_y) - 0.5		#	Without it, the rayDirection would head towards the bottom left of a pixel
-
+    xScale <= ((x + 0.5) / res_x) - 0.5     
+    yScale <= ((y + 0.5) / res_y) - 0.5     
+    #	The + 0.5 means the ray is sent to the center of a pixel
+    #	Without it, the ray would head towards the bottom left of a pixel
+	
     #	Random Sampling Section
     xOffset <= 0
     yOffset <= 0
@@ -27,8 +29,8 @@ FUNCTION findPixelsRayDirection (x, y)	#	Runs on every pixel
 
 
 
-    #	FoVScale accounts for current FoV angle, screenRatio accounts for the image ratio
-    float3 pixelVector <= ((xScale + xOffset) * FoVScale, (yScale + yOffset) * FoVScale * screenRatio, 1)
+    #	FoVScale accounts for current FoV angle, screenRatio accounts for the image size ratio
+    float3 pixelVector <= ((xScale + xOffset) * FoVScale, 1, (yScale + yOffset) * FoVScale * screenRatio)
 
     rayDirection <= camera.camToWorldSpace(pixelVector)
     rayOrigin <= camera.Location

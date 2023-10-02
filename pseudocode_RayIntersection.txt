@@ -14,12 +14,13 @@ FUNCTION determineIntersections(rayOrigin, rayDirection, previousShape)
 	exitCode <= null
 	closestObject <= null
 	
-	WHILE searching is true THEN
+	WHILE searching is true
 		#	Find closest surface
 		lowestDistance = tolerance.MaxDistance
-		FOR object IN all shapes and lights				#	SDF = Signed Distance Function
+		FOR object IN all shapes and lights				
 			IF object is not previousShape THEN
 				newDistance = object.SDF(currPos)
+				#	SDF = Signed Distance Function
 				
 				IF newDistance is less than lowestDistance THEN
 					lowestDistance = newDistance
@@ -27,13 +28,13 @@ FUNCTION determineIntersections(rayOrigin, rayDirection, previousShape)
 				END IF
 			END IF
 		END FOR
-		#	Iteration count is used to determine
+		#	Iteration count used to check against max iteration count
 		iterationCount <= iterationCount + 1
 		
 		#	Use closest surface to find new position
 		currPos <= currPos + rayDirection * lowestDistance
 		
-		#	Tolerance check, have we travelled over the max distance, or gone through too many iterations?
+		#	Tolerance check: Have we travelled over the max distance, or gone through too many iterations?
 		IF iterationCount > tolerance.MaxIterations OR lowestDistance equals tolerance.MaxDistance THEN
 			searching <= false
 			exitCode <= NO_INTERSECTION
@@ -44,4 +45,4 @@ FUNCTION determineIntersections(rayOrigin, rayDirection, previousShape)
 	END WHILE
 	
 	
-	return (exitInfo, CurrPos, closestObject)
+	return (exitCode, CurrPos, closestObject)
