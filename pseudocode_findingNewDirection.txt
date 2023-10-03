@@ -1,0 +1,2 @@
+#   Don't copy - This is simplest version possible, could be improved a lot (account for BRDF changes though)
+FUNCTION findingNewRayDirection()

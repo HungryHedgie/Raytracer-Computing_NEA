@@ -3,8 +3,8 @@ FOREACH pixel IN screen
     FOREACH ray IN currentPixelRays
         WHILE ray has not hit a light source
             FindIntersection                                            B
-            Calculate effect on colour                                  C
-            Find new direction                                          D
+            Find new direction                                          C
+            Calculate effect on colour                                  D
         END WHILE
         Calculate final ray colour
 	END FOREACH
