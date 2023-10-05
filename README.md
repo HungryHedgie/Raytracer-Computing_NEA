@@ -1,6 +1,4 @@
-# Modelling-For-Computing-NEA
-The code for a simple 2D antialiasing function, along with pseudocode for a few key functions.
+# Raytracer - Computing NEA
+Full code and pseudocode for my computing coursework.
 
-A high res 2D image is taken as the input and a lower res 2D image is produced.
-
-Random sampling anti-aliasing is used to smooth edges of the produced image using different techniques.
+Contains the final code, a ray tracer using RayMarching and the modelling, which was a test of anti-aliasing with random samples.
