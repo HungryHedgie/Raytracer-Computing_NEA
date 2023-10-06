@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Numerics;
 
 
 
@@ -26,6 +27,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
     {
         //  Hard constants (never change)
         Random rnd = new Random();  //  For multithreaded, I would need a different random method
+        
 
         //  Medium constants - Can be changed for fine tuning algorithm
         int rayCountPerPixel = 1;
@@ -38,15 +40,18 @@ namespace RayTracer___Raymarching__Computing_NEA_
         static int res_x = 600;
         static int res_y = 400;
 
+        static vec3 camLocation = new vec3(-5, 0, 0);
+        static double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
+        camera cameraOne = new camera(camLocation, camRotations);
+
         //  Precomputed
         double screenRatio = res_y / res_x;
         double FoVScale = Math.Tan(FoVangle * (Math.PI / 180) / 2);  //  FoVangle is in degrees, and must be converted to radians
         public MainWindow()
         {
             //  Precomputed values:
-            double FoVScale = Math.Tan(FoVangle * (Math.PI / 180) / 2);  //  FoVangle is in degrees, and must be converted to radians
-            double screenRatio = res_y / res_x;
-
+            
+            camera cameraOne = new camera(camLocation, camRotations);
 
             InitializeComponent();
         }
@@ -90,9 +95,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
             vec3 pixelVector = new vec3(newX, 1, newZ);
 
             //  Need to make camera
-            vec3 rayDirection = camera.camSpaceToWorldSpace(pixelVector);
-            vec3 rayOrigin = camera.position;
+            vec3 rayDirection = cameraOne.camSpaceToWorldSpace(pixelVector);
+            vec3 rayOrigin = cameraOne.position;
 
+            //  Return type needs fixing
             return (rayOrigin, rayDirection - rayOrigin);
         }
 
