@@ -38,6 +38,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return quat;
         }
 
+        public void normalise()
+        {
+            double normFraction = 1 / Math.Sqrt(Math.Pow(this.x, 2) + Math.Pow(this.y, 2) + Math.Pow(this.z, 2));
+            x *= normFraction;
+            y *= normFraction;
+            z *= normFraction;
+        }
+
         public static vec3 cross(vec3 a, vec3 b)
         {
             double s_1 = a.y * b.z - a.z * b.y;
@@ -53,7 +61,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return a * normFraction;
         }
 
-        static double dot3D(vec3 a, vec3 b)
+        static public double operator *(vec3 a, vec3 b)
         {
             return a.x * b.x + a.y * b.y + a.z * b.z;
         }

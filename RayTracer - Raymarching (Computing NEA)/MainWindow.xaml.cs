@@ -32,6 +32,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  Medium constants - Can be changed for fine tuning algorithm
         int rayCountPerPixel = 1;
         bool isAntiAliasing = true;
+
+        
+        int maxIterations = 100;
+        double maxJumpDistance = 50;
+        double minJumpDistance = 0.01;
+        
         
         
         //  Soft constants - Changed on circumstance
@@ -54,6 +60,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             camera cameraOne = new camera(camLocation, camRotations);
 
             InitializeComponent();
+
+            //  Implement bitmap code from mandelbrot code
         }
 
 
@@ -61,19 +69,19 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             for (int i = 0; i < rayCountPerPixel; i++)
             {
-                findPixelsRayDirection(x, y);
+                vec3[] originAndDirection = findPixelsRayDirection(x, y);
             }
 
             return
         }
         
-        vec3 findPixelsRayDirection(int x, int y)
+        vec3[] findPixelsRayDirection(int x, int y)
         {
             //   (x, y) is the pixel co-ordinate
             //   (0, 0) is the bottom left of the image
             // res_x and res_y is the amount of pixels in the x and y directions
 
-            double xScale = ((x + 0.5) / res_x) - 0.5;
+            double xScale = ((x + 0.5) / res_x) - 0.5;  //  Could precompute?
             double zScale = ((y + 0.5) / res_y) - 0.5;
             //	The + 0.5 means the ray is sent to the center of a pixel
             //	Without it, the ray would head towards the bottom left of a pixel
@@ -99,8 +107,54 @@ namespace RayTracer___Raymarching__Computing_NEA_
             vec3 rayOrigin = cameraOne.position;
 
             //  Return type needs fixing
-            return (rayOrigin, rayDirection - rayOrigin);
+            return new vec3[2] { rayOrigin, rayDirection - rayOrigin };
         }
+
+        void determineIntersections(vec3 rayOrigin, vec3 rayDirection, shape previousShape)
+    #	previousShape stops us colliding with what we just hit
+    rayDirection <= normalise(rayDirection)	#	We want to normalise rayDirection
+
+    currPos <= rayOrigin
+
+    searching <= true
+    iterationCount <= 0
+    exitCode <= null
+    closestObject <= null
+
+    WHILE searching is true
+        #	Find closest surface
+        lowestDistance = tolerance.MaxDistance
+        FOR object IN all shapes and lights
+            IF object is not previousShape
+                newDistance = object.SDF(currPos)
+                #	SDF = Signed Distance Function
+                
+                IF newDistance<lowestDistance
+                    lowestDistance = newDistance
+                    closestObject = object
+                END IF
+            END IF
+        END FOR
+        #	Iteration count used to check against max iteration count
+        iterationCount <= iterationCount + 1
+
+        # Use closest surface to find new position
+        currPos <= currPos + rayDirection* lowestDistance
+
+        # Tolerance check:
+# Have we travelled over the max distance?
+# Have we gone through too many iterations?
+        IF iterationCount > tolerance.MaxIterations OR lowestDistance = tolerance.MaxDistance
+            searching <= false
+            exitCode <= NO_INTERSECTION
+        ELSE IF lowestDistance <= tolerance.MinDistance
+            searching <= false
+            exitCode <= INTERSECTION
+        END IF
+    END WHILE
+
+
+    return(exitCode, CurrPos, closestObject)
 
     }
 }
