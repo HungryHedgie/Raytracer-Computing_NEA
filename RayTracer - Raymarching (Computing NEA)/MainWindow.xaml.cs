@@ -106,55 +106,77 @@ namespace RayTracer___Raymarching__Computing_NEA_
             vec3 rayDirection = cameraOne.camSpaceToWorldSpace(pixelVector);
             vec3 rayOrigin = cameraOne.position;
 
-            //  Return type needs fixing
+            
             return new vec3[2] { rayOrigin, rayDirection - rayOrigin };
         }
 
         void determineIntersections(vec3 rayOrigin, vec3 rayDirection, shape previousShape)
-    #	previousShape stops us colliding with what we just hit
-    rayDirection <= normalise(rayDirection)	#	We want to normalise rayDirection
+        {
+            //	previousShape stops us colliding with what we just hit
+            rayDirection.normalise();
+            //  We want normalised versions
+            vec3 currPos = rayOrigin;
+            bool searching = true;
+            int iterationCount = 0;
 
-    currPos <= rayOrigin
+            string exitCode;
+            shape closestObject;
 
-    searching <= true
-    iterationCount <= 0
-    exitCode <= null
-    closestObject <= null
+            while(searching)
+            {
+                //  Find closest surface
+                double lowestDistance = maxJumpDistance;
+                foreach object in shapes
+                {
+                    //  Is this a valid comparison?             !IMPORTANT!
+                    if(object != previousShape){
+                        newDistance = object.SDF(currPos);
+                        // SDF - Signed Distance Function
 
-    WHILE searching is true
-        #	Find closest surface
-        lowestDistance = tolerance.MaxDistance
-        FOR object IN all shapes and lights
-            IF object is not previousShape
-                newDistance = object.SDF(currPos)
-                #	SDF = Signed Distance Function
-                
-                IF newDistance<lowestDistance
-                    lowestDistance = newDistance
-                    closestObject = object
-                END IF
-            END IF
-        END FOR
-        #	Iteration count used to check against max iteration count
-        iterationCount <= iterationCount + 1
+                        if(newDistance < lowestDistance){
+                            lowestDistance = newDistance;
+                            closestObject = object;
+                        }
+                    }
+                }
+                //  For now lights are treated (intersection wise) as the same as shape
+                foreach object in lights
+                {
+                    //  Is this a valid comparison?             !IMPORTANT!
+                    //  If light ray stops on lights then will this always be true?
+                    if(object != previousShape){
+                        newDistance = object.SDF(currPos);
+                        // SDF - Signed Distance Function
 
-        # Use closest surface to find new position
-        currPos <= currPos + rayDirection* lowestDistance
+                        if(newDistance < lowestDistance){
+                            lowestDistance = newDistance;
+                            closestObject = object;
+                        }
+                    }
+                }
+                //  Iteration counts prevents iteration going on forever
+                iterationCount++;
 
-        # Tolerance check:
-# Have we travelled over the max distance?
-# Have we gone through too many iterations?
-        IF iterationCount > tolerance.MaxIterations OR lowestDistance = tolerance.MaxDistance
-            searching <= false
-            exitCode <= NO_INTERSECTION
-        ELSE IF lowestDistance <= tolerance.MinDistance
-            searching <= false
-            exitCode <= INTERSECTION
-        END IF
-    END WHILE
+                //  Dist to closest surface used to find new position
+                currPos += rayDirection * lowestDistance;
 
+                //  Tolerance check:
+                //  Have we travelled further than the max jump distance?
+                //  Have we gone through too many iterations?
+                if(iterationCount > maxIterations || lowestDistance == maxJumpDistance){
+                    searching = false;
+                    exitCode = "NO_INTERSECTION";
+                }
+                else if(lowestDistance <= minJumpDistance){
+                    searching = false;
+                    exitCode = "INTERSECTION"
+                }
+            }
 
-    return(exitCode, CurrPos, closestObject)
+            return(exitCode, CurrPos, closestObject)
+        }
 
     }
+
+
 }
