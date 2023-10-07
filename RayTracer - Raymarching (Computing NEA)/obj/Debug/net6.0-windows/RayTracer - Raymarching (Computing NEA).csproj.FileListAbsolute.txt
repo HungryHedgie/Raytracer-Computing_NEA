@@ -1,0 +1,27 @@
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).csproj.AssemblyReference.cache
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).csproj.ResolveComReference.cache
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\MainWindow.g.cs
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\App.g.cs
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA)_MarkupCompile.cache
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA)_MarkupCompile.lref
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\bin\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).exe
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\bin\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).deps.json
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\bin\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).runtimeconfig.json
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\bin\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).dll
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\bin\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).pdb
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\bin\Debug\net6.0-windows\Microsoft.Win32.SystemEvents.dll
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\bin\Debug\net6.0-windows\System.Drawing.Common.dll
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\MainWindow.baml
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).g.resources
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).AssemblyInfoInputs.cache
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).AssemblyInfo.cs
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).csproj.CoreCompileInputs.cache
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).csproj.CopyComplete
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).dll
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\refint\RayTracer - Raymarching (Computing NEA).dll
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).pdb
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\RayTracer - Raymarching (Computing NEA).genruntimeconfig.cache
+C:\Users\jedsk\Documents\GitHub\!RayTracer-ComputingNEA\RayTracer - Raymarching (Computing NEA)\obj\Debug\net6.0-windows\ref\RayTracer - Raymarching (Computing NEA).dll

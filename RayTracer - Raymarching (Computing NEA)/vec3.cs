@@ -26,7 +26,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             x = input.X;
             y = input.Y;
             z = input.Z;
-            if(input.W != 0)    //  Debug and could be removed
+            if(input.W > 0.0001)    //  Debug and could be removed
             {
                 MessageBox.Show("Error with quaternion to vector, real component is non zero");
             }

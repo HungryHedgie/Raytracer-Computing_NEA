@@ -8,11 +8,14 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
+//using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Numerics;
+using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 
 
@@ -27,11 +30,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
     {
         //  Hard constants (never change)
         Random rnd = new Random();  //  For multithreaded, I would need a different random method
-        
+        Bitmap bmpFinalImage = new Bitmap(res_x, res_y);
 
         //  Medium constants - Can be changed for fine tuning algorithm
         int rayCountPerPixel = 1;
-        bool isAntiAliasing = true;
+        bool isAntiAliasing = false;
 
         
         int maxIterations = 100;
@@ -43,39 +46,90 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  Soft constants - Changed on circumstance
         double AA_Strength = 0.2d;
         static double FoVangle = 90;
-        static int res_x = 600;
-        static int res_y = 400;
+        static int res_x = 40;
+        static int res_y = 30;
 
         static vec3 camLocation = new vec3(-5, 0, 0);
-        static double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
-        camera cameraOne = new camera(camLocation, camRotations);
+        double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
+
+
+        //  Shapes
+        List<Shape> shapes = new List<Shape>();
+        //  Currently lights are shapes, will need changing at some point
+        List<Shape> lights = new List<Shape>();
+
+
 
         //  Precomputed
-        double screenRatio = res_y / res_x;
+        double screenRatio = (double)res_y / (double)res_x;
         double FoVScale = Math.Tan(FoVangle * (Math.PI / 180) / 2);  //  FoVangle is in degrees, and must be converted to radians
+        
+        camera cameraOne;
+
+
+
         public MainWindow()
         {
-            //  Precomputed values:
-            
-            camera cameraOne = new camera(camLocation, camRotations);
 
             InitializeComponent();
 
-            //  Implement bitmap code from mandelbrot code
+            cameraOne = new camera(camLocation, camRotations);
+
+            generateAllPixels();
+            
+
+
+            
         }
 
-
-        Color getPixelColor(int x, int y)
+        void generateAllPixels()
         {
-            for (int i = 0; i < rayCountPerPixel; i++)
+            for (int x = 0; x < res_x; x++)
             {
-                vec3[] originAndDirection = findPixelsRayDirection(x, y);
+                for (int y = 0; y < res_y; y++)
+                {
+                    Color pixelColor = GetPixelColor(x, y);
+                    bmpFinalImage.SetPixel(x, y, pixelColor);
+                }
             }
 
-            return
+            //  COPIED FROM INTERNET
+            //  Converts from Bitmap to BitmapSource, which can be shown on screen
+            using (MemoryStream memory = new MemoryStream())
+            {
+                bmpFinalImage.Save(memory, ImageFormat.Bmp);
+                memory.Position = 0;
+
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+
+                // Set the BitmapImage as the source for the Image control
+                imgFinalImage.Source = bitmapImage;
+            }
+            //  END OF COPIED CODE
+
+            
+        }
+
+        Color GetPixelColor(int x, int y)
+        {
+            /*
+            for (int i = 0; i < rayCountPerPixel; i++)
+            {
+                vec3[] originAndDirection = FindPixelsRayDirection(x, y);
+            }*/
+
+            vec3 testRay = FindPixelsRayDirection(x, y);
+            double upwards = Math.Max(new vec3(0, 0, 1) * testRay, 0);
+            return Color.FromArgb((int)(255 * upwards), (int)(255 * upwards), (int)(255 * upwards));
+
+            //return Color.FromArgb((int)(255 * Math.Max(testRay.x, 0)), (int)(255 * Math.Max(testRay.y, 0)), (int)(255 * Math.Max(testRay.z, 0)));
         }
         
-        vec3[] findPixelsRayDirection(int x, int y)
+        vec3 FindPixelsRayDirection(int x, int y)
         {
             //   (x, y) is the pixel co-ordinate
             //   (0, 0) is the bottom left of the image
@@ -100,17 +154,18 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             double newX = (xScale + xOffset) * FoVScale;
             double newZ = (zScale + zOffset) * FoVScale * screenRatio;
-            vec3 pixelVector = new vec3(newX, 1, newZ);
+            vec3 pixelVector = new vec3(1, newX, newZ);
+
 
             //  Need to make camera
-            vec3 rayDirection = cameraOne.camSpaceToWorldSpace(pixelVector);
-            vec3 rayOrigin = cameraOne.position;
+            vec3 rayDirection = cameraOne.camSpaceToWorldSpace(pixelVector) - cameraOne.position;
+            rayDirection.normalise();
 
             
-            return new vec3[2] { rayOrigin, rayDirection - rayOrigin };
+            return rayDirection;
         }
 
-        void determineIntersections(vec3 rayOrigin, vec3 rayDirection, shape previousShape)
+        void DetermineIntersections(vec3 rayOrigin, vec3 rayDirection, Shape previousShape)
         {
             //	previousShape stops us colliding with what we just hit
             rayDirection.normalise();
@@ -119,38 +174,41 @@ namespace RayTracer___Raymarching__Computing_NEA_
             bool searching = true;
             int iterationCount = 0;
 
-            string exitCode;
-            shape closestObject;
+            string exitCode = "ERROR";
+            Shape closestObject = null;
 
             while(searching)
             {
                 //  Find closest surface
                 double lowestDistance = maxJumpDistance;
-                foreach object in shapes
+                foreach (Shape currentShape in shapes)
                 {
                     //  Is this a valid comparison?             !IMPORTANT!
-                    if(object != previousShape){
-                        newDistance = object.SDF(currPos);
+                    if (currentShape != previousShape)
+                    {
+                        double newDistance = currentShape.SDF(currPos);
                         // SDF - Signed Distance Function
 
-                        if(newDistance < lowestDistance){
+                        if (newDistance < lowestDistance)
+                        {
                             lowestDistance = newDistance;
-                            closestObject = object;
+                            closestObject = currentShape;
                         }
                     }
                 }
                 //  For now lights are treated (intersection wise) as the same as shape
-                foreach object in lights
+                foreach (Shape currentLight in lights)
                 {
                     //  Is this a valid comparison?             !IMPORTANT!
-                    //  If light ray stops on lights then will this always be true?
-                    if(object != previousShape){
-                        newDistance = object.SDF(currPos);
+                    if (currentLight != previousShape)
+                    {
+                        double newDistance = currentLight.SDF(currPos);
                         // SDF - Signed Distance Function
 
-                        if(newDistance < lowestDistance){
+                        if (newDistance < lowestDistance)
+                        {
                             lowestDistance = newDistance;
-                            closestObject = object;
+                            closestObject = currentLight;
                         }
                     }
                 }
@@ -169,13 +227,54 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 }
                 else if(lowestDistance <= minJumpDistance){
                     searching = false;
-                    exitCode = "INTERSECTION"
+                    exitCode = "INTERSECTION";
                 }
             }
-
-            return(exitCode, CurrPos, closestObject)
+            //  NEED TO SORT OUT RETURN TYPE
+            //  return (exitCode, currPos, closestObject);
         }
 
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            bool change = true;
+            if(e.Key == Key.Left) {
+                camRotations[0] += 10;
+            }
+            else if(e.Key == Key.Right)
+            {
+                camRotations[0] -= 10;
+            }
+            else if (e.Key == Key.Up)
+            {
+                camRotations[2] -= 10;
+            }
+            else if (e.Key == Key.Down)
+            {
+                camRotations[2] += 10;
+            }
+            else
+            {
+                change = false;
+            }
+            if(change)
+            {
+                cameraOne.newRotation(camRotations);
+                generateAllPixels();
+            }
+            if(e.Key == Key.S)  //  S key brings up save menu
+            {
+                DateTime time = DateTime.Now;
+                MessageBoxResult result = MessageBox.Show("Do you want to save your image?", "Saving", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    bmpFinalImage.Save("..\\..\\..\\..\\Images\\" + time.Year + "." + time.Month + "." + time.Day + "." + time.Hour + "." + time.Minute + "_RayTracer_" + time.Millisecond + ".png", ImageFormat.Png);
+                    //bmpFinalImage.Save("TEST.png", ImageFormat.Png);
+
+                }
+            }
+            
+
+        }
     }
 
 
