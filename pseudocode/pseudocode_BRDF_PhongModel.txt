@@ -24,3 +24,5 @@ FUNCTION BRDF_phong(omega_i, omega_o, Normal)
     #   Each component is how much of the colour is reflected
 
     return reflectance
+	
+	UNCHANGED IN FINAL IMPLEMENTATION (9.10.23)

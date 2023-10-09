@@ -25,6 +25,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public vec3 BRDF_phong(vec3 omega_i, vec3 omega_o, vec3 normal)
         {
+            //  SAME AS PSEUDOCODE
             omega_i.normalise();
             omega_o.normalise();
             normal.normalise();
