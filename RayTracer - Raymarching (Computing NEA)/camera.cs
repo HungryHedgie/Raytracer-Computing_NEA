@@ -29,7 +29,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Quaternion xyQuat = new Quaternion(0, 0, MathF.Sin((float)(xyPlaneRot / 2) * MathF.PI / 180), MathF.Cos((float)(xyPlaneRot / 2) * MathF.PI / 180));
             Quaternion yzQuat = new Quaternion(MathF.Sin((float)(yzPlaneRot / 2) * MathF.PI / 180), 0, 0, MathF.Cos((float)(yzPlaneRot / 2) * MathF.PI / 180));
             Quaternion xzQuat = new Quaternion(0, MathF.Sin((float)(xzPlaneRot / 2) * MathF.PI / 180), 0, MathF.Cos((float)(xzPlaneRot / 2) * MathF.PI / 180));
-            rotation = xzQuat * yzQuat * xyQuat;
+            rotation =  yzQuat * xyQuat * xzQuat;
         }
 
         public vec3 camSpaceToWorldSpace(vec3 point_relCam) {

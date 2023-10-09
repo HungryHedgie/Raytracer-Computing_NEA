@@ -46,8 +46,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  Soft constants - Changed on circumstance
         double AA_Strength = 0.2d;
         static double FoVangle = 90;
-        static int res_x = 40;
-        static int res_y = 30;
+        static int res_x = 600;
+        static int res_y = 300;
 
         static vec3 camLocation = new vec3(-5, 0, 0);
         double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
@@ -92,6 +92,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                     bmpFinalImage.SetPixel(x, y, pixelColor);
                 }
             }
+            
 
             //  COPIED FROM INTERNET
             //  Converts from Bitmap to BitmapSource, which can be shown on screen
