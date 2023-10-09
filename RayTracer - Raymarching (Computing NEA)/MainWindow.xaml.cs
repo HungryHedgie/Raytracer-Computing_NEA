@@ -45,7 +45,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         
         //  Soft constants - Changed on circumstance
         double AA_Strength = 0.2d;
-        static double FoVangle = 90;
+        static double FoVangle = 110;
         static int res_x = 600;
         static int res_y = 300;
 
@@ -88,8 +88,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
             {
                 for (int y = 0; y < res_y; y++)
                 {
-                    //Color pixelColor = GetPixelColor(x, res_y - y);
-                    Color pixelColor = Color.FromArgb(255 * y/res_y, 255 * y / res_y, 255 * y / res_y);
+                    Color pixelColor = GetPixelColor(x, res_y - y);
+                    //int brightness = (255 * x) / res_x;
+                    //Color pixelColor = Color.FromArgb(brightness, brightness, brightness);
                     bmpFinalImage.SetPixel(x, y, pixelColor);
                 }
             }
@@ -125,10 +126,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
             }*/
 
             vec3 testRay = FindPixelsRayDirection(x, y);
-            double upwards = Math.Max(new vec3(0, 0, 1) * testRay, 0);
-            return Color.FromArgb((int)(255 * upwards), (int)(255 * upwards), (int)(255 * upwards));
 
-            //return Color.FromArgb((int)(255 * Math.Max(testRay.x, 0)), (int)(255 * Math.Max(testRay.y, 0)), (int)(255 * Math.Max(testRay.z, 0)));
+            //  Code for checking specific directions
+            //double testDirection = Math.Max(new vec3(0, -1, 0) * testRay, 0);
+            //return Color.FromArgb((int)(255 * testDirection), (int)(255 * testDirection), (int)(255 * testDirection));
+
+            return Color.FromArgb((int)(255 * Math.Max(testRay.x, 0)), (int)(255 * Math.Max(testRay.y, 0)), (int)(255 * Math.Max(testRay.z, 0)));
         }
         
         vec3 FindPixelsRayDirection(int x, int y)
@@ -156,10 +159,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             double newX = (xScale + xOffset) * FoVScale;
             double newZ = (zScale + zOffset) * FoVScale * screenRatio;
-            vec3 pixelVector = new vec3(1, newX, newZ);
+            //  We take negative of newX because we are in a right hand co-ordinate system, so a ray sent out to the left should have a positive value for y
+            vec3 pixelVector = new vec3(1, -newX, newZ);
 
 
-            //  Need to make camera
+            
             vec3 rayDirection = cameraOne.camSpaceToWorldSpace(pixelVector) - cameraOne.position;
             rayDirection.normalise();
 
