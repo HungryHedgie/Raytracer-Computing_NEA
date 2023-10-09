@@ -88,7 +88,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             {
                 for (int y = 0; y < res_y; y++)
                 {
-                    Color pixelColor = GetPixelColor(x, y);
+                    //Color pixelColor = GetPixelColor(x, res_y - y);
+                    Color pixelColor = Color.FromArgb(255 * y/res_y, 255 * y / res_y, 255 * y / res_y);
                     bmpFinalImage.SetPixel(x, y, pixelColor);
                 }
             }
@@ -238,7 +239,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             bool change = true;
-            if(e.Key == Key.Left) {
+            if(e.Key == Key.Left) 
+            {
                 camRotations[0] += 10;
             }
             else if(e.Key == Key.Right)
@@ -247,11 +249,19 @@ namespace RayTracer___Raymarching__Computing_NEA_
             }
             else if (e.Key == Key.Up)
             {
-                camRotations[2] -= 10;
+                if(camRotations[2] >= -80)
+                {
+                    camRotations[2] -= 10;
+                }
+                
             }
             else if (e.Key == Key.Down)
             {
-                camRotations[2] += 10;
+                if(camRotations[2] <= 80)
+                {
+                    camRotations[2] += 10;
+                }
+                
             }
             else
             {
