@@ -7,12 +7,12 @@ using System.Numerics;
 
 namespace RayTracer___Raymarching__Computing_NEA_
 {
-    internal class camera
+    internal class Camera
     {
-        public vec3 position;
+        public Vec3 position;
         public Quaternion rotation;
 
-        public camera(vec3 startPos, double[] fullRotationInfo)
+        public Camera(Vec3 startPos, double[] fullRotationInfo)
         {
             position = startPos;
 
@@ -32,17 +32,17 @@ namespace RayTracer___Raymarching__Computing_NEA_
             rotation =  yzQuat * xyQuat * xzQuat;
         }
 
-        public vec3 camSpaceToWorldSpace(vec3 point_relCam) {
-            vec3 point_relWorld = this.position + rotatePoint(point_relCam, this.rotation);
+        public Vec3 camSpaceToWorldSpace(Vec3 point_relCam) {
+            Vec3 point_relWorld = this.position + rotatePoint(point_relCam, this.rotation);
             
             return point_relWorld;
         }
 
 
-        private vec3 rotatePoint(vec3 initialVec, Quaternion rotation) {
+        private Vec3 rotatePoint(Vec3 initialVec, Quaternion rotation) {
             Quaternion initialQuat = initialVec.asQuaternion();
             Quaternion finalQuat = rotation * initialQuat * Quaternion.Conjugate(rotation);
-            return new vec3(finalQuat);
+            return new Vec3(finalQuat);
         }
 
     }

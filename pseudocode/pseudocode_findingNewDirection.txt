@@ -19,3 +19,5 @@ FUNCTION findingNewRayDirection(normal)
     END IF
     
     return newDir
+	
+	##	Implemeted no changes 10.10.23

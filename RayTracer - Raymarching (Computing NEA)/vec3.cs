@@ -8,20 +8,20 @@ using System.Windows;
 
 namespace RayTracer___Raymarching__Computing_NEA_
 {
-    internal class vec3
+    internal class Vec3
     {
         public double x;
         public double y;
         public double z;
 
-        public vec3(double x_in, double y_in, double z_in)
+        public Vec3(double x_in, double y_in, double z_in)
         {
             x = x_in;
             y = y_in;
             z = z_in;
         }
 
-        public vec3(Quaternion input)
+        public Vec3(Quaternion input)
         {
             x = input.X;
             y = input.Y;
@@ -46,44 +46,51 @@ namespace RayTracer___Raymarching__Computing_NEA_
             z *= normFraction;
         }
 
-        public static vec3 cross(vec3 a, vec3 b)
+        public static Vec3 cross(Vec3 a, Vec3 b)
         {
             double s_1 = a.y * b.z - a.z * b.y;
             double s_2 = a.z * b.x - a.x * b.z;
             double s_3 = a.x * b.y - a.y * b.x;
-            return new vec3(s_1, s_2, s_3);
+            return new Vec3(s_1, s_2, s_3);
 
         }
 
-        static public vec3 normalise(vec3 a)
+        static public Vec3 normalise(Vec3 a)
         {
             double normFraction = 1 / Math.Sqrt(Math.Pow(a.x, 2) + Math.Pow(a.y, 2) + Math.Pow(a.z, 2));
             return a * normFraction;
         }
 
-        static public double operator *(vec3 a, vec3 b)
+        //  Should colour be its own class?
+        static public Vec3 colorCombination(Vec3 a, Vec3 b) //  For combining reflectance, we treat this as an array
+        {
+            Vec3 c = new(a.x * b.x, a.y * b.y, a.z * b.z);
+            return c;
+        }
+
+        static public double operator *(Vec3 a, Vec3 b)
         {
             return a.x * b.x + a.y * b.y + a.z * b.z;
         }
 
-        static public vec3 operator +(vec3 a, vec3 b)
+        static public Vec3 operator +(Vec3 a, Vec3 b)
         {
-            return new vec3(a.x + b.x, a.y + b.y, a.z + b.z);
+            return new Vec3(a.x + b.x, a.y + b.y, a.z + b.z);
         }
 
-        static public vec3 operator *(double a, vec3 b)
+        static public Vec3 operator *(double a, Vec3 b)
         {
-            return new vec3(a * b.x, a * b.y, a * b.z);
+            return new Vec3(a * b.x, a * b.y, a * b.z);
         }
 
-        static public vec3 operator *(vec3 b, double a)
+        static public Vec3 operator *(Vec3 b, double a)
         {
-            return new vec3(a * b.x, a * b.y, a * b.z);
+            return new Vec3(a * b.x, a * b.y, a * b.z);
         }
 
-        static public vec3 operator -(vec3 a, vec3 b)
+        static public Vec3 operator -(Vec3 a, Vec3 b)
         {
-            return new vec3(a.x - b.x, a.y - b.y, a.z - b.z);
+            return new Vec3(a.x - b.x, a.y - b.y, a.z - b.z);
         }
 
     }

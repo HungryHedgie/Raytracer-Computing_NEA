@@ -25,7 +25,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
     /// Interaction logic for MainWindow.xaml
     /// </summary>
 
-
     public partial class MainWindow : Window
     {
         //  Hard constants (never change)
@@ -33,8 +32,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Bitmap bmpFinalImage = new Bitmap(res_x, res_y);
 
         //  Medium constants - Can be changed for fine tuning algorithm
-        int rayCountPerPixel = 1;
-        bool isAntiAliasing = false;
+        int rayCountPerPixel = 1000;
+        bool isAntiAliasing = true;
 
         
         int maxIterations = 100;
@@ -49,12 +48,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
         static int res_x = 600;
         static int res_y = 300;
 
-        static vec3 camLocation = new vec3(-5, 0, 0);
+        static Vec3 camLocation = new Vec3(-5, 0, 0);
         double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
 
 
         //  Shapes
         List<Shape> shapes = new List<Shape>();
+        
         //  Currently lights are shapes, will need changing at some point
         List<Shape> lights = new List<Shape>();
 
@@ -64,7 +64,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         double screenRatio = (double)res_y / (double)res_x;
         double FoVScale = Math.Tan(FoVangle * (Math.PI / 180) / 2);  //  FoVangle is in degrees, and must be converted to radians
         
-        camera cameraOne;
+        Camera cameraOne;
 
 
 
@@ -73,7 +73,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             InitializeComponent();
 
-            cameraOne = new camera(camLocation, camRotations);
+            cameraOne = new Camera(camLocation, camRotations);
+            Vec3 pos = new Vec3(0, 0, 0);
+            Vec3 k_s = new Vec3(1, 1, 0.3);
+            Vec3 k_d = new Vec3(0, 0, 0.7);
+            shapes.Add(new Sphere(pos, k_s, k_d, 2d, 2));
 
             generateAllPixels();
             
@@ -119,22 +123,49 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         Color GetPixelColor(int x, int y)
         {
-            /*
-            for (int i = 0; i < rayCountPerPixel; i++)
+
+            /*for (int i = 0; i < rayCountPerPixel; i++)
             {
                 vec3[] originAndDirection = FindPixelsRayDirection(x, y);
             }*/
 
-            vec3 testRay = FindPixelsRayDirection(x, y);
+            Vec3 rayDirection = FindPixelsRayDirection(x, y);
+            Vec3 finalColor = null;
+
+            //Vec3 rayDirection = new(1, 0, 0);
+            Ray currentRay = new Ray(cameraOne.position, rayDirection);
+            bool checkForNewIntersections = true;
+            while (checkForNewIntersections)
+            {
+                Vec3 initialDirection = currentRay.direction;
+                DetermineIntersections(currentRay);
+                if (currentRay.previousShape != null)
+                {
+                    Vec3 normal = currentRay.previousShape.findNormal(currentRay.position);
+                    
+                    currentRay.direction = findingNewRayDirection(normal);
+                    Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(initialDirection, currentRay.direction, normal);
+                    currentRay.runningTotalOfReflectance = Vec3.colorCombination(shapeReflectance, currentRay.runningTotalOfReflectance);
+                }
+                else
+                {
+                    
+                    checkForNewIntersections = false;
+                    //  Simulate a sun
+                    double lightMagnitude = Math.Pow(initialDirection * new Vec3(0, 0, 1), 10);
+                    Vec3 lighting = lightMagnitude * new Vec3(1, 1, 1);
+                    finalColor = Vec3.colorCombination(currentRay.runningTotalOfReflectance, lighting);
+                }
+            }
 
             //  Code for checking specific directions
             //double testDirection = Math.Max(new vec3(0, -1, 0) * testRay, 0);
             //return Color.FromArgb((int)(255 * testDirection), (int)(255 * testDirection), (int)(255 * testDirection));
 
-            return Color.FromArgb((int)(255 * Math.Max(testRay.x, 0)), (int)(255 * Math.Max(testRay.y, 0)), (int)(255 * Math.Max(testRay.z, 0)));
+            return Color.FromArgb((int)finalColor.x, (int)finalColor.y, (int)finalColor.z);
         }
         
-        vec3 FindPixelsRayDirection(int x, int y)
+        Vec3 FindPixelsRayDirection(int x, int y)
         {
             //   (x, y) is the pixel co-ordinate
             //   (0, 0) is the bottom left of the image
@@ -160,23 +191,24 @@ namespace RayTracer___Raymarching__Computing_NEA_
             double newX = (xScale + xOffset) * FoVScale;
             double newZ = (zScale + zOffset) * FoVScale * screenRatio;
             //  We take negative of newX because we are in a right hand co-ordinate system, so a ray sent out to the left should have a positive value for y
-            vec3 pixelVector = new vec3(1, -newX, newZ);
+            Vec3 pixelVector = new Vec3(1, -newX, newZ);
 
 
             
-            vec3 rayDirection = cameraOne.camSpaceToWorldSpace(pixelVector) - cameraOne.position;
+            Vec3 rayDirection = cameraOne.camSpaceToWorldSpace(pixelVector) - cameraOne.position;
             rayDirection.normalise();
 
             
             return rayDirection;
         }
 
-        void DetermineIntersections(vec3 rayOrigin, vec3 rayDirection, Shape previousShape)
+        void DetermineIntersections(Ray currentRay)
         {
+            Shape? previousShape = currentRay.previousShape;
             //	previousShape stops us colliding with what we just hit
-            rayDirection.normalise();
+            currentRay.direction.normalise();
             //  We want normalised versions
-            vec3 currPos = rayOrigin;
+            Vec3 currPos = currentRay.position;
             bool searching = true;
             int iterationCount = 0;
 
@@ -222,7 +254,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 iterationCount++;
 
                 //  Dist to closest surface used to find new position
-                currPos += rayDirection * lowestDistance;
+                currPos += currentRay.direction * lowestDistance;
 
                 //  Tolerance check:
                 //  Have we travelled further than the max jump distance?
@@ -236,9 +268,34 @@ namespace RayTracer___Raymarching__Computing_NEA_
                     exitCode = "INTERSECTION";
                 }
             }
+
+            currentRay.position = currPos;
+            currentRay.previousShape = closestObject;
+            currentRay.direction = null;
             //  NEED TO SORT OUT RETURN TYPE
             //  return (exitCode, currPos, closestObject);
         }
+
+        Vec3 findingNewRayDirection(Vec3 normal) {
+            double theta = rnd.NextDouble() * 2 * Math.PI;  //   Get a random number for the trig functions
+            double phi = rnd.NextDouble() * 2 * Math.PI;    //  Could decrease precision, 2 or 3 dp is likely to be enough
+
+            double cosTheta = Math.Cos(theta);
+            double sinTheta = Math.Sin(theta);
+
+            double cosPhi = Math.Cos(phi);
+            double sinPhi = Math.Sin(phi);
+
+            //  This method will give us an already normalised value
+            Vec3 newDir = new(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
+            if(newDir * normal < 0)
+            {
+                newDir *= -1;
+            }
+            return newDir;
+        }
+    
+    
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
