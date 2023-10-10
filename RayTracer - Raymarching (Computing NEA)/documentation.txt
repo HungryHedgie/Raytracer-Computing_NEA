@@ -1,0 +1,3 @@
+﻿arrow keys control camera direction, left is left, up looks up
+S key triggers a save menu
+U key applies changes arrow keys have made

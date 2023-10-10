@@ -28,8 +28,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             //  NOT SAME AS PSEUDOCODE
             omega_i *= -1;  //  Added line, accounts for that we want the direction to heading outwards
-            omega_i.normalise();
-            omega_o.normalise();
+            omega_i.normalise();    //  Incoming light (From a physics perspective)
+            omega_o.normalise();    //  Outgoing from a physics perspective, so these are the opposite of the order we got our rays
             normal.normalise();
 
             //  Max is in place in case the dot product is negative

@@ -5,10 +5,14 @@
       "Microsoft.Win32.SystemEvents/7.0.0": {
         "type": "package",
         "compile": {
-          "lib/net6.0/Microsoft.Win32.SystemEvents.dll": {}
+          "lib/net6.0/Microsoft.Win32.SystemEvents.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net6.0/Microsoft.Win32.SystemEvents.dll": {}
+          "lib/net6.0/Microsoft.Win32.SystemEvents.dll": {
+            "related": ".xml"
+          }
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
@@ -26,10 +30,14 @@
           "Microsoft.Win32.SystemEvents": "7.0.0"
         },
         "compile": {
-          "lib/net6.0/System.Drawing.Common.dll": {}
+          "lib/net6.0/System.Drawing.Common.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net6.0/System.Drawing.Common.dll": {}
+          "lib/net6.0/System.Drawing.Common.dll": {
+            "related": ".xml"
+          }
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
@@ -119,28 +127,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\17NSKILJe\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\jedsk\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "\\\\strs\\dfs\\Devs\\Data\\17NSKILJe\\!Computing NEA - Coursework\\RayTracer - Raymarching (Computing NEA)\\RayTracer - Raymarching (Computing NEA).csproj",
+      "projectUniqueName": "C:\\Users\\jedsk\\Documents\\GitHub\\!RayTracer-ComputingNEA\\RayTracer - Raymarching (Computing NEA)\\RayTracer - Raymarching (Computing NEA).csproj",
       "projectName": "RayTracer - Raymarching (Computing NEA)",
-      "projectPath": "\\\\strs\\dfs\\Devs\\Data\\17NSKILJe\\!Computing NEA - Coursework\\RayTracer - Raymarching (Computing NEA)\\RayTracer - Raymarching (Computing NEA).csproj",
-      "packagesPath": "C:\\Users\\17NSKILJe\\.nuget\\packages\\",
-      "outputPath": "\\\\strs\\dfs\\Devs\\Data\\17NSKILJe\\!Computing NEA - Coursework\\RayTracer - Raymarching (Computing NEA)\\obj\\",
+      "projectPath": "C:\\Users\\jedsk\\Documents\\GitHub\\!RayTracer-ComputingNEA\\RayTracer - Raymarching (Computing NEA)\\RayTracer - Raymarching (Computing NEA).csproj",
+      "packagesPath": "C:\\Users\\jedsk\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\jedsk\\Documents\\GitHub\\!RayTracer-ComputingNEA\\RayTracer - Raymarching (Computing NEA)\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\17NSKILJe\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\jedsk\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "net6.0-windows7.0"
+        "net6.0-windows"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
@@ -173,7 +176,8 @@
           "net47",
           "net471",
           "net472",
-          "net48"
+          "net48",
+          "net481"
         ],
         "assetTargetFallback": true,
         "warn": true,
@@ -185,7 +189,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
       }
     }
   }

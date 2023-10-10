@@ -24,11 +24,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             double xyPlaneRot = fullRotationInfo[0];
             double yzPlaneRot = fullRotationInfo[1];
-            double xzPlaneRot = fullRotationInfo[2];
+            double xzPlaneRot = fullRotationInfo[2];   //  We take negative of this as for quaternions a positive xz rotation points downwards
             //  Generates corresponding quaternions for xy, yz and xy plane rotations, then combines them
             Quaternion xyQuat = new Quaternion(0, 0, MathF.Sin((float)(xyPlaneRot / 2) * MathF.PI / 180), MathF.Cos((float)(xyPlaneRot / 2) * MathF.PI / 180));
             Quaternion yzQuat = new Quaternion(MathF.Sin((float)(yzPlaneRot / 2) * MathF.PI / 180), 0, 0, MathF.Cos((float)(yzPlaneRot / 2) * MathF.PI / 180));
-            Quaternion xzQuat = new Quaternion(0, MathF.Sin((float)(xzPlaneRot / 2) * MathF.PI / 180), 0, MathF.Cos((float)(xzPlaneRot / 2) * MathF.PI / 180));
+            Quaternion xzQuat = new Quaternion(0, -MathF.Sin((float)(xzPlaneRot / 2) * MathF.PI / 180), 0, MathF.Cos((float)(xzPlaneRot / 2) * MathF.PI / 180));
             rotation =  yzQuat * xyQuat * xzQuat;
         }
 
