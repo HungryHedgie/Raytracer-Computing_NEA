@@ -32,12 +32,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Bitmap bmpFinalImage = new Bitmap(res_x, res_y);
 
         //  Medium constants - Can be changed for fine tuning algorithm
-        int rayCountPerPixel = 1000;
-        bool isAntiAliasing = true;
+        int rayCountPerPixel = 50;
+        bool isAntiAliasing = false;
 
         
         int maxIterations = 100;
-        double maxJumpDistance = 50;
+        double maxJumpDistance = 100;
         double minJumpDistance = 0.01;
         
         
@@ -48,7 +48,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         static int res_x = 600;
         static int res_y = 300;
 
-        static Vec3 camLocation = new Vec3(-5, 0, 0);
+        static Vec3 camLocation = new Vec3(-20, 0, 0);
         double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
 
 
@@ -75,8 +75,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             cameraOne = new Camera(camLocation, camRotations);
             Vec3 pos = new Vec3(0, 0, 0);
-            Vec3 k_s = new Vec3(1, 1, 0.3);
-            Vec3 k_d = new Vec3(0, 0, 0.7);
+            Vec3 k_s = new Vec3(1, 1, 1);
+            Vec3 k_d = new Vec3(0.1, 0.1, 0.1);
             shapes.Add(new Sphere(pos, k_s, k_d, 2d, 2));
 
             generateAllPixels();
@@ -123,46 +123,48 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         Color GetPixelColor(int x, int y)
         {
-
-            /*for (int i = 0; i < rayCountPerPixel; i++)
+            Vec3 finalColor = new(0, 0, 0);
+            for (int i = 0; i < rayCountPerPixel; i++)
             {
-                vec3[] originAndDirection = FindPixelsRayDirection(x, y);
-            }*/
+                Vec3 rayDirection = FindPixelsRayDirection(x, y);
 
-            Vec3 rayDirection = FindPixelsRayDirection(x, y);
-            Vec3 finalColor = null;
+                
 
-            //Vec3 rayDirection = new(1, 0, 0);
-            Ray currentRay = new Ray(cameraOne.position, rayDirection);
-            bool checkForNewIntersections = true;
-            while (checkForNewIntersections)
-            {
-                Vec3 initialDirection = currentRay.direction;
-                DetermineIntersections(currentRay);
-                if (currentRay.previousShape != null)
+                //Vec3 rayDirection = new(1, 0, 0);
+                Ray currentRay = new Ray(cameraOne.position, rayDirection);
+                bool checkForNewIntersections = true;
+                while (checkForNewIntersections)
                 {
-                    Vec3 normal = currentRay.previousShape.findNormal(currentRay.position);
-                    
-                    currentRay.direction = findingNewRayDirection(normal);
-                    Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(initialDirection, currentRay.direction, normal);
-                    currentRay.runningTotalOfReflectance = Vec3.colorCombination(shapeReflectance, currentRay.runningTotalOfReflectance);
-                }
-                else
-                {
-                    
-                    checkForNewIntersections = false;
-                    //  Simulate a sun
-                    double lightMagnitude = Math.Pow(initialDirection * new Vec3(0, 0, 1), 10);
-                    Vec3 lighting = lightMagnitude * new Vec3(1, 1, 1);
-                    finalColor = Vec3.colorCombination(currentRay.runningTotalOfReflectance, lighting);
+                    Vec3 initialDirection = currentRay.direction;
+                    DetermineIntersections(currentRay);
+                    if (currentRay.previousShape != null)
+                    {
+                        Vec3 normal = currentRay.previousShape.findNormal(currentRay.position);
+
+                        currentRay.direction = findingNewRayDirection(normal);
+                        Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(initialDirection, currentRay.direction, normal);
+                        currentRay.runningTotalOfReflectance = Vec3.colorCombination(shapeReflectance, currentRay.runningTotalOfReflectance);
+                    }
+                    else
+                    {
+
+                        checkForNewIntersections = false;
+                        //  Simulate a sun
+                        double lightMagnitude = 20 * Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 5);
+                        Vec3 lighting = lightMagnitude * new Vec3(1, 1, 1);
+                        finalColor += Vec3.colorCombination(currentRay.runningTotalOfReflectance, lighting);
+                    }
                 }
             }
+            finalColor *= 1/(double)rayCountPerPixel;
+
+
 
             //  Code for checking specific directions
             //double testDirection = Math.Max(new vec3(0, -1, 0) * testRay, 0);
             //return Color.FromArgb((int)(255 * testDirection), (int)(255 * testDirection), (int)(255 * testDirection));
 
-            return Color.FromArgb((int)finalColor.x, (int)finalColor.y, (int)finalColor.z);
+            return Color.FromArgb((int)Math.Min(255 * finalColor.x, 255), (int)Math.Min(finalColor.y * 255, 255), (int)Math.Min(finalColor.z * 255, 255));
         }
         
         Vec3 FindPixelsRayDirection(int x, int y)
@@ -261,6 +263,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 //  Have we gone through too many iterations?
                 if(iterationCount > maxIterations || lowestDistance == maxJumpDistance){
                     searching = false;
+                    closestObject = null;
                     exitCode = "NO_INTERSECTION";
                 }
                 else if(lowestDistance <= minJumpDistance){

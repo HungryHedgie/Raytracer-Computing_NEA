@@ -26,7 +26,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public Vec3 BRDF_phong(Vec3 omega_i, Vec3 omega_o, Vec3 normal)
         {
-            //  SAME AS PSEUDOCODE
+            //  NOT SAME AS PSEUDOCODE
+            omega_i *= -1;  //  Added line, accounts for that we want the direction to heading outwards
             omega_i.normalise();
             omega_o.normalise();
             normal.normalise();
@@ -36,7 +37,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  Reflectance is the sum of the seperate components of specular and diffuse reflection    HERE ONWARDS DONE with VS CODE, NEEDS CHECKING WITH Visual Studio
             Vec3 specularComponent = this.k_s * Math.Pow(Math.Max(omega_i * reflectedRay, 0), this.alpha);
-            Vec3 reflectanceComponent = this.k_d * Math.Max(omega_i * normal, 0);
+            Vec3 reflectanceComponent = this.k_d * Math.Max(omega_o * normal, 0);
 
             //  The dot product term accounts for the shallow angles, which have a lower contribution
             Vec3 reflectance = (specularComponent + reflectanceComponent) * Math.Max(normal * omega_i, 0);
