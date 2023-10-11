@@ -32,11 +32,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Bitmap bmpFinalImage = new Bitmap(res_x, res_y);
 
         //  Medium constants - Can be changed for fine tuning algorithm
-        int rayCountPerPixel = 60;
+        int rayCountPerPixel = 160;
         bool isAntiAliasing = true;
 
         
-        int maxIterations = 100;
+        int maxIterations = 70;
         double maxJumpDistance = 30;
         double minJumpDistance = 0.001;
 
@@ -48,7 +48,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         double AA_Strength = 0.007d;
         static double FoVangle = 110;
         static int res_x = 220;
-        static int res_y = 110;
+        static int res_y = 100;
 
         static Vec3 camLocation = new Vec3(-40, 0, 0);
         double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
@@ -77,18 +77,26 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             cameraOne = new Camera(camLocation, camRotations);
             Vec3 pos1 = new Vec3(0, 0, 0);
-            Vec3 k_s1 = new Vec3(1, 0, 0);
+            Vec3 k_s1 = new Vec3(0.9, 0.4, 0.9);
             Vec3 k_d1 = new Vec3(0.1, 0.6, 0.1);
             double alpha1 = 2;
             double radius1 = 2;
             shapes.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1));
 
             Vec3 pos2 = new Vec3(0, 0, -50);
-            Vec3 k_s2 = new Vec3(0, 0, 0);
+            Vec3 k_s2 = new Vec3(0.6, 0.8, 0.5);
             Vec3 k_d2 = new Vec3(0.4, 0.2, 0.5);
-            double alpha2 = 1;
+            double alpha2 = 9;
             double radius2 = 45;
             shapes.Add(new Sphere(pos2, k_s2, k_d2, alpha2, radius2));
+
+            Vec3 pos3 = new Vec3(50, 10, 40);
+            Vec3 k_s3 = new Vec3(0, 0, 0);
+            Vec3 k_d3 = new Vec3(1,1, 1);
+            double alpha3 = 2;
+            double radius3 = 40;
+            Vec3 lightStrength = new Vec3(1, 1, 1);
+            lights.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3, lightStrength));
 
             generateAllPixels();
             
@@ -145,7 +153,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 //Vec3 rayDirection = new(1, 0, 0);
                 Ray currentRay = new Ray(cameraOne.position, rayDirection);
                 bool checkForNewIntersections = true;
-                for (int j = 0; j < maxBounceCount && checkForNewIntersections; j++)
+                for (int j = 0; j < maxBounceCount && checkForNewIntersections && !currentRay.hasHitLight; j++)
                 {
                     Vec3 initialDirection = currentRay.direction;
                     DetermineIntersections(currentRay);
@@ -154,7 +162,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         Vec3 normal = currentRay.previousShape.findNormal(currentRay.position);
 
                         currentRay.direction = findingNewRayDirection(normal);
-                        Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(initialDirection, currentRay.direction, normal);
+                        Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(currentRay.direction, initialDirection, normal);
                         currentRay.runningTotalOfReflectance = Vec3.colorCombination(shapeReflectance, currentRay.runningTotalOfReflectance);
 
                     }
@@ -162,13 +170,16 @@ namespace RayTracer___Raymarching__Computing_NEA_
                     {
 
                         checkForNewIntersections = false;
-                        //  Simulate a sun
+                        //  Get colour from lights
+                        Vec3 lightStrength = currentRay.previousShape.lightStrength;
+                        
+                        //  Simulate a sun and skyline
                         double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 6);
                         Vec3 sunColour = new Vec3(1, 0.8, 0.4);
                         double skyMagnitude = Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 0.4);
                         Vec3 skyColour = new Vec3(0.3, 0.3, 0.7);
                         Vec3 ambientColour = new Vec3(0.1, 0.1, 0.1);
-                        Vec3 lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour;
+                        Vec3 lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour + lightStrength;
                         finalColor += Vec3.colorCombination(currentRay.runningTotalOfReflectance, lighting);
                     }
                 }
@@ -230,6 +241,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 currPos = currentRay.position;
             bool searching = true;
             int iterationCount = 0;
+            bool hitLight = false;
+
 
             string exitCode = "ERROR";
             Shape closestObject = null;
@@ -250,6 +263,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         {
                             lowestDistance = newDistance;
                             closestObject = currentShape;
+                            hitLight = false;
                         }
                     }
                 }
@@ -266,6 +280,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         {
                             lowestDistance = newDistance;
                             closestObject = currentLight;
+                            hitLight = true;
                         }
                     }
                 }
@@ -288,7 +303,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                     exitCode = "INTERSECTION";
                 }
             }
-
+            currentRay.hasHitLight = hitLight;
             currentRay.position = currPos;
             currentRay.previousShape = closestObject;
             currentRay.direction = null;
@@ -347,13 +362,17 @@ namespace RayTracer___Raymarching__Computing_NEA_
             }
             else if(e.Key == Key.U)
             {
-                MessageBox.Show("Updating", "Image will start updating upon pressing Ok");
+                MessageBox.Show("Image will start updating upon pressing Ok", "Updating");
+
                 change = true;
+
+                
             }
             if(change)
             {
                 cameraOne.newRotation(camRotations);
                 generateAllPixels();
+                MessageBox.Show("Finished updating", "Updating complete");
             }
             if(e.Key == Key.S)  //  S key brings up save menu
             {

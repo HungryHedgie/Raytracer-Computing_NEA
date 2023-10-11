@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "4hZ8yjZ0MpPeUh4VCowUWGwXL2EgPiQSa5dyVgb2ApjxxMzteS/KZj+pIYlAVpnVCEtQBzqSlz+Mp/J5QtGJcw==",
+  "dgSpecHash": "Kq2lgWxHqow7iORXUxpxIOBZXK1IwDgmF9Ggo45Ihm81dLHVaJ9DMf23AGUMBlm1DokNypskWSd1HbiD8nPGUQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\jedsk\\Documents\\GitHub\\!RayTracer-ComputingNEA\\RayTracer - Raymarching (Computing NEA)\\RayTracer - Raymarching (Computing NEA).csproj",
+  "projectFilePath": "\\\\strs\\dfs\\Devs\\Data\\17NSKILJe\\!Computing NEA - Coursework\\RayTracer - Raymarching (Computing NEA)\\RayTracer - Raymarching (Computing NEA).csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\jedsk\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
-    "C:\\Users\\jedsk\\.nuget\\packages\\system.drawing.common\\7.0.0\\system.drawing.common.7.0.0.nupkg.sha512"
+    "C:\\Users\\17NSKILJe\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
+    "C:\\Users\\17NSKILJe\\.nuget\\packages\\system.drawing.common\\7.0.0\\system.drawing.common.7.0.0.nupkg.sha512"
   ],
   "logs": []
 }

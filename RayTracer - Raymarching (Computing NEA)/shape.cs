@@ -10,24 +10,31 @@ namespace RayTracer___Raymarching__Computing_NEA_
     {
         public abstract double SDF(Vec3 rayLocation);
         public abstract Vec3 findNormal(Vec3 rayLocation);
-        public Vec3 position = new(1, 0, 0);
+        public Vec3 position;
 
-        public Vec3 k_s = new( 0.5, 0.5, 0.5 );
-        public Vec3 k_d = new( 0, 0, 1 );
-        public double alpha = 1;
+        public Vec3 k_s;
+        public Vec3 k_d;
+        public double alpha;
 
-        public Shape(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha)
+        public Vec3 lightStrength = new Vec3(0, 0, 0);
+
+        public Shape(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Vec3 lightStrength = null) //  Need to change
         {
             this.position = position;
             this.k_s = specularComponent;
             this.k_d = diffuseComponent;
             this.alpha = alpha;
+
+            if(lightStrength == null)
+            {
+                this.lightStrength = lightStrength;
+            }
         }
 
         public Vec3 BRDF_phong(Vec3 omega_i, Vec3 omega_o, Vec3 normal)
         {
             //  NOT SAME AS PSEUDOCODE
-            omega_i *= -1;  //  Added line, accounts for that we want the direction to heading outwards
+            omega_o *= -1;  //  Added line, accounts for that we want the direction to heading outwards
             omega_i.normalise();    //  Incoming light (From a physics perspective)
             omega_o.normalise();    //  Outgoing from a physics perspective, so these are the opposite of the order we got our rays
             normal.normalise();
@@ -52,7 +59,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
     class Sphere : Shape
     {
         double radius {get; set;}
-        public Sphere(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, double radius) : base (position, specularComponent, diffuseComponent, alpha)
+        public Sphere(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, double radius, Vec3 lightStrength = null) : base (position, specularComponent, diffuseComponent, alpha, lightStrength)
         {
             this.position = position;
             this.k_s = specularComponent;
@@ -60,6 +67,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
             this.alpha = alpha;
             this.radius = radius;
 
+            if (lightStrength != null)
+            {
+                this.lightStrength = lightStrength;
+            }
         }
 
         public override double SDF(Vec3 rayLocation)
