@@ -27,6 +27,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             if(lightStrength == null)
             {
+                this.lightStrength = new(0, 0, 0);
+            }
+            else
+            {
                 this.lightStrength = lightStrength;
             }
         }
@@ -61,16 +65,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
         double radius {get; set;}
         public Sphere(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, double radius, Vec3 lightStrength = null) : base (position, specularComponent, diffuseComponent, alpha, lightStrength)
         {
-            this.position = position;
-            this.k_s = specularComponent;
-            this.k_d = diffuseComponent;
-            this.alpha = alpha;
+            
             this.radius = radius;
 
-            if (lightStrength != null)
-            {
-                this.lightStrength = lightStrength;
-            }
         }
 
         public override double SDF(Vec3 rayLocation)

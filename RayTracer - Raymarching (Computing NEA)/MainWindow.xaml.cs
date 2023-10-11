@@ -36,12 +36,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
         bool isAntiAliasing = true;
 
         
-        int maxIterations = 70;
+        int maxIterations = 150;
         double maxJumpDistance = 30;
         double minJumpDistance = 0.001;
 
         int maxBounceCount = 4;
-        
+        double distMovedPerKeyPress = 1000;
         
         
         //  Soft constants - Changed on circumstance
@@ -52,7 +52,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         static Vec3 camLocation = new Vec3(-40, 0, 0);
         double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
-
+        Vec3 newMovement = new(0, 0, 0);
 
         //  Shapes
         List<Shape> shapes = new List<Shape>();
@@ -94,8 +94,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_s3 = new Vec3(0, 0, 0);
             Vec3 k_d3 = new Vec3(1,1, 1);
             double alpha3 = 2;
-            double radius3 = 40;
-            Vec3 lightStrength = new Vec3(1, 1, 1);
+            double radius3 = 60;
+            Vec3 lightStrength = 10 * new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3, lightStrength));
 
             generateAllPixels();
@@ -157,7 +157,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 {
                     Vec3 initialDirection = currentRay.direction;
                     DetermineIntersections(currentRay);
-                    if (currentRay.previousShape != null)
+                    if (currentRay.previousShape != null && !currentRay.hasHitLight)
                     {
                         Vec3 normal = currentRay.previousShape.findNormal(currentRay.position);
 
@@ -171,11 +171,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                         checkForNewIntersections = false;
                         //  Get colour from lights
-                        Vec3 lightStrength = currentRay.previousShape.lightStrength;
+                        Vec3 lightStrength = new(0, 0, 0);
+                        if (currentRay.previousShape != null && currentRay.hasHitLight)
+                        {
+                            lightStrength = currentRay.previousShape.lightStrength;
+                        }
                         
                         //  Simulate a sun and skyline
-                        double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 6);
-                        Vec3 sunColour = new Vec3(1, 0.8, 0.4);
+                        double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 128);
+                        Vec3 sunColour = 0 * new Vec3(1, 0.8, 0.4);
                         double skyMagnitude = Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 0.4);
                         Vec3 skyColour = new Vec3(0.3, 0.3, 0.7);
                         Vec3 ambientColour = new Vec3(0.1, 0.1, 0.1);
@@ -296,6 +300,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 if(iterationCount > maxIterations || lowestDistance == maxJumpDistance){
                     searching = false;
                     closestObject = null;
+                    hitLight=false;
                     exitCode = "NO_INTERSECTION";
                 }
                 else if(lowestDistance <= minJumpDistance){
@@ -335,8 +340,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             bool change = false;
-
-            if(e.Key == Key.Left) 
+            
+            
+            if (e.Key == Key.Left) 
             {
                 camRotations[0] += 10;
             }
@@ -358,9 +364,32 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 {
                     camRotations[2] += -10;
                 }
-                
             }
-            else if(e.Key == Key.U)
+            else if(e.Key == Key.W)
+            {
+                newMovement.x += distMovedPerKeyPress;
+            }
+            else if(e.Key == Key.D)
+            {
+                newMovement.y -= distMovedPerKeyPress;
+            }
+            else if(e.Key == Key.A)
+            {
+                newMovement.y += distMovedPerKeyPress;
+            }
+            else if(e.Key == Key.S)
+            {
+                newMovement.x -= distMovedPerKeyPress;
+            }
+            else if(e.Key == Key.LeftShift)
+            {
+                newMovement.z += distMovedPerKeyPress;
+            }
+            else if(e.Key == Key.Space)
+            {
+                newMovement.z -= distMovedPerKeyPress;
+            }
+            else if(e.Key == Key.D1)    //  "1" brings up updating image
             {
                 MessageBox.Show("Image will start updating upon pressing Ok", "Updating");
 
@@ -368,13 +397,18 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                 
             }
-            if(change)
+            if (change)
             {
+                cameraOne.newDirection(newMovement);
                 cameraOne.newRotation(camRotations);
+
                 generateAllPixels();
                 MessageBox.Show("Finished updating", "Updating complete");
+                newMovement = new(0, 0, 0);
+                change = false;
             }
-            if(e.Key == Key.S)  //  S key brings up save menu
+
+            if (e.Key == Key.D2)  //  "2" key brings up save menu
             {
                 DateTime time = DateTime.Now;
                 MessageBoxResult result = MessageBox.Show("Do you want to save your image?", "Saving", MessageBoxButton.YesNo);
