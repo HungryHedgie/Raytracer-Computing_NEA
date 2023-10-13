@@ -35,7 +35,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public void newDirection(Vec3 newMovement)
         {
-            this.position += rotatePoint(newMovement, this.xyQuat);
+            Vec3 deltaXY = new Vec3(newMovement.x, newMovement.y, 0);
+            Vec3 deltaZ = new Vec3(0, 0, newMovement.z);
+            this.position += rotatePoint(deltaXY, this.xyQuat);
+            this.position += deltaZ;
         }
 
         public Vec3 camSpaceToWorldSpace(Vec3 point_relCam) {

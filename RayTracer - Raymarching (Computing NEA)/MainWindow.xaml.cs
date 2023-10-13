@@ -32,20 +32,20 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Bitmap bmpFinalImage = new Bitmap(res_x, res_y);
 
         //  Medium constants - Can be changed for fine tuning algorithm
-        int rayCountPerPixel = 160;
+        int rayCountPerPixel = 30;
         bool isAntiAliasing = true;
 
         
         int maxIterations = 150;
-        double maxJumpDistance = 30;
+        double maxJumpDistance = 200;
         double minJumpDistance = 0.001;
 
         int maxBounceCount = 4;
-        double distMovedPerKeyPress = 1000;
+        double distMovedPerKeyPress = 10;
         
         
         //  Soft constants - Changed on circumstance
-        double AA_Strength = 0.007d;
+        double AA_Strength = 0.01d;
         static double FoVangle = 110;
         static int res_x = 220;
         static int res_y = 100;
@@ -90,12 +90,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
             double radius2 = 45;
             shapes.Add(new Sphere(pos2, k_s2, k_d2, alpha2, radius2));
 
-            Vec3 pos3 = new Vec3(50, 10, 40);
+            Vec3 pos3 = new Vec3(150, 0, 0);
             Vec3 k_s3 = new Vec3(0, 0, 0);
             Vec3 k_d3 = new Vec3(1,1, 1);
             double alpha3 = 2;
-            double radius3 = 60;
-            Vec3 lightStrength = 10 * new Vec3(1, 1, 1);
+            double radius3 = 120;
+            Vec3 lightStrength = new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3, lightStrength));
 
             generateAllPixels();
@@ -383,11 +383,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
             }
             else if(e.Key == Key.LeftShift)
             {
-                newMovement.z += distMovedPerKeyPress;
+                newMovement.z -= distMovedPerKeyPress;
             }
             else if(e.Key == Key.Space)
             {
-                newMovement.z -= distMovedPerKeyPress;
+                newMovement.z += distMovedPerKeyPress;
             }
             else if(e.Key == Key.D1)    //  "1" brings up updating image
             {
