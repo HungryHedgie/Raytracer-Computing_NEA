@@ -61,7 +61,7 @@ namespace RayTracer___Raymarching__Computing_NEA_ {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/RayTracer - Raymarching (Computing NEA);component/mainwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/RayTracer - Raymarching (Computing NEA);V1.0.0.0;component/mainwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\MainWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

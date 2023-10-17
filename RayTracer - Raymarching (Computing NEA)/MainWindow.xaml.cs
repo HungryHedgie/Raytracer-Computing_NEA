@@ -32,7 +32,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Bitmap bmpFinalImage = new Bitmap(res_x, res_y);
 
         //  Medium constants - Can be changed for fine tuning algorithm
-        int rayCountPerPixel = 30;
+        int rayCountPerPixel = 50;
         bool isAntiAliasing = true;
 
         
@@ -48,7 +48,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         double AA_Strength = 0.01d;
         static double FoVangle = 110;
         static int res_x = 220;
-        static int res_y = 100;
+        static int res_y = 110;
 
         static Vec3 camLocation = new Vec3(-40, 0, 0);
         double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
@@ -75,28 +75,43 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             InitializeComponent();
 
+
             cameraOne = new Camera(camLocation, camRotations);
+
+            /*
             Vec3 pos1 = new Vec3(0, 0, 0);
             Vec3 k_s1 = new Vec3(0.9, 0.4, 0.9);
             Vec3 k_d1 = new Vec3(0.1, 0.6, 0.1);
             double alpha1 = 2;
             double radius1 = 2;
             shapes.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1));
+            */
 
-            Vec3 pos2 = new Vec3(0, 0, -50);
+            Vec3 pos2 = new Vec3(0, 0, -500);
             Vec3 k_s2 = new Vec3(0.6, 0.8, 0.5);
             Vec3 k_d2 = new Vec3(0.4, 0.2, 0.5);
             double alpha2 = 9;
-            double radius2 = 45;
+            double radius2 = 499;
             shapes.Add(new Sphere(pos2, k_s2, k_d2, alpha2, radius2));
 
-            Vec3 pos3 = new Vec3(150, 0, 0);
-            Vec3 k_s3 = new Vec3(0, 0, 0);
-            Vec3 k_d3 = new Vec3(1,1, 1);
-            double alpha3 = 2;
-            double radius3 = 120;
+            /*
+            Vec3 pos3 = new Vec3(-10, 0, 350);
+            Vec3 k_s3 = new Vec3(0.1, 0.9, 0.6);
+            Vec3 k_d3 = new Vec3(0.9, 0.1, 0.4);
+            double alpha3 = 9;
+            double radius3 = 300;
+            shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
+            */
+
+            /*
+            Vec3 pos4 = new Vec3(150, 0, 0);
+            Vec3 k_s4 = new Vec3(0, 0, 0);
+            Vec3 k_d4 = new Vec3(1,1, 1);
+            double alpha4 = 2;
+            double radius4 = 120;
             Vec3 lightStrength = new Vec3(1, 1, 1);
-            lights.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3, lightStrength));
+            lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength));
+            */
 
             generateAllPixels();
             
@@ -178,11 +193,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         }
                         
                         //  Simulate a sun and skyline
-                        double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 128);
-                        Vec3 sunColour = 0 * new Vec3(1, 0.8, 0.4);
+                        double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(1, 0, 0), 0), 128);
+                        Vec3 sunColour = 5 * new Vec3(1, 0.8, 0.4);
                         double skyMagnitude = Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 0.4);
                         Vec3 skyColour = new Vec3(0.3, 0.3, 0.7);
-                        Vec3 ambientColour = new Vec3(0.1, 0.1, 0.1);
+                        Vec3 ambientColour = new Vec3(0.2, 0.2, 0.2);
                         Vec3 lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour + lightStrength;
                         finalColor += Vec3.colorCombination(currentRay.runningTotalOfReflectance, lighting);
                     }
