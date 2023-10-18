@@ -178,7 +178,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                         currentRay.direction = findingNewRayDirection(normal);
                         Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(currentRay.direction, initialDirection, normal);
-                        currentRay.runningTotalOfReflectance = Vec3.colorCombination(shapeReflectance, currentRay.runningTotalOfReflectance);
+                        currentRay.sumOfReflectance = Vec3.colorCombination(shapeReflectance, currentRay.sumOfReflectance);
 
                     }
                     else
@@ -199,7 +199,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         Vec3 skyColour = new Vec3(0.3, 0.3, 0.7);
                         Vec3 ambientColour = new Vec3(0.2, 0.2, 0.2);
                         Vec3 lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour + lightStrength;
-                        finalColor += Vec3.colorCombination(currentRay.runningTotalOfReflectance, lighting);
+                        finalColor += Vec3.colorCombination(currentRay.sumOfReflectance, lighting);
                     }
                 }
             }

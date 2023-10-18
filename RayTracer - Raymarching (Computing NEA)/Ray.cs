@@ -13,7 +13,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public Shape? previousShape;
         public bool hasHitLight = false;
 
-        public Vec3 runningTotalOfReflectance = new(1, 1, 1);
+        public Vec3 sumOfReflectance = new(1, 1, 1);
 
         public Ray(Vec3 position, Vec3 direction)
         {
