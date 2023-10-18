@@ -50,7 +50,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         static int res_x = 220;
         static int res_y = 110;
 
-        static Vec3 camLocation = new Vec3(-40, 0, 0);
+        static Vec3 camLocation = new Vec3(-35, 0, 0);
         double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
@@ -75,6 +75,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             InitializeComponent();
 
+            //  Testing
 
             cameraOne = new Camera(camLocation, camRotations);
 
