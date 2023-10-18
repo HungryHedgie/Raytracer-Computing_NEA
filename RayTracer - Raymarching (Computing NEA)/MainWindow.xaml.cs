@@ -40,7 +40,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         double maxJumpDistance = 200;
         double minJumpDistance = 0.001;
 
-        int maxBounceCount = 4;
+        int maxBounceCount = 12;
         double distMovedPerKeyPress = 10;
         
         
@@ -50,7 +50,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         static int res_x = 220;
         static int res_y = 110;
 
-        static Vec3 camLocation = new Vec3(-30, 0, 0);
+        static Vec3 camLocation = new Vec3(-30, 0, 5);
         double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
@@ -104,15 +104,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
             shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
             */
 
-            /*
-            Vec3 pos4 = new Vec3(150, 0, 0);
+            
+            Vec3 pos4 = new Vec3(50, 0, -500);
             Vec3 k_s4 = new Vec3(0, 0, 0);
             Vec3 k_d4 = new Vec3(1,1, 1);
             double alpha4 = 2;
             double radius4 = 120;
-            Vec3 lightStrength = new Vec3(1, 1, 1);
+            Vec3 lightStrength = 10 * new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength));
-            */
+            
 
             generateAllPixels();
             
@@ -397,7 +397,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             {
                 newMovement.x -= distMovedPerKeyPress;
             }
-            else if(e.Key == Key.LeftShift)
+            else if(e.Key == Key.LeftCtrl)
             {
                 newMovement.z -= distMovedPerKeyPress;
             }

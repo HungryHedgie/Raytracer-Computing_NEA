@@ -43,7 +43,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public Vec3 camSpaceToWorldSpace(Vec3 point_relCam) {
             Vec3 point_relWorld = this.position + rotatePoint(point_relCam, this.rotation);
-            
             return point_relWorld;
         }
 
