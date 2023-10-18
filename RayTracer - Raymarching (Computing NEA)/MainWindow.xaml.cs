@@ -50,7 +50,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         static int res_x = 220;
         static int res_y = 110;
 
-        static Vec3 camLocation = new Vec3(-40, 0, 0);
+        static Vec3 camLocation = new Vec3(-30, 0, 0);
         double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
@@ -75,6 +75,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             InitializeComponent();
 
+            //  Testing
 
             cameraOne = new Camera(camLocation, camRotations);
 
@@ -178,7 +179,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                         currentRay.direction = findingNewRayDirection(normal);
                         Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(currentRay.direction, initialDirection, normal);
-                        currentRay.runningTotalOfReflectance = Vec3.colorCombination(shapeReflectance, currentRay.runningTotalOfReflectance);
+                        currentRay.sumOfReflectance = Vec3.colorCombination(shapeReflectance, currentRay.sumOfReflectance);
 
                     }
                     else
@@ -199,7 +200,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         Vec3 skyColour = new Vec3(0.3, 0.3, 0.7);
                         Vec3 ambientColour = new Vec3(0.2, 0.2, 0.2);
                         Vec3 lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour + lightStrength;
-                        finalColor += Vec3.colorCombination(currentRay.runningTotalOfReflectance, lighting);
+                        finalColor += Vec3.colorCombination(currentRay.sumOfReflectance, lighting);
                     }
                 }
             }
