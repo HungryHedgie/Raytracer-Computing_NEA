@@ -88,11 +88,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
             shapes.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1));
             */
 
-            Vec3 pos2 = new Vec3(0, 0, -500);
-            Vec3 k_s2 = new Vec3(0.6, 0.8, 0.5);
-            Vec3 k_d2 = new Vec3(0.4, 0.2, 0.5);
-            double alpha2 = 9;
-            double radius2 = 499;
+            Vec3 pos2 = new Vec3(0, 0, -20000);
+            Vec3 k_s2 = 1*new Vec3(0.6, 0.8, 0.5);
+            Vec3 k_d2 = 0*new Vec3(0.4, 0.2, 0.5);
+            double alpha2 = 7;
+            double radius2 = 20000;
             shapes.Add(new Sphere(pos2, k_s2, k_d2, alpha2, radius2));
 
             /*
@@ -105,12 +105,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
             */
 
             
-            Vec3 pos4 = new Vec3(50, 0, -500);
+            Vec3 pos4 = new Vec3(50, 0, 100);
             Vec3 k_s4 = new Vec3(0, 0, 0);
             Vec3 k_d4 = new Vec3(1,1, 1);
             double alpha4 = 2;
-            double radius4 = 120;
-            Vec3 lightStrength = 10 * new Vec3(1, 1, 1);
+            double radius4 = 40;
+            Vec3 lightStrength = 15 * new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength));
             
 
@@ -195,7 +195,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         
                         //  Simulate a sun and skyline
                         double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(1, 0, 0), 0), 128);
-                        Vec3 sunColour = 5 * new Vec3(1, 0.8, 0.4);
+                        Vec3 sunColour = 0 * new Vec3(1, 0.8, 0.4);
                         double skyMagnitude = Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 0.4);
                         Vec3 skyColour = new Vec3(0.3, 0.3, 0.7);
                         Vec3 ambientColour = new Vec3(0.2, 0.2, 0.2);

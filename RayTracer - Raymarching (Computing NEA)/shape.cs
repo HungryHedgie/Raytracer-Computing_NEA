@@ -47,7 +47,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 reflectedRay = 2 * Math.Max(omega_i * normal, 0) * normal - omega_i;
 
             //  Reflectance is the sum of the seperate components of specular and diffuse reflection    HERE ONWARDS DONE with VS CODE, NEEDS CHECKING WITH Visual Studio
-            Vec3 specularComponent = this.k_s * Math.Pow(Math.Max(omega_i * reflectedRay, 0), this.alpha);
+            Vec3 specularComponent = this.k_s * Math.Pow(Math.Max(omega_o * reflectedRay, 0), this.alpha);
             Vec3 reflectanceComponent = this.k_d * Math.Max(omega_o * normal, 0);
 
             //  The dot product term accounts for the shallow angles, which have a lower contribution
@@ -73,7 +73,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public override double SDF(Vec3 rayLocation)
         {
             double signedDistance =  Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
-            return Math.Abs(signedDistance);    //  Absolute should enable rendering from inside the sphere
+            return signedDistance;    //  Absolute should enable rendering from inside the sphere
         }
 
         public override Vec3 findNormal(Vec3 rayLocation)
