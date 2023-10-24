@@ -32,7 +32,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Bitmap bmpFinalImage = new Bitmap(res_x, res_y);
 
         //  Medium constants - Can be changed for fine tuning algorithm
-        int rayCountPerPixel = 50;
+        int rayCountPerPixel = 100;
         bool isAntiAliasing = true;
 
         
@@ -112,6 +112,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             double radius4 = 40;
             Vec3 lightStrength = 15 * new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength));
+
             
 
             generateAllPixels();
