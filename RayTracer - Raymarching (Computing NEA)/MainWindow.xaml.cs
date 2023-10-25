@@ -32,31 +32,32 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Bitmap bmpFinalImage = new Bitmap(res_x, res_y);
 
     //  Medium constants - Can be changed for fine tuning algorithm
-        int rayCountPerPixel = 50; //  Rays sent out for each pixel
-        bool isAntiAliasing = true; 
+        int rayCountPerPixel = 100; //  Rays sent out for each pixel
+        bool isAntiAliasing = false; 
 
         //  Controls cutoff and precision the ray-marching uses
         int maxIterations = 150;
         double maxJumpDistance = 400;
         double minJumpDistance = 0.01;
-
-
         int maxBounceCount = 12;
+
+        //  Controls sensitivity of user controls
         double distMovedPerKeyPress = 10;
-        
-        
+        double distRotPerKeyPress = 15;
+
+
     //  Soft constants - Changed on circumstance
-        //  Anti-Aliasing
-        double AA_Strength = 0.03d;
+    //  Anti-Aliasing
+        double AA_Strength = 0.02d;
 
         //  Controls screen resolution
-        static int res_x = 220;
-        static int res_y = 110;
+        static int res_x = 400;
+        static int res_y = 260;
 
         //  Controls initial camera sections
         static double FoVangle = 110;
-        static Vec3 camLocation = new Vec3(-30, 0, 5);
-        double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
+        static Vec3 camLocation = new Vec3(-160, 0, 110);
+        double[] camRotations = new double[] { 0, 0, -30 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
         //  All Shapes
@@ -91,12 +92,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
             double alpha1 = 2;
             double radius1 = 15;
             Vec3 lightStrength1 = 15 * new Vec3(1, 1, 1);
-            lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
+            //lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
             
             //  Second sphere
             Vec3 pos2 = new Vec3(0, 0, -20000);
-            Vec3 k_s2 = 1*new Vec3(0.8, 0.2, 0.9);
-            Vec3 k_d2 = 1*new Vec3(0.2, 0.8, 0.1);
+            Vec3 k_s2 = 1*new Vec3(0.3, 0.2, 0.9);
+            Vec3 k_d2 = 1*new Vec3(0.7, 0.8, 0.1);
             double alpha2 = 3;
             double radius2 = 20000;
             shapes.Add(new Sphere(pos2, k_s2, k_d2, alpha2, radius2));
@@ -107,7 +108,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_d3 = new Vec3(0.1, 0.1, 0.8);
             double alpha3 = 9;
             double radius3 = 40;
-            shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
+            //shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
             
             //  Fourth sphere
             Vec3 pos4 = new Vec3(50, 0, 100);
@@ -134,6 +135,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             {
                 for (int y = 0; y < res_y; y++)
                 {
+                    //Color pixelColor = GetPixelColor(x, res_y - y);
                     Color pixelColor = GetPixelColor(x, res_y - y);
                     //int brightness = (255 * x) / res_x;
                     //Color pixelColor = Color.FromArgb(brightness, brightness, brightness);
@@ -224,7 +226,16 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             return Color.FromArgb((int)Math.Min(255 * finalColor.x, 255), (int)Math.Min(finalColor.y * 255, 255), (int)Math.Min(finalColor.z * 255, 255));
         }
-        
+
+        Color GetPixelColor_DEBUG(int x, int y)
+        {
+            //double testDirection = Math.Max(new vec3(0, -1, 0) * testRay, 0);
+            //return Color.FromArgb((int)(255 * testDirection), (int)(255 * testDirection), (int)(255 * testDirection));
+            Vec3 rayDirection = FindPixelsRayDirection(x, y);
+
+            return Color.FromArgb((int)Math.Max(255 * rayDirection.x, 0), (int)Math.Max(rayDirection.y * 255, 0), (int)Math.Max(rayDirection.z * 255, 0));
+        }
+
         Vec3 FindPixelsRayDirection(int x, int y)
         {
             //   (x, y) is the pixel co-ordinate
@@ -236,7 +247,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //	The + 0.5 means the ray is sent to the center of a pixel
             //	Without it, the ray would head towards the bottom left of a pixel
 
-            // Random Sampling Section
+            // Random offset generation
             double xOffset = 0;
             double zOffset = 0;
             if (isAntiAliasing == true) {
@@ -254,7 +265,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 pixelVector = new Vec3(1, -newX, newZ);
 
 
-            
+            //  We want to convert the ray direction to world space, to include rotation info, but then subtract camera position as we want a direction starting at the camera
             Vec3 rayDirection = cameraOne.camSpaceToWorldSpace(pixelVector) - cameraOne.position;
             rayDirection.Normalise();
 
@@ -269,21 +280,21 @@ namespace RayTracer___Raymarching__Computing_NEA_
             currentRay.direction.Normalise();
             //  We want normalised versions
             Vec3 currPos = currentRay.position;
+
             bool searching = true;
             int iterationCount = 0;
             bool hitLight = false;
 
-
-            string exitCode = "ERROR";
             Shape closestObject = null;
 
             while(searching)
             {
                 //  Find closest surface
+                //  anything below current lowest distance will be set as te new lowest distance
                 double lowestDistance = maxJumpDistance;
                 foreach (Shape currentShape in shapes)
                 {
-                    //  Is this a valid comparison?             !IMPORTANT!
+                    //  Check we aren't colliding with the same object as where we started
                     if (currentShape != previousShape)
                     {
                         double newDistance = currentShape.SDF(currPos);
@@ -300,7 +311,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 //  For now lights are treated (intersection wise) as the same as shape
                 foreach (Shape currentLight in lights)
                 {
-                    //  Is this a valid comparison?             !IMPORTANT!
                     if (currentLight != previousShape)
                     {
                         double newDistance = currentLight.SDF(currPos);
@@ -353,7 +363,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
             double sinPhi = Math.Sin(phi);
 
             //  This method will give us an already normalised value
+            //  newDir will be a random point lying on a unit sphere
             Vec3 newDir = new(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
+            //  If newDir faces back in towards the centre of the sphere we flip it so it points out
             if(newDir * normal < 0)
             {
                 newDir *= -1;
@@ -370,25 +382,25 @@ namespace RayTracer___Raymarching__Computing_NEA_
             
             if (e.Key == Key.Left) 
             {
-                camRotations[0] += 10;
+                camRotations[0] += distRotPerKeyPress;
             }
             else if(e.Key == Key.Right)
             {
-                camRotations[0] += -10;
+                camRotations[0] += -distRotPerKeyPress;
             }
             else if (e.Key == Key.Up)
             {
-                if(camRotations[2] <= 80)
+                if(camRotations[2] <= 90 - distRotPerKeyPress)
                 {
-                    camRotations[2] += 10;
+                    camRotations[2] += distRotPerKeyPress;
                 }
                 
             }
             else if (e.Key == Key.Down)
             {
-                if(camRotations[2] >= -80)
+                if(camRotations[2] >= -90 + distRotPerKeyPress)
                 {
-                    camRotations[2] += -10;
+                    camRotations[2] += -distRotPerKeyPress;
                 }
             }
             else if(e.Key == Key.W)
