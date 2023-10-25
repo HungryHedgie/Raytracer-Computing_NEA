@@ -48,7 +48,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
 
         private Vec3 rotatePoint(Vec3 initialVec, Quaternion rotation) {
-            Quaternion initialQuat = initialVec.asQuaternion();
+            Quaternion initialQuat = initialVec.AsQuaternion();
             Quaternion finalQuat = rotation * initialQuat * Quaternion.Conjugate(rotation);
             return new Vec3(finalQuat);
         }

@@ -9,7 +9,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
     abstract class Shape
     {
         public abstract double SDF(Vec3 rayLocation);
-        public abstract Vec3 findNormal(Vec3 rayLocation);
+        public abstract Vec3 FindNormal(Vec3 rayLocation);
         public Vec3 position;
 
         public Vec3 k_s;
@@ -39,9 +39,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             //  NOT SAME AS PSEUDOCODE
             omega_o *= -1;  //  Added line, accounts for that we want the direction to heading outwards
-            omega_i.normalise();    //  Incoming light (From a physics perspective)
-            omega_o.normalise();    //  Outgoing from a physics perspective, so these are the opposite of the order we got our rays
-            normal.normalise();
+            omega_i.Normalise();    //  Incoming light (From a physics perspective)
+            omega_o.Normalise();    //  Outgoing from a physics perspective, so these are the opposite of the order we got our rays
+            normal.Normalise();
 
             //  Max is in place in case the dot product is negative
             Vec3 reflectedRay = 2 * Math.Max(omega_i * normal, 0) * normal - omega_i;
@@ -76,10 +76,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return signedDistance;    //  Absolute should enable rendering from inside the sphere
         }
 
-        public override Vec3 findNormal(Vec3 rayLocation)
+        public override Vec3 FindNormal(Vec3 rayLocation)
         {
             Vec3 normal = rayLocation - this.position;
-            normal.normalise();
+            normal.Normalise();
             return normal;
         }
     }
