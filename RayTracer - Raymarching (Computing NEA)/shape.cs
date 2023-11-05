@@ -73,7 +73,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public override double SDF(Vec3 rayLocation)
         {
             double signedDistance =  Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
-            return signedDistance;    //  Absolute should enable rendering from inside the sphere
+            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
+            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
         }
 
         public override Vec3 FindNormal(Vec3 rayLocation)
