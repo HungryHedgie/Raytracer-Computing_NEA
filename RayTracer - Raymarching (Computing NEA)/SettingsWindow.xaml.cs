@@ -23,5 +23,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             InitializeComponent();
         }
+
+        private void btnTurnAAOf_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

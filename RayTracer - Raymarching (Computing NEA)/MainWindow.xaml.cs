@@ -57,11 +57,23 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  Currently lights are shapes, will need changing at some point
         List<Shape> lights = new List<Shape>();
 
-        double screenRatio;
-        double FoVScale;
 
-        SettingInfo currentSettings;
-        
+        SettingInfo currentSettings = new(
+                res_x: 150,
+                res_y: 100,
+                rayCountPerPixel: 100,
+
+                maxIterations: 150,
+                maxJumpDistance: 400,
+                minJumpDistance: 0.01d,
+                maxBounceCount: 12,
+
+                isAntiAliasing: true,
+                AA_Strength: 0.02d,
+                FoVangle: 110
+
+                );
+
 
         Camera cameraOne;
 
@@ -84,10 +96,29 @@ namespace RayTracer___Raymarching__Computing_NEA_
             public bool isAntiAliasing = true;
             public double AA_Strength = 0.02d;
             public double FoVangle = 110;
-            public SettingInfo(int res_x, int res_y)
+
+            //  Precomputed
+            public double screenRatio;
+            public double FoVScale;
+            public SettingInfo(int res_x, int res_y, int rayCountPerPixel, int maxIterations, double maxJumpDistance, double minJumpDistance, int maxBounceCount, bool isAntiAliasing, double AA_Strength, double FoVangle)
             {
                 this.res_x = res_x;
                 this.res_y = res_y;
+                this.rayCountPerPixel = rayCountPerPixel;
+
+                this.maxIterations = maxIterations;
+                this.maxJumpDistance = maxJumpDistance;
+                this.minJumpDistance = minJumpDistance;
+                this.maxBounceCount = maxBounceCount;
+
+                this.isAntiAliasing = isAntiAliasing;
+                this.AA_Strength = AA_Strength;
+                this.FoVangle = FoVangle;
+
+                
+                this.screenRatio = (double)this.res_y / (double)this.res_x;
+                this.FoVScale = Math.Tan(this.FoVangle * (Math.PI / 180) / 2);  //  FoVangle is in degrees, and must be converted to radians
+
 
             }
         }
@@ -100,24 +131,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  Constant initialisation (Can't be statics as they may be changed)
 
             bmpFinalImage = new Bitmap(currentSettings.res_x, currentSettings.res_y);
-            SettingInfo
-            currentSettings.res_x = 260;
-            currentSettings.res_y = 200;
-            currentSettings.rayCountPerPixel = 100;
-
-            currentSettings.maxIterations = 150;
-            currentSettings.maxJumpDistance = 400;
-            currentSettings.minJumpDistance = 0.01;
-            currentSettings.maxBounceCount = 12;
-
-            currentSettings.isAntiAliasing = true;
-            currentSettings.AA_Strength = 0.02d;
-            currentSettings.FoVangle = 110;
-
-            //  Precomputed
-            screenRatio = (double)currentSettings.res_y / (double)currentSettings.res_x;
-            FoVScale = Math.Tan(FoVangle * (Math.PI / 180) / 2);  //  FoVangle is in degrees, and must be converted to radians
-
+            
             //  Shape and camera initialisation
 
             cameraOne = new Camera(camLocation, camRotations);
@@ -164,7 +178,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
 
             //  Main loop
-            //GenerateAllPixels();
+            GenerateAllPixels();
             
 
 
@@ -214,7 +228,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 finalColor = new(0, 0, 0);
 
             //  Loop through to run a ray calculation as many times as needed
-            for (int i = 0; i < rayCountPerPixel; i++)
+            for (int i = 0; i < currentSettings.rayCountPerPixel; i++)
             {
 
                 Vec3 rayDirection = FindPixelsRayDirection(x, y);
@@ -224,7 +238,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 
                 Ray currentRay = new Ray(cameraOne.position, rayDirection);
                 bool checkForNewIntersections = true;
-                for (int j = 0; j < maxBounceCount && checkForNewIntersections && !currentRay.hasHitLight; j++)
+                for (int j = 0; j < currentSettings.maxBounceCount && checkForNewIntersections && !currentRay.hasHitLight; j++)
                 {
                     Vec3 initialDirection = currentRay.direction;
                     DetermineIntersections(currentRay);
@@ -259,7 +273,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                     }
                 }
             }
-            finalColor *= 1/(double)rayCountPerPixel;
+            finalColor *= 1/(double)currentSettings.rayCountPerPixel;
 
 
 
@@ -293,8 +307,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             // Random offset generation
             double xOffset = 0;
             double zOffset = 0;
-            if (isAntiAliasing == true) {
-                double R = (AA_Strength) * Math.Sqrt(rnd.NextDouble());  //   Sqrt ensures uniform distribution
+            if (currentSettings.isAntiAliasing == true) {
+                double R = (currentSettings.AA_Strength) * Math.Sqrt(rnd.NextDouble());  //   Sqrt ensures uniform distribution
                 double theta = 2 * Math.PI * rnd.NextDouble();
                 xOffset = R * Math.Cos(theta);
                 zOffset = R * Math.Sin(theta);
@@ -302,8 +316,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             // FoVScale accounts for current FoV angle, screenRatio accounts for the image size ratio
 
-            double newX = (xScale + xOffset) * FoVScale;
-            double newZ = (zScale + zOffset) * FoVScale * screenRatio;
+            double newX = (xScale + xOffset) * currentSettings.FoVScale;
+            double newZ = (zScale + zOffset) * currentSettings.FoVScale * currentSettings.screenRatio;
             //  We take negative of newX because we are in a right hand co-ordinate system, so a ray sent out to the left should have a positive value for y
             Vec3 pixelVector = new Vec3(1, -newX, newZ);
 
@@ -334,7 +348,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             {
                 //  Find closest surface
                 //  anything below current lowest distance will be set as te new lowest distance
-                double lowestDistance = maxJumpDistance;
+                double lowestDistance = currentSettings.maxJumpDistance;
                 foreach (Shape currentShape in shapes)
                 {
                     //  Check we aren't colliding with the same object as where we started
@@ -376,13 +390,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 //  Tolerance check:
                 //  Have we travelled further than the max jump distance?
                 //  Have we gone through too many iterations?
-                if(iterationCount > maxIterations || lowestDistance == maxJumpDistance){
+                if(iterationCount > currentSettings.maxIterations || lowestDistance == currentSettings.maxJumpDistance){
                     searching = false;
                     closestObject = null;
                     hitLight=false;
                     //  NO INTERSECTION
                 }
-                else if(lowestDistance <= minJumpDistance){
+                else if(lowestDistance <= currentSettings.minJumpDistance){
                     searching = false;
                     //  INTERSECTION
                 }
