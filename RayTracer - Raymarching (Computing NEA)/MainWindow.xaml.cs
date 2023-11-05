@@ -29,17 +29,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
     {
     //  Hard constants (never change)
         Random rnd = new Random();  //  For multithreaded, I would need a different random method
-        Bitmap bmpFinalImage = new Bitmap(res_x, res_y);
+        Bitmap bmpFinalImage;
 
-    //  Medium constants - Can be changed for fine tuning algorithm
-        int rayCountPerPixel = 100; //  Rays sent out for each pixel
-        bool isAntiAliasing = false; 
-
-        //  Controls cutoff and precision the ray-marching uses
-        int maxIterations = 150;
-        double maxJumpDistance = 400;
-        double minJumpDistance = 0.01;
-        int maxBounceCount = 12;
 
         //  Controls sensitivity of user controls
         double distMovedPerKeyPress = 10;
@@ -48,16 +39,16 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
     //  Soft constants - Changed on circumstance
     //  Anti-Aliasing
-        double AA_Strength = 0.02d;
+        
 
         //  Controls screen resolution
-        static int res_x = 400;
-        static int res_y = 260;
+        //int res_x = 260;
+        //int res_y = 100;
 
         //  Controls initial camera sections
-        static double FoVangle = 110;
-        static Vec3 camLocation = new Vec3(-160, 0, 110);
-        double[] camRotations = new double[] { 0, 0, -30 };   //  Rotations in xy, yz, and xz planes respectively
+        
+        static Vec3 camLocation = new Vec3(-30, 0, 20);
+        double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
         //  All Shapes
@@ -66,22 +57,68 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  Currently lights are shapes, will need changing at some point
         List<Shape> lights = new List<Shape>();
 
+        double screenRatio;
+        double FoVScale;
 
-
-        //  Precomputed
-        double screenRatio = (double)res_y / (double)res_x;
-        double FoVScale = Math.Tan(FoVangle * (Math.PI / 180) / 2);  //  FoVangle is in degrees, and must be converted to radians
+        SettingInfo currentSettings;
         
+
         Camera cameraOne;
 
+        public struct SettingInfo
+        {
+            //  Given values here are all place holders
+        //  High performance impact
+            public int res_x = 10;
+            public int res_y = 10;
+            public int rayCountPerPixel = 3; //  Rays sent out for each pixel
 
+            //  Unkown/Medium performance impact
+            //  Controls cutoff and precision the ray-marching uses
+            public int maxIterations = 150;
+            public double maxJumpDistance = 400;
+            public double minJumpDistance = 0.01;
+            public int maxBounceCount = 12;
+
+            //  Low performance impact
+            public bool isAntiAliasing = true;
+            public double AA_Strength = 0.02d;
+            public double FoVangle = 110;
+            public SettingInfo(int res_x, int res_y)
+            {
+                this.res_x = res_x;
+                this.res_y = res_y;
+
+            }
+        }
 
         public MainWindow()
         {
 
             InitializeComponent();
 
-            //  Testing
+            //  Constant initialisation (Can't be statics as they may be changed)
+
+            bmpFinalImage = new Bitmap(currentSettings.res_x, currentSettings.res_y);
+            SettingInfo
+            currentSettings.res_x = 260;
+            currentSettings.res_y = 200;
+            currentSettings.rayCountPerPixel = 100;
+
+            currentSettings.maxIterations = 150;
+            currentSettings.maxJumpDistance = 400;
+            currentSettings.minJumpDistance = 0.01;
+            currentSettings.maxBounceCount = 12;
+
+            currentSettings.isAntiAliasing = true;
+            currentSettings.AA_Strength = 0.02d;
+            currentSettings.FoVangle = 110;
+
+            //  Precomputed
+            screenRatio = (double)currentSettings.res_y / (double)currentSettings.res_x;
+            FoVScale = Math.Tan(FoVangle * (Math.PI / 180) / 2);  //  FoVangle is in degrees, and must be converted to radians
+
+            //  Shape and camera initialisation
 
             cameraOne = new Camera(camLocation, camRotations);
 
@@ -103,25 +140,31 @@ namespace RayTracer___Raymarching__Computing_NEA_
             shapes.Add(new Sphere(pos2, k_s2, k_d2, alpha2, radius2));
 
             //  Third sphere
-            Vec3 pos3 = new Vec3(-50, 0, 50);
+            Vec3 pos3 = new Vec3(0, -20050, 0);
             Vec3 k_s3 = new Vec3(0.9, 0.9, 0.2);
             Vec3 k_d3 = new Vec3(0.1, 0.1, 0.8);
             double alpha3 = 9;
-            double radius3 = 40;
-            //shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
+            double radius3 = 20000;
+            shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
             
             //  Fourth sphere
-            Vec3 pos4 = new Vec3(50, 0, 100);
+            Vec3 pos4 = new Vec3(50, 0, 30);
             Vec3 k_s4 = new Vec3(0, 0, 0);
             Vec3 k_d4 = new Vec3(1,1, 1);
             double alpha4 = 14;
-            double radius4 = 40;
+            double radius4 = 15;
             Vec3 lightStrength4 = 15 * new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength4));
 
+            //  DEBUG CODE
+            SettingsWindow SettingsWindow01 = new SettingsWindow();
+            SettingsWindow01.Show();
             
+            //  END OF DEBUG CODE
+
+
             //  Main loop
-            GenerateAllPixels();
+            //GenerateAllPixels();
             
 
 
@@ -131,13 +174,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
         void GenerateAllPixels()
         {
             //  Loops through each pixel, generating rays to find the pixel's colour
-            for (int x = 0; x < res_x; x++)
+            for (int x = 0; x < currentSettings.res_x; x++)
             {
-                for (int y = 0; y < res_y; y++)
+                for (int y = 0; y < currentSettings.res_y; y++)
                 {
-                    //Color pixelColor = GetPixelColor(x, res_y - y);
-                    Color pixelColor = GetPixelColor(x, res_y - y);
-                    //int brightness = (255 * x) / res_x;
+                    //Color pixelColor = GetPixelColor(x, currentSettings.res_y - y);
+                    Color pixelColor = GetPixelColor(x, currentSettings.res_y - y);
+                    //int brightness = (255 * x) / currentSettings.res_x;
                     //Color pixelColor = Color.FromArgb(brightness, brightness, brightness);
                     bmpFinalImage.SetPixel(x, y, pixelColor);
                 }
@@ -242,8 +285,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //   (0, 0) is the bottom left of the image
             // res_x and res_y is the amount of pixels in the x and y directions
 
-            double xScale = ((x + 0.5) / res_x) - 0.5;  //  Could precompute?
-            double zScale = ((y + 0.5) / res_y) - 0.5;
+            double xScale = ((x + 0.5) / currentSettings.res_x) - 0.5;  //  Could precompute?
+            double zScale = ((y + 0.5) / currentSettings.res_y) - 0.5;
             //	The + 0.5 means the ray is sent to the center of a pixel
             //	Without it, the ray would head towards the bottom left of a pixel
 
@@ -365,7 +408,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  This method will give us an already normalised value
             //  newDir will be a random point lying on a unit sphere
             Vec3 newDir = new(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
-            //  If newDir faces back in towards the centre of the sphere we flip it so it points out
+            //  If newDir faces back in towards the centre of the object we flip it so it points out
             if(newDir * normal < 0)
             {
                 newDir *= -1;
