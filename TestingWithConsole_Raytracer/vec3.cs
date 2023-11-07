@@ -45,7 +45,10 @@ namespace TestingWithConsole_Raytracer
             y *= normFraction;
             z *= normFraction;
         }
-
+        public double Magnitude()   //  NOT IN MAIN CODE YET (7.11.23)
+        {
+            return Math.Sqrt(x * x + y * y + z * z);
+        }
         public static Vec3 Cross(Vec3 a, Vec3 b)
         {
             double s_1 = a.y * b.z - a.z * b.y;

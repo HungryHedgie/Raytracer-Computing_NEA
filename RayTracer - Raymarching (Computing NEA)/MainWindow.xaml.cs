@@ -172,6 +172,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  DEBUG CODE
             SettingsWindow SettingsWindow01 = new SettingsWindow();
+            SettingsWindow.
             SettingsWindow01.Show();
             
             //  END OF DEBUG CODE

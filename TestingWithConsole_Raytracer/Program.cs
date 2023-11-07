@@ -16,7 +16,7 @@
             }
             Console.WriteLine(allPoints);
         }
-        public static Vec3 FindingNewRayDirection(Vec3 normal)
+        public static Vec3 FindingNewRayDirection_TrigMethodNonUniform(Vec3 normal)
         {
             double theta = rnd.NextDouble() * 2 * Math.PI;  //   Get a random number for the trig functions
             double phi = rnd.NextDouble() * 2 * Math.PI;    //  Could decrease precision, 2 or 3 dp is likely to be enough
@@ -37,7 +37,24 @@
             }
             return newDir;
         }
+        public static Vec3 FindingNewRayDirection_NormalMethodUniform(Vec3 normal)
+        {
+            rnd.
+            Vec3 newDir = new(normal.x, normal.y, normal.z);
+        }
 
+        public static Vec3 FindingNewRayDirection_RejectionMethodUniform(Vec3 normal)
+        {
+            
+            Vec3 newDir = new(rnd.NextDouble()*2 -1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
+            double magnitude = newDir.Magnitude();
+            while (magnitude > 1|| magnitude < 0.00001)
+            {
+                newDir = new(rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
+                magnitude = newDir.Magnitude();
+            }
+            return newDir * (1/magnitude);
+        }
     }
 
 }
