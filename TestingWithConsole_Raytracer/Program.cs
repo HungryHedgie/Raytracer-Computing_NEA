@@ -1,20 +1,22 @@
-﻿namespace TestingWithConsole_Raytracer
+﻿using System.Numerics;
+
+namespace TestingWithConsole_Raytracer
 {
     internal class Program
     {
         static Random rnd = new Random();
-        static int pointCount = 150;
+        static int pointCount = 1500000;
         static void Main(string[] args)
         {
             Vec3 normal = new(0, 0, 1);
             string allPoints = "";
             for (int i = 0; i < pointCount; i++)
             {
-                Vec3 currPoint = FindingNewRayDirection(normal);
+                Vec3 currPoint = FindingNewRayDirection_RejectionMethodUniform(normal);
                 string vecInfo = currPoint.x.ToString() + "," + currPoint.y.ToString() + "," + currPoint.z.ToString();
-                allPoints += vecInfo + "\n";
+                Console.WriteLine(vecInfo);
             }
-            Console.WriteLine(allPoints);
+            
         }
         public static Vec3 FindingNewRayDirection_TrigMethodNonUniform(Vec3 normal)
         {
@@ -37,23 +39,47 @@
             }
             return newDir;
         }
+        /*
         public static Vec3 FindingNewRayDirection_NormalMethodUniform(Vec3 normal)
         {
             rnd.
             Vec3 newDir = new(normal.x, normal.y, normal.z);
-        }
+        }*/
 
         public static Vec3 FindingNewRayDirection_RejectionMethodUniform(Vec3 normal)
         {
             
-            Vec3 newDir = new(rnd.NextDouble()*2 -1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
+            Vec3 newDir = new(rnd.NextDouble()*2 - 1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
             double magnitude = newDir.Magnitude();
             while (magnitude > 1|| magnitude < 0.00001)
             {
                 newDir = new(rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
                 magnitude = newDir.Magnitude();
             }
+            if (newDir * normal < 0)
+            {
+                newDir *= -1;
+            }
+            
             return newDir * (1/magnitude);
+        }
+
+        public static Vec3 FindingNewRayDirection_CubeMethodNonUniform(Vec3 normal)
+        {
+
+            Vec3 newDir = new(rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
+            double magnitude = newDir.Magnitude();
+            while (magnitude < 0.00001)
+            {
+                newDir = new(rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
+                magnitude = newDir.Magnitude();
+            }
+            if (newDir * normal < 0)
+            {
+                newDir *= -1;
+            }
+
+            return newDir * (1 / magnitude);
         }
     }
 
