@@ -61,6 +61,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return a * normFraction;
         }
 
+        public double Magnitude()
+        {
+            return Math.Sqrt(x * x + y * y + z * z);
+        }
+
         //  Should colour be its own class?
         static public Vec3 ColorCombination(Vec3 a, Vec3 b) //  For combining reflectance, we treat this as an array
         {

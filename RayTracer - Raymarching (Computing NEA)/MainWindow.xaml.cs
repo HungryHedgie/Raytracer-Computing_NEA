@@ -48,7 +48,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  Controls initial camera sections
         
         static Vec3 camLocation = new Vec3(-30, 0, 20);
-        double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
+        double[] camRotations = new double[] { -20, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
         //  All Shapes
@@ -59,9 +59,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
 
         SettingInfo currentSettings = new(
-                res_x: 150,
-                res_y: 100,
-                rayCountPerPixel: 100,
+                res_x: 250,
+                res_y: 170,
+                rayCountPerPixel: 120,
 
                 maxIterations: 150,
                 maxJumpDistance: 400,
@@ -155,9 +155,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  Third sphere
             Vec3 pos3 = new Vec3(0, -20050, 0);
-            Vec3 k_s3 = new Vec3(0.9, 0.9, 0.2);
-            Vec3 k_d3 = new Vec3(0.1, 0.1, 0.8);
-            double alpha3 = 9;
+            Vec3 k_s3 = new Vec3(.9, 0.9, 0.1);
+            Vec3 k_d3 = new Vec3(0.1, 0.1, 0.9);
+            double alpha3 = 20;
             double radius3 = 20000;
             shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
             
@@ -167,14 +167,22 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_d4 = new Vec3(1,1, 1);
             double alpha4 = 14;
             double radius4 = 15;
-            Vec3 lightStrength4 = 15 * new Vec3(1, 1, 1);
+            Vec3 lightStrength4 = 14 * new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength4));
 
+            //  Fifth sphere 105,76,179
+            Vec3 pos5 = new Vec3(25, -25, 20);
+            Vec3 k_s5 = 1 * new Vec3(0.3, 0.2, 0.9);
+            Vec3 k_d5 = 1 * new Vec3(0.4, 0.3, 0.8);
+            double alpha5 = 3;
+            double radius5 = 10;
+            shapes.Add(new Sphere(pos5, k_s5, k_d5, alpha5, radius5));
+
             //  DEBUG CODE
-            SettingsWindow SettingsWindow01 = new SettingsWindow();
-            SettingsWindow.
-            SettingsWindow01.Show();
-            
+            //SettingsWindow SettingsWindow01 = new SettingsWindow();
+            //SettingsWindow.
+            //SettingsWindow01.Show();
+
             //  END OF DEBUG CODE
 
 
@@ -411,24 +419,19 @@ namespace RayTracer___Raymarching__Computing_NEA_
         }
 
         Vec3 FindingNewRayDirection(Vec3 normal) {
-            double theta = rnd.NextDouble() * 2 * Math.PI;  //   Get a random number for the trig functions
-            double phi = rnd.NextDouble() * 2 * Math.PI;    //  Could decrease precision, 2 or 3 dp is likely to be enough
-
-            double cosTheta = Math.Cos(theta);
-            double sinTheta = Math.Sin(theta);
-
-            double cosPhi = Math.Cos(phi);
-            double sinPhi = Math.Sin(phi);
-
-            //  This method will give us an already normalised value
-            //  newDir will be a random point lying on a unit sphere
-            Vec3 newDir = new(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
-            //  If newDir faces back in towards the centre of the object we flip it so it points out
-            if(newDir * normal < 0)
+            Vec3 newDir = new(rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
+            double magnitude = newDir.Magnitude();
+            while (magnitude > 1 || magnitude < 0.00001)
+            {
+                newDir = new(rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
+                magnitude = newDir.Magnitude();
+            }
+            if (newDir * normal < 0)
             {
                 newDir *= -1;
             }
-            return newDir;
+
+            return newDir * (1 / magnitude);
         }
     
     
