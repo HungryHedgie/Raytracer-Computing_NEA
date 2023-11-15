@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace TestingWithConsole_Raytracer
 {
-    internal class Vec3
+    internal class Vec3 : IEquatable<Vec3>  //  NOT IN ACTUAL CODE AND SHOULDN'T BE 
     {
         public double x;
         public double y;
@@ -45,7 +45,12 @@ namespace TestingWithConsole_Raytracer
             y *= normFraction;
             z *= normFraction;
         }
-        public double Magnitude()   //  NOT IN MAIN CODE YET (7.11.23)
+
+        public bool Equals(Vec3 other)  //  NOT IN ACTUAL CODE AND  SHOULDN'T BE 
+        {
+            return this.x == other.x && this.y == other.y && this.z == other.z;
+        }
+        public double Magnitude()
         {
             return Math.Sqrt(x * x + y * y + z * z);
         }

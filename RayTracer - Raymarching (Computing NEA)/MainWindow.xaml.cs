@@ -59,13 +59,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
 
         SettingInfo currentSettings = new(
-                res_x: 250,
-                res_y: 170,
-                rayCountPerPixel: 120,
+                res_x: 500,
+                res_y: 300,
+                rayCountPerPixel: 280,
 
                 maxIterations: 150,
                 maxJumpDistance: 400,
-                minJumpDistance: 0.01d,
+                minJumpDistance: 0.05d,
                 maxBounceCount: 12,
 
                 isAntiAliasing: true,
@@ -142,8 +142,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_d1 = new Vec3(0.9, 0.2, 0.1);
             double alpha1 = 2;
             double radius1 = 15;
-            Vec3 lightStrength1 = 15 * new Vec3(1, 1, 1);
-            //lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
+            Vec3 lightStrength1 = 15 * new Vec3(0.1, .1, 1);
+            lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
             
             //  Second sphere
             Vec3 pos2 = new Vec3(0, 0, -20000);
@@ -166,8 +166,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_s4 = new Vec3(0, 0, 0);
             Vec3 k_d4 = new Vec3(1,1, 1);
             double alpha4 = 14;
-            double radius4 = 15;
-            Vec3 lightStrength4 = 14 * new Vec3(1, 1, 1);
+            double radius4 = 7.5;
+            Vec3 lightStrength4 = 56 * new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength4));
 
             //  Fifth sphere 105,76,179
@@ -178,6 +178,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
             double radius5 = 10;
             shapes.Add(new Sphere(pos5, k_s5, k_d5, alpha5, radius5));
 
+            //  Sixth sphere
+            shapes.Add(new Sphere(
+                position:new Vec3(20100, 0, 0)
+                , specularComponent: new Vec3(.7, .1, .9)
+                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+                , alpha: 3
+                , radius: 20000
+                ));
             //  DEBUG CODE
             //SettingsWindow SettingsWindow01 = new SettingsWindow();
             //SettingsWindow.

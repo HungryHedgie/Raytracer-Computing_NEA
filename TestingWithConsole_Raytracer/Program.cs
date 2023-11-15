@@ -6,8 +6,13 @@ namespace TestingWithConsole_Raytracer
     {
         static Random rnd = new Random();
         static int pointCount = 60;
+        struct test { public int x; public int y; 
+        
+        
+        }
         static void Main(string[] args)
         {
+            /*
             Vec3 normal = new(0, 0, 1);
             string allPoints = "";
 
@@ -17,7 +22,15 @@ namespace TestingWithConsole_Raytracer
                 string vecInfo = currPoint.x.ToString() + "," + currPoint.y.ToString() + "," + currPoint.z.ToString();
                 Console.WriteLine(vecInfo);
             }
+            */
             
+
+            Vec3 vec = new Vec3(1, 2, 1);
+            vec.Equals(vec);
+            List<Vec3> list = new List<Vec3> { new Vec3(1, 2, 1) };
+
+            Console.WriteLine(list.Contains(vec));
+
         }
         public static Vec3 FindingNewRayDirection_TrigMethodNonUniform(Vec3 normal)
         {
