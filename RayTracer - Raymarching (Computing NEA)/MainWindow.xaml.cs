@@ -27,23 +27,20 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
     public partial class MainWindow : Window
     {
-    //  Hard constants (never change)
+        //  Constants for testing:
+        
+
+
+        //  Hard constants (never change)
         Random rnd = new Random();  //  For multithreaded, I would need a different random method
         Bitmap bmpFinalImage;
+
 
 
         //  Controls sensitivity of user controls
         double distMovedPerKeyPress = 10;
         double distRotPerKeyPress = 15;
 
-
-    //  Soft constants - Changed on circumstance
-    //  Anti-Aliasing
-        
-
-        //  Controls screen resolution
-        //int res_x = 260;
-        //int res_y = 100;
 
         //  Controls initial camera sections
         
@@ -59,12 +56,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
 
         SettingInfo currentSettings = new(
-                res_x: 500,
-                res_y: 300,
-                rayCountPerPixel: 280,
+                res_x: 1920,
+                res_y: 1080,
+                rayCountPerPixel: 1,
 
                 maxIterations: 150,
-                maxJumpDistance: 400,
+                maxJumpDistance: 1000,
                 minJumpDistance: 0.05d,
                 maxBounceCount: 12,
 
@@ -142,7 +139,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_d1 = new Vec3(0.9, 0.2, 0.1);
             double alpha1 = 2;
             double radius1 = 15;
-            Vec3 lightStrength1 = 15 * new Vec3(0.1, .1, 1);
+            Vec3 lightStrength1 = new Vec3(0.1, .1, 1);
             lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
             
             //  Second sphere
@@ -167,7 +164,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_d4 = new Vec3(1,1, 1);
             double alpha4 = 14;
             double radius4 = 7.5;
-            Vec3 lightStrength4 = 56 * new Vec3(1, 1, 1);
+            Vec3 lightStrength4 = new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength4));
 
             //  Fifth sphere 105,76,179
@@ -183,7 +180,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 position:new Vec3(20100, 0, 0)
                 , specularComponent: new Vec3(.7, .1, .9)
                 , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-                , alpha: 3
+                , alpha: 6
                 , radius: 20000
                 ));
             //  DEBUG CODE
