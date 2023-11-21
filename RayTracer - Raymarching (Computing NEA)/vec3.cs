@@ -10,6 +10,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 {
     internal class Vec3
     {
+        //  Co-ordinates
         public double x;
         public double y;
         public double z;
@@ -21,7 +22,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             z = z_in;
         }
 
-        public Vec3(Quaternion input)
+        public Vec3(Quaternion input)   //  
         {
             x = input.X;
             y = input.Y;

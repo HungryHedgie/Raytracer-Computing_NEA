@@ -84,4 +84,53 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return normal;
         }
     }
+
+    class Plane : Shape
+    {
+        Vec3 pointOnPlane { get; set; }
+        Vec3 normal { get; set; }
+        public Plane(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Vec3 pointOnPlane, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        {
+
+            this.pointOnPlane = pointOnPlane;
+            this.normal = Vec3.Normalise(normal);
+
+        }
+
+        public override double SDF(Vec3 rayLocation)
+        {
+            double signedDistance = rayLocation * this.normal - this.pointOnPlane * this.normal;
+            return signedDistance;    
+        }
+
+        public override Vec3 FindNormal(Vec3 rayLocation)
+        {
+            return this.normal;
+        }
+    }
+
+    class Line : Shape
+    {
+        double radius { get; set; }
+        public Line(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, double radius, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        {
+
+            this.radius = radius;
+
+        }
+
+        public override double SDF(Vec3 rayLocation)
+        {
+            double signedDistance = Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
+            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
+            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
+        }
+
+        public override Vec3 FindNormal(Vec3 rayLocation)
+        {
+            Vec3 normal = rayLocation - this.position;
+            normal.Normalise();
+            return normal;
+        }
+    }
 }

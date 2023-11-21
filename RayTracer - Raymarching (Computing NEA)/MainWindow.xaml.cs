@@ -56,14 +56,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
 
         SettingInfo currentSettings = new(
-                res_x: 1920,
-                res_y: 1080,
-                rayCountPerPixel: 1,
+                res_x: 192,
+                res_y: 108,
+                rayCountPerPixel: 20,
 
-                maxIterations: 150,
-                maxJumpDistance: 1000,
-                minJumpDistance: 0.05d,
-                maxBounceCount: 12,
+                maxIterations: 2000,
+                maxJumpDistance: 4000,
+                minJumpDistance: 0.1d,
+                maxBounceCount: 15,
 
                 isAntiAliasing: true,
                 AA_Strength: 0.02d,
@@ -139,7 +139,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_d1 = new Vec3(0.9, 0.2, 0.1);
             double alpha1 = 2;
             double radius1 = 15;
-            Vec3 lightStrength1 = new Vec3(0.1, .1, 1);
+            Vec3 lightStrength1 = 20000*new Vec3(0.1, .1, 1);
             lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
             
             //  Second sphere
@@ -164,7 +164,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_d4 = new Vec3(1,1, 1);
             double alpha4 = 14;
             double radius4 = 7.5;
-            Vec3 lightStrength4 = new Vec3(1, 1, 1);
+            Vec3 lightStrength4 = 10*new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength4));
 
             //  Fifth sphere 105,76,179
@@ -178,6 +178,33 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  Sixth sphere
             shapes.Add(new Sphere(
                 position:new Vec3(20100, 0, 0)
+                , specularComponent: new Vec3(.7, .1, .9)
+                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+                , alpha: 6
+                , radius: 20000
+                ));
+
+            //  Seventh sphere
+            shapes.Add(new Sphere(
+                position: new Vec3(-20100, 0, 0)
+                , specularComponent: new Vec3(.7, .1, .9)
+                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+                , alpha: 6
+                , radius: 20000
+                ));
+
+            //  Eigth sphere
+            shapes.Add(new Sphere(
+                position: new Vec3(0, 20100, 0)
+                , specularComponent: new Vec3(.7, .1, .9)
+                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+                , alpha: 6
+                , radius: 20000
+                ));
+
+            //  Ninth sphere
+            shapes.Add(new Sphere(
+                position: new Vec3(0, 0, 20200)
                 , specularComponent: new Vec3(.7, .1, .9)
                 , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
                 , alpha: 6
@@ -271,19 +298,22 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         checkForNewIntersections = false;
                         //  Get colour from lights
                         Vec3 lightStrength = new(0, 0, 0);
+                        Vec3 lighting = new(0, 0, 0);
                         if (currentRay.previousShape != null && currentRay.hasHitLight)
                         {
                             lightStrength = currentRay.previousShape.lightStrength;
                         }
-                        
-                        //  Simulate a sun and skyline
-                        double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(1, 0, 0), 0), 128);
-                        Vec3 sunColour = 0 * new Vec3(1, 0.8, 0.4);
-                        double skyMagnitude = Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 0.4);
-                        Vec3 skyColour = new Vec3(0.3, 0.3, 0.7);
-                        Vec3 ambientColour = new Vec3(0.2, 0.2, 0.2);
-                        Vec3 lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour + lightStrength;
-                        finalColor += Vec3.ColorCombination(currentRay.sumOfReflectance, lighting);
+                        if (currentRay.previousShape == null)
+                        {
+                            //  Simulate a sun and skyline
+                            double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(1, 0, 0), 0), 128);
+                            Vec3 sunColour = 0 * new Vec3(1, 0.8, 0.4);
+                            double skyMagnitude = Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 0.4);
+                            Vec3 skyColour = new Vec3(0.3, 0.3, 0.7);
+                            Vec3 ambientColour = 20 * new Vec3(1, 0.2, 0.2);
+                            lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour + lightStrength;
+                        }
+                        finalColor += currentRay.sumOfReflectance + lighting;
                     }
                 }
             }
