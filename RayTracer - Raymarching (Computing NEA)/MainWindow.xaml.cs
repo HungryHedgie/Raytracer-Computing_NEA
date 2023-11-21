@@ -58,10 +58,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
         SettingInfo currentSettings = new(
                 res_x: 192,
                 res_y: 108,
-                rayCountPerPixel: 20,
+                rayCountPerPixel: 30,
 
-                maxIterations: 2000,
-                maxJumpDistance: 4000,
+                maxIterations: 100,
+                maxJumpDistance: 300,
                 minJumpDistance: 0.1d,
                 maxBounceCount: 15,
 
@@ -303,17 +303,19 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         {
                             lightStrength = currentRay.previousShape.lightStrength;
                         }
-                        if (currentRay.previousShape == null)
+                        if(currentRay.previousShape == null)
                         {
                             //  Simulate a sun and skyline
                             double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(1, 0, 0), 0), 128);
                             Vec3 sunColour = 0 * new Vec3(1, 0.8, 0.4);
                             double skyMagnitude = Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 0.4);
-                            Vec3 skyColour = new Vec3(0.3, 0.3, 0.7);
-                            Vec3 ambientColour = 20 * new Vec3(1, 0.2, 0.2);
-                            lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour + lightStrength;
+                            Vec3 skyColour = 0 * new Vec3(0.3, 0.3, 0.7);
+                            Vec3 ambientColour = 100 * new Vec3(1, 0, 0);
+                            lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour;
                         }
-                        finalColor += currentRay.sumOfReflectance + lighting;
+                        
+                        
+                        finalColor += Vec3.ColorCombination(currentRay.sumOfReflectance, lighting + 0*lightStrength);
                     }
                 }
             }
