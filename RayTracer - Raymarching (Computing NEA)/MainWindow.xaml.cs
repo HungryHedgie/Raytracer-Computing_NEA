@@ -54,15 +54,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  Currently lights are shapes, will need changing at some point
         List<Shape> lights = new List<Shape>();
 
-
+        //  Settings for each image
         SettingInfo currentSettings = new(
-                res_x: 192,
-                res_y: 108,
-                rayCountPerPixel: 30,
+                res_x: 80,
+                res_y: 40,
+                rayCountPerPixel: 1000,
 
-                maxIterations: 100,
+                maxIterations: 400,
                 maxJumpDistance: 300,
-                minJumpDistance: 0.1d,
+                minJumpDistance: 0.01d,
                 maxBounceCount: 15,
 
                 isAntiAliasing: true,
@@ -77,7 +77,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public struct SettingInfo
         {
             //  Given values here are all place holders
-        //  High performance impact
+            //  High performance impact
             public int res_x = 10;
             public int res_y = 10;
             public int rayCountPerPixel = 3; //  Rays sent out for each pixel
@@ -112,7 +112,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 this.AA_Strength = AA_Strength;
                 this.FoVangle = FoVangle;
 
-                
+                //  Precalculated constants, used in assinging initial ray direction given a start pixel
                 this.screenRatio = (double)this.res_y / (double)this.res_x;
                 this.FoVScale = Math.Tan(this.FoVangle * (Math.PI / 180) / 2);  //  FoVangle is in degrees, and must be converted to radians
 
@@ -125,7 +125,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             InitializeComponent();
 
-            //  Constant initialisation (Can't be statics as they may be changed)
+            //  Constant initialisation
 
             bmpFinalImage = new Bitmap(currentSettings.res_x, currentSettings.res_y);
             
@@ -139,7 +139,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_d1 = new Vec3(0.9, 0.2, 0.1);
             double alpha1 = 2;
             double radius1 = 15;
-            Vec3 lightStrength1 = 20000*new Vec3(0.1, .1, 1);
+            Vec3 lightStrength1 = 10*new Vec3(0.1, .1, 1);
             lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
             
             //  Second sphere
@@ -164,7 +164,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 k_d4 = new Vec3(1,1, 1);
             double alpha4 = 14;
             double radius4 = 7.5;
-            Vec3 lightStrength4 = 10*new Vec3(1, 1, 1);
+            Vec3 lightStrength4 = 75*new Vec3(1, 1, 1);
             lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength4));
 
             //  Fifth sphere 105,76,179
@@ -194,12 +194,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 ));
 
             //  Eigth sphere
-            shapes.Add(new Sphere(
+            lights.Add(new Sphere(
                 position: new Vec3(0, 20100, 0)
                 , specularComponent: new Vec3(.7, .1, .9)
                 , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
                 , alpha: 6
                 , radius: 20000
+                , lightStrength:3*new Vec3(1, 1, 1)
                 ));
 
             //  Ninth sphere
@@ -210,6 +211,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 , alpha: 6
                 , radius: 20000
                 ));
+
+
+
             //  DEBUG CODE
             //SettingsWindow SettingsWindow01 = new SettingsWindow();
             //SettingsWindow.
@@ -233,10 +237,32 @@ namespace RayTracer___Raymarching__Computing_NEA_
             {
                 for (int y = 0; y < currentSettings.res_y; y++)
                 {
+
                     //Color pixelColor = GetPixelColor(x, currentSettings.res_y - y);
-                    Color pixelColor = GetPixelColor(x, currentSettings.res_y - y);
+
+                    //  Old code for testing directions
                     //int brightness = (255 * x) / currentSettings.res_x;
                     //Color pixelColor = Color.FromArgb(brightness, brightness, brightness);
+
+                    //  Testing randomness
+                    
+                    Color pixelColor;
+                    Vec3 sumOfColour = new(0, 0, 0);
+                    double sampleCount = 15000;
+                    for (int i = 0; i < sampleCount; i++)
+                    {
+                        if(rnd.NextDouble() < 0.02)
+                        {
+                            sumOfColour += new Vec3(50, 50, 50);
+                        }
+                        
+                    }
+                    sumOfColour = (1 / sampleCount) * sumOfColour;
+                    pixelColor = Color.FromArgb((int)Math.Min(255 * sumOfColour.x, 255), (int)Math.Min(sumOfColour.y * 255, 255), (int)Math.Min(sumOfColour.z * 255, 255));
+                    
+                    //  End
+
+
                     bmpFinalImage.SetPixel(x, y, pixelColor);
                 }
             }
@@ -265,42 +291,52 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         Color GetPixelColor(int x, int y)
         {
-            //  This will be added to track the contributions of each ray towards the colour
+            //  This will be added to by each ray to track the contributions of each ray towards the pixels colour
             Vec3 finalColor = new(0, 0, 0);
 
             //  Loop through to run a ray calculation as many times as needed
             for (int i = 0; i < currentSettings.rayCountPerPixel; i++)
             {
-
+                //  Based of the pixels co-ordinate, finds the ray direction
                 Vec3 rayDirection = FindPixelsRayDirection(x, y);
-
-                
-
-                
                 Ray currentRay = new Ray(cameraOne.position, rayDirection);
+
+
                 bool checkForNewIntersections = true;
-                for (int j = 0; j < currentSettings.maxBounceCount && checkForNewIntersections && !currentRay.hasHitLight; j++)
+
+                //  Checks if ray has bounced more than the maximun count
+                //  Checks if ray is still looking for new intersections eg if it hit a light or hit nothing at all
+
+                for (int j = 0; j < currentSettings.maxBounceCount && checkForNewIntersections; j++)
                 {
                     Vec3 initialDirection = currentRay.direction;
+
+                    //  Calculates what object (if any) the ray hits
                     DetermineIntersections(currentRay);
+                    
+                    //  Result of collision checks is saved to currentRay
+
+                    //  If we hit something that was not a light, we work out the colour of the object and send out a new ray
                     if (currentRay.previousShape != null && !currentRay.hasHitLight)
                     {
+                        //  Get the normal to the shape at the intersection point
                         Vec3 normal = currentRay.previousShape.FindNormal(currentRay.position);
 
                         currentRay.direction = FindingNewRayDirection(normal);
                         Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(currentRay.direction, initialDirection, normal);
-                        currentRay.sumOfReflectance = Vec3.ColorCombination(shapeReflectance, currentRay.sumOfReflectance);
+                        currentRay.productOfReflectance = Vec3.ColorCombination(shapeReflectance, currentRay.productOfReflectance);
 
                     }
                     else
                     {
-
+                        //  If we have hit a light or the sky we start our final pixel calculations
                         checkForNewIntersections = false;
                         //  Get colour from lights
                         Vec3 lightStrength = new(0, 0, 0);
                         Vec3 lighting = new(0, 0, 0);
                         if (currentRay.previousShape != null && currentRay.hasHitLight)
                         {
+                            //  If we hit a light then we add
                             lightStrength = currentRay.previousShape.lightStrength;
                         }
                         if(currentRay.previousShape == null)
@@ -315,7 +351,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         }
                         
                         
-                        finalColor += Vec3.ColorCombination(currentRay.sumOfReflectance, lighting + 0*lightStrength);
+                        finalColor += Vec3.ColorCombination(currentRay.productOfReflectance, lighting + lightStrength);
                     }
                 }
             }
@@ -547,10 +583,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
             if (e.Key == Key.D2)  //  "2" key brings up save menu
             {
                 DateTime time = DateTime.Now;
-                MessageBoxResult result = MessageBox.Show("Do you want to save your image?", "Saving", MessageBoxButton.YesNo);
+                string fileName = time.Year + "." + time.Month + "." + time.Day + "." + time.Hour + "." + time.Minute + "_RayTracer_RaysPerPixel_" + currentSettings.rayCountPerPixel + "_" + time.Millisecond + ".png";
+                MessageBoxResult result = MessageBox.Show("Do you want to save your image?\n" + fileName, "Saving", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
-                    bmpFinalImage.Save("..\\..\\..\\..\\Images\\" + time.Year + "." + time.Month + "." + time.Day + "." + time.Hour + "." + time.Minute + "_RayTracer_" + time.Millisecond + ".png", ImageFormat.Png);
+                    bmpFinalImage.Save("..\\..\\..\\..\\Images\\" + fileName, ImageFormat.Png);
                     //bmpFinalImage.Save("TEST.png", ImageFormat.Png);
 
                 }

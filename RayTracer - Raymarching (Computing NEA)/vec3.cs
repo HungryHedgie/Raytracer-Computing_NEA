@@ -22,7 +22,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             z = z_in;
         }
 
-        public Vec3(Quaternion input)   //  
+        public Vec3(Quaternion input)   //  Vector from a quaternion (With a zero real component)
         {
             x = input.X;
             y = input.Y;
@@ -33,13 +33,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
             }
         }
 
-        public Quaternion AsQuaternion()
+        public Quaternion AsQuaternion()    //  Converts vector to quaternion (Real part is kept zero
         {
             Quaternion quat = new Quaternion((float)x, (float)y, (float)z, 0);
             return quat;
         }
 
-        public void Normalise()
+        public void Normalise() 
         {
             double normFraction = 1 / Math.Sqrt(Math.Pow(this.x, 2) + Math.Pow(this.y, 2) + Math.Pow(this.z, 2));
             x *= normFraction;
@@ -47,7 +47,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             z *= normFraction;
         }
 
-        public static Vec3 Cross(Vec3 a, Vec3 b)
+        public static Vec3 Cross(Vec3 a, Vec3 b)    //  Cross product, not currently used so could remove
         {
             double s_1 = a.y * b.z - a.z * b.y;
             double s_2 = a.z * b.x - a.x * b.z;
@@ -70,6 +70,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  Should colour be its own class?
         static public Vec3 ColorCombination(Vec3 a, Vec3 b) //  For combining reflectance, we treat this as an array
         {
+            //  Each element is multiplied individually
             Vec3 c = new(a.x * b.x, a.y * b.y, a.z * b.z);
             return c;
         }
