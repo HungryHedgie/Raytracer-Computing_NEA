@@ -20,7 +20,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public Shape(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Vec3 lightStrength = null) //  Need to change
         {
-            this.position = position;
+            //  General info all shapes will need
+            this.position = position;   
             this.k_s = specularComponent;
             this.k_d = diffuseComponent;
             this.alpha = alpha;
@@ -46,7 +47,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  Max is in place in case the dot product is negative
             Vec3 reflectedRay = 2 * Math.Max(omega_i * normal, 0) * normal - omega_i;
 
-            //  Reflectance is the sum of the seperate components of specular and diffuse reflection    HERE ONWARDS DONE with VS CODE, NEEDS CHECKING WITH Visual Studio
+            //  Reflectance is the sum of the seperate components of specular and diffuse reflection
             Vec3 specularComponent = this.k_s * Math.Pow(Math.Max(omega_o * reflectedRay, 0), this.alpha);
             Vec3 reflectanceComponent = this.k_d * Math.Max(omega_o * normal, 0);
 
@@ -65,7 +66,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         double radius {get; set;}
         public Sphere(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, double radius, Vec3 lightStrength = null) : base (position, specularComponent, diffuseComponent, alpha, lightStrength)
         {
-            
+            //  Only extra info that a sphere needs is the radius
             this.radius = radius;
 
         }
@@ -73,7 +74,58 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public override double SDF(Vec3 rayLocation)
         {
             double signedDistance =  Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
-            return signedDistance;    //  Absolute should enable rendering from inside the sphere
+            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
+            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
+        }
+
+        public override Vec3 FindNormal(Vec3 rayLocation)
+        {
+            Vec3 normal = rayLocation - this.position;
+            normal.Normalise();
+            return normal;
+        }
+    }
+
+    class Plane : Shape
+    {
+        Vec3 pointOnPlane { get; set; }
+        Vec3 normal { get; set; }
+        public Plane(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Vec3 pointOnPlane, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        {
+
+            this.pointOnPlane = pointOnPlane;
+            this.normal = Vec3.Normalise(normal);
+
+        }
+
+        public override double SDF(Vec3 rayLocation)
+        {
+            double signedDistance = rayLocation * this.normal - this.pointOnPlane * this.normal;
+            return signedDistance;    
+        }
+
+        public override Vec3 FindNormal(Vec3 rayLocation)
+        {
+            return this.normal;
+        }
+    }
+
+    class Line : Shape  //  NOT FINISHED YET
+    {
+        //  Radius is how much area around the line is taken up
+        double radius { get; set; }
+        public Line(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, double radius, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        {
+
+            this.radius = radius;
+
+        }
+
+        public override double SDF(Vec3 rayLocation)
+        {
+            double signedDistance = Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
+            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
+            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
         }
 
         public override Vec3 FindNormal(Vec3 rayLocation)

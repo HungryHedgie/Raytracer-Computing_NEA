@@ -6,11 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace RayTracer___Raymarching__Computing_NEA_
+namespace TestingWithConsole_Raytracer
 {
-    internal class Vec3
+    internal class Vec3 : IEquatable<Vec3>  //  NOT IN ACTUAL CODE AND SHOULDN'T BE 
     {
-        //  Co-ordinates
         public double x;
         public double y;
         public double z;
@@ -22,24 +21,24 @@ namespace RayTracer___Raymarching__Computing_NEA_
             z = z_in;
         }
 
-        public Vec3(Quaternion input)   //  Vector from a quaternion (With a zero real component)
+        public Vec3(Quaternion input)
         {
             x = input.X;
             y = input.Y;
             z = input.Z;
             if(input.W > 0.0001)    //  Debug and could be removed
             {
-                MessageBox.Show("Error with quaternion to vector, real component is non zero");
+                //MessageBox.Show("Error with quaternion to vector, real component is non zero");
             }
         }
 
-        public Quaternion AsQuaternion()    //  Converts vector to quaternion (Real part is kept zero
+        public Quaternion AsQuaternion()
         {
             Quaternion quat = new Quaternion((float)x, (float)y, (float)z, 0);
             return quat;
         }
 
-        public void Normalise() 
+        public void Normalise()
         {
             double normFraction = 1 / Math.Sqrt(Math.Pow(this.x, 2) + Math.Pow(this.y, 2) + Math.Pow(this.z, 2));
             x *= normFraction;
@@ -47,7 +46,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
             z *= normFraction;
         }
 
-        public static Vec3 Cross(Vec3 a, Vec3 b)    //  Cross product, not currently used so could remove
+        public bool Equals(Vec3 other)  //  NOT IN ACTUAL CODE AND  SHOULDN'T BE 
+        {
+            return this.x == other.x && this.y == other.y && this.z == other.z;
+        }
+        public double Magnitude()
+        {
+            return Math.Sqrt(x * x + y * y + z * z);
+        }
+        public static Vec3 Cross(Vec3 a, Vec3 b)
         {
             double s_1 = a.y * b.z - a.z * b.y;
             double s_2 = a.z * b.x - a.x * b.z;
@@ -62,15 +69,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return a * normFraction;
         }
 
-        public double Magnitude()
-        {
-            return Math.Sqrt(x * x + y * y + z * z);
-        }
-
         //  Should colour be its own class?
         static public Vec3 ColorCombination(Vec3 a, Vec3 b) //  For combining reflectance, we treat this as an array
         {
-            //  Each element is multiplied individually
             Vec3 c = new(a.x * b.x, a.y * b.y, a.z * b.z);
             return c;
         }
