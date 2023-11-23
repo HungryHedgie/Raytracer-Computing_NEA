@@ -61,12 +61,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
         SettingInfo currentSettings = new(
                 res_x: 80,
                 res_y: 40,
-                rayCountPerPixel: 10,
+                rayCountPerPixel: 20,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
                 minJumpDistance: 0.01d,
-                maxBounceCount: 15,
+                maxBounceCount: 20,
 
                 isAntiAliasing: true,
                 AA_Strength: 0.02d,
@@ -154,13 +154,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
             cameraOne = new Camera(camLocation, camRotations);
 
             //  First sphere
-            Vec3 pos1 = new Vec3(100, -50, 0);
-            Vec3 k_s1 = new Vec3(0.1, 0.8, 0.9);
-            Vec3 k_d1 = new Vec3(0.9, 0.2, 0.1);
-            double alpha1 = 2;
-            double radius1 = 15;
-            Vec3 lightStrength1 = 10*new Vec3(0.1, .1, 1);
-            lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
+            //Vec3 pos1 = new Vec3(100, -50, 0);
+            //Vec3 k_s1 = new Vec3(0.1, 0.8, 0.9);
+            //Vec3 k_d1 = new Vec3(0.9, 0.2, 0.1);
+            //double alpha1 = 2;
+            //double radius1 = 15;
+            //Vec3 lightStrength1 = 10*new Vec3(0.1, .1, 1);
+            //lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
             
             //  Second sphere
             Vec3 pos2 = new Vec3(0, 0, -20000);
@@ -179,13 +179,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
             shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
             
             //  Fourth sphere
-            Vec3 pos4 = new Vec3(50, 0, 30);
-            Vec3 k_s4 = new Vec3(0, 0, 0);
-            Vec3 k_d4 = new Vec3(1,1, 1);
-            double alpha4 = 14;
-            double radius4 = 7.5;
-            Vec3 lightStrength4 = 75*new Vec3(1, 1, 1);
-            lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength4));
+            //Vec3 pos4 = new Vec3(50, 0, 30);
+            //Vec3 k_s4 = new Vec3(0, 0, 0);
+            //Vec3 k_d4 = new Vec3(1,1, 1);
+            //double alpha4 = 14;
+            //double radius4 = 7.5;
+            //Vec3 lightStrength4 = 75*new Vec3(1, 1, 1);
+            //lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength4));
 
             //  Fifth sphere 105,76,179
             Vec3 pos5 = new Vec3(25, -25, 20);
@@ -214,14 +214,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 ));
 
             //  Eigth sphere
-            lights.Add(new Sphere(
-                position: new Vec3(0, 20100, 0)
-                , specularComponent: new Vec3(.7, .1, .9)
-                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-                , alpha: 6
-                , radius: 20000
-                , lightStrength:3*new Vec3(1, 1, 1)
-                ));
+            //lights.Add(new Sphere(
+            //    position: new Vec3(0, 20100, 0)
+            //    , specularComponent: new Vec3(.7, .1, .9)
+            //    , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+            //    , alpha: 6
+            //    , radius: 20000
+            //    , lightStrength:3*new Vec3(1, 1, 1)
+            //    ));
 
             //  Ninth sphere
             shapes.Add(new Sphere(
@@ -232,6 +232,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 , radius: 20000
                 ));
 
+            //  First Point light source
+            lightPoints.Add(new PointLight(
+                position: new Vec3(50, 0, 30),
+                lightColour: new Vec3(1, 1, 1),
+                lightBrightness: 1
+
+                ));
 
 
             //  DEBUG CODE
@@ -314,10 +321,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             //  This will be added to by each ray to track the contributions of each ray towards the pixels colour
             Vec3 finalColor = new(0, 0, 0);
+            int pseudoRayCount = 0;
 
             //  Loop through to run a ray calculation as many times as needed
             for (int i = 0; i < currentSettings.rayCountPerPixel; i++)
             {
+                
                 //  Based of the pixels co-ordinate, finds the ray direction
                 Vec3 rayDirection = FindPixelsRayDirection(x, y);
                 Ray currentRay = new Ray(cameraOne.position, rayDirection);
@@ -370,12 +379,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             {
                                 Vec3 finalShapeReflectance = currentRay.previousShape.BRDF_phong(currPosToLight, initialDirection, normal);
                                 Vec3 tmpProductOfReflectance = Vec3.ColorCombination(finalShapeReflectance, currentRay.productOfReflectance);
-
-
+                                Vec3 pointLightContribution = Vec3.ColorCombination(tmpProductOfReflectance, currLight.lightStrength);
+                                finalColor += pointLightContribution;
                             }
 
                         }
-                        Vec3 pointLightContribution =
+                        
                         
 
 
@@ -416,6 +425,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         
                         finalColor += Vec3.ColorCombination(currentRay.productOfReflectance, lighting + lightStrength);
                     }
+                    pseudoRayCount++;
                 }
             }
             finalColor *= 1/(double)currentSettings.rayCountPerPixel;
