@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace RayTracer___Raymarching__Computing_NEA_
 {
-    abstract class Shape
+    abstract public class Shape
     {
         public abstract double SDF(Vec3 rayLocation);
         public abstract Vec3 FindNormal(Vec3 rayLocation);
         public Vec3 position;
-
+        
         public Vec3 k_s;
         public Vec3 k_d;
         public double alpha;

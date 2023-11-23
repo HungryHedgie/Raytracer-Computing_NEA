@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace RayTracer___Raymarching__Computing_NEA_
 {
-    internal class Vec3
+    public class Vec3
     {
         //  Co-ordinates
         public double x;

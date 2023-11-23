@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace RayTracer___Raymarching__Computing_NEA_
 {
-    internal class Camera
+    public class Camera
     {
         public Vec3 position;
         public Quaternion rotation;

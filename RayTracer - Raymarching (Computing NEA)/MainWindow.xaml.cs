@@ -51,14 +51,17 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  All Shapes
         List<Shape> shapes = new List<Shape>();
         
-        //  Currently lights are shapes, will need changing at some point
+        //  All non point light sources
         List<Shape> lights = new List<Shape>();
+
+        //  All Point Light source
+        List<PointLight> lightPoints = new List<PointLight>();
 
         //  Settings for each image
         SettingInfo currentSettings = new(
                 res_x: 80,
                 res_y: 40,
-                rayCountPerPixel: 1000,
+                rayCountPerPixel: 10,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
@@ -117,6 +120,23 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 this.FoVScale = Math.Tan(this.FoVangle * (Math.PI / 180) / 2);  //  FoVangle is in degrees, and must be converted to radians
 
 
+            }
+        }
+
+        public struct IntersectionInfo
+        {
+            public bool hasHitLight;
+            public Vec3 position = new Vec3(0, 0, 0);
+            public Shape previousShape;
+            //currentRay.direction = null;
+            public double distance;
+
+            public IntersectionInfo(bool hasHitLight, Vec3 position, Shape previousShape, double distance)
+            {
+                this.hasHitLight = hasHitLight;
+                this.position = position;
+                this.previousShape = previousShape;
+                this.distance = distance;
             }
         }
 
@@ -238,7 +258,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 for (int y = 0; y < currentSettings.res_y; y++)
                 {
 
-                    //Color pixelColor = GetPixelColor(x, currentSettings.res_y - y);
+                    Color pixelColor = GetPixelColor(x, currentSettings.res_y - y);
 
                     //  Old code for testing directions
                     //int brightness = (255 * x) / currentSettings.res_x;
@@ -246,6 +266,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                     //  Testing randomness
                     
+                    /*
                     Color pixelColor;
                     Vec3 sumOfColour = new(0, 0, 0);
                     double sampleCount = 15000;
@@ -259,7 +280,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                     }
                     sumOfColour = (1 / sampleCount) * sumOfColour;
                     pixelColor = Color.FromArgb((int)Math.Min(255 * sumOfColour.x, 255), (int)Math.Min(sumOfColour.y * 255, 255), (int)Math.Min(sumOfColour.z * 255, 255));
-                    
+                    */
                     //  End
 
 
@@ -311,9 +332,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 {
                     Vec3 initialDirection = currentRay.direction;
 
-                    //  Calculates what object (if any) the ray hits
-                    DetermineIntersections(currentRay);
-                    
+                    //  Calculates what object (if any) the ray hits, using the direction last calculated
+                    IntersectionInfo intersectionReturnInfo0 = DetermineIntersections(currentRay);
+
+                    //  We won't need to update all these class variables each time, so we handle it seperately
+                    currentRay.hasHitLight = intersectionReturnInfo0.hasHitLight;
+                    currentRay.position = intersectionReturnInfo0.position;
+                    currentRay.previousShape = intersectionReturnInfo0.previousShape;
+                    currentRay.direction = null;
+
                     //  Result of collision checks is saved to currentRay
 
                     //  If we hit something that was not a light, we work out the colour of the object and send out a new ray
@@ -322,9 +349,45 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         //  Get the normal to the shape at the intersection point
                         Vec3 normal = currentRay.previousShape.FindNormal(currentRay.position);
 
+                        //  Accounting for Point Light sources:
+                        
+                        foreach (PointLight currLight in lightPoints)
+                        {
+                            //  Determine intersections changes these variables, but we don't want that (yet)
+                            
+                            //  Check occlusion
+                            Vec3 currPosToLight = currLight.position - currentRay.position;
+                            double lightDistance = currPosToLight.Magnitude();
+
+                            currentRay.direction = currPosToLight;
+                            IntersectionInfo intersectionReturnInfo1 = DetermineIntersections(currentRay);
+                            double intersectionDistance = intersectionReturnInfo1.distance;
+                            Shape shapeIntersected = intersectionReturnInfo1.previousShape;
+                            
+                            //  If distance to nearest shape is further than the light, then the ray will reach the light source unoccluded
+                            //  If the ray intersects nothing then the ray reaches the light source as well
+                            if(lightDistance < intersectionDistance || shapeIntersected == null)
+                            {
+                                Vec3 finalShapeReflectance = currentRay.previousShape.BRDF_phong(currPosToLight, initialDirection, normal);
+                                Vec3 tmpProductOfReflectance = Vec3.ColorCombination(finalShapeReflectance, currentRay.productOfReflectance);
+
+
+                            }
+
+                        }
+                        Vec3 pointLightContribution =
+                        
+
+
+
+                        //  Find new direction and that affect on the reflectance
                         currentRay.direction = FindingNewRayDirection(normal);
                         Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(currentRay.direction, initialDirection, normal);
                         currentRay.productOfReflectance = Vec3.ColorCombination(shapeReflectance, currentRay.productOfReflectance);
+
+                        //  Need to setup how this affects final colour, should it run every time? What do we divide it by?
+
+                        
 
                     }
                     else
@@ -412,7 +475,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return rayDirection;
         }
 
-        void DetermineIntersections(Ray currentRay)
+        IntersectionInfo DetermineIntersections(Ray currentRay)
         {
             Shape? previousShape = currentRay.previousShape;
             //	previousShape stops us colliding with what we just hit
@@ -423,6 +486,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
             bool searching = true;
             int iterationCount = 0;
             bool hitLight = false;
+
+            //  Distance not used, but provides a point to check against
+            double distance = 0;
 
             Shape closestObject = null;
 
@@ -468,11 +534,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                 //  Dist to closest surface used to find new position
                 currPos += currentRay.direction * lowestDistance;
-
+                distance += lowestDistance;
                 //  Tolerance check:
                 //  Have we travelled further than the max jump distance?
                 //  Have we gone through too many iterations?
-                if(iterationCount > currentSettings.maxIterations || lowestDistance == currentSettings.maxJumpDistance){
+                if (iterationCount > currentSettings.maxIterations || lowestDistance == currentSettings.maxJumpDistance){
                     searching = false;
                     closestObject = null;
                     hitLight=false;
@@ -483,12 +549,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
                     //  INTERSECTION
                 }
             }
-            currentRay.hasHitLight = hitLight;
-            currentRay.position = currPos;
-            currentRay.previousShape = closestObject;
-            currentRay.direction = null;
-            //  NEED TO SORT OUT RETURN TYPE
-            //  return (exitCode, currPos, closestObject);
+            
+            IntersectionInfo intersectionReturnInfo = new IntersectionInfo(
+                hasHitLight: hitLight,
+                position: currPos,
+                previousShape: closestObject,
+                distance: distance
+                );
+            return intersectionReturnInfo;
         }
 
         Vec3 FindingNewRayDirection(Vec3 normal) {

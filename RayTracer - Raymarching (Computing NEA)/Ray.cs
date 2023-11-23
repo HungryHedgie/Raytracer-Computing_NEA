@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RayTracer___Raymarching__Computing_NEA_
 {
-    internal class Ray
+    public class Ray
     {
         public Vec3 position;
         public Vec3? direction;
