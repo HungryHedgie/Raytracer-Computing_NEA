@@ -86,6 +86,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
         }
     }
 
+    
+
     class Plane : Shape
     {
         Vec3 pointOnPlane { get; set; }
@@ -126,6 +128,35 @@ namespace RayTracer___Raymarching__Computing_NEA_
             double signedDistance = Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
             //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
             return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
+        }
+
+        public override Vec3 FindNormal(Vec3 rayLocation)
+        {
+            Vec3 normal = rayLocation - this.position;
+            normal.Normalise();
+            return normal;
+        }
+    }
+
+    class SmoothCombination : Shape
+    {
+        public Shape shape1;
+        public Shape shape2;
+
+        public double weighting2;    //  We may want to weight one shape more than another, negative weightings also can create indents
+        public SmoothCombination(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Shape shape1, Shape shape2, double weighting2, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        {
+
+            this.shape1 = shape1;
+            this.shape2 = shape2;
+            this.weighting2 = weighting2;
+
+        }
+
+        public override double SDF(Vec3 rayLocation)
+        {
+            double signedDistance = shape1.SDF(rayLocation) + weighting2 * shape2.SDF(rayLocation);
+            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with the shape they started in
         }
 
         public override Vec3 FindNormal(Vec3 rayLocation)

@@ -16,8 +16,7 @@ using System.Numerics;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
-
-
+using System.Diagnostics;
 
 namespace RayTracer___Raymarching__Computing_NEA_
 {
@@ -59,9 +58,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Settings for each image
         SettingInfo currentSettings = new(
-                res_x: 80,
-                res_y: 40,
-                rayCountPerPixel: 20,
+                res_x: 160,
+                res_y: 80,
+                rayCountPerPixel: 15,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
@@ -235,11 +234,18 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  First Point light source
             lightPoints.Add(new PointLight(
                 position: new Vec3(50, 0, 30),
-                lightColour: new Vec3(1, 1, 1),
-                lightBrightness: 1
+                lightColour: new Vec3(0.6, 0, 0.6),
+                lightBrightness: 0.6
 
                 ));
 
+            //  Second Point light source
+            lightPoints.Add(new PointLight(
+                position: new Vec3(70, 40, 10),
+                lightColour: new Vec3(0.6, 0, 0.6),
+                lightBrightness: 0.6
+
+                ));
 
             //  DEBUG CODE
             //SettingsWindow SettingsWindow01 = new SettingsWindow();
@@ -250,11 +256,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
 
             //  Main loop
+            Stopwatch timer = Stopwatch.StartNew();
             GenerateAllPixels();
-            
+            timer.Stop();
+            double secOverallTime = timer.ElapsedMilliseconds/1000;
+            //  Assume overall time, T is given by T = res_x * res_y * rayCountPerPixel * meanTimePerRay
+            double totalRayCount = currentSettings.res_x * currentSettings.res_y * currentSettings.rayCountPerPixel;
+            double meanTimePerRay = secOverallTime / totalRayCount;
+            MessageBox.Show("There were " + totalRayCount + " ray(s) in total, taking " + secOverallTime + " seconds in total, with a mean time of " + 1000*meanTimePerRay + " milliseconds per ray", "Timing info");
 
-
-            
         }
 
         void GenerateAllPixels()
@@ -417,8 +427,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(1, 0, 0), 0), 128);
                             Vec3 sunColour = 0 * new Vec3(1, 0.8, 0.4);
                             double skyMagnitude = Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 0.4);
-                            Vec3 skyColour = 0 * new Vec3(0.3, 0.3, 0.7);
-                            Vec3 ambientColour = 100 * new Vec3(1, 0, 0);
+                            Vec3 skyColour = 1 * new Vec3(0.3, 0.3, 0.7);
+                            Vec3 ambientColour = 1 * new Vec3(0.1, 0.1, 0.1);
                             lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour;
                         }
                         
