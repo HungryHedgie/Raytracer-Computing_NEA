@@ -6,6 +6,17 @@ using System.Threading.Tasks;
 
 namespace RayTracer___Raymarching__Computing_NEA_
 {
+    public enum comboType
+    {
+        Union,
+        Intersection,
+        Exclusion
+
+
+
+
+    }
+    
     abstract public class Shape
     {
         public abstract double SDF(Vec3 rayLocation);
@@ -78,6 +89,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
         }
 
+        
+
         public override Vec3 FindNormal(Vec3 rayLocation)
         {
             Vec3 normal = rayLocation - this.position;
@@ -138,25 +151,26 @@ namespace RayTracer___Raymarching__Computing_NEA_
         }
     }
 
-    class SmoothCombination : Shape
+    class Combination : Shape       //  Not implemented yet, normal needs some work to be done
     {
         public Shape shape1;
         public Shape shape2;
 
-        public double weighting2;    //  We may want to weight one shape more than another, negative weightings also can create indents
-        public SmoothCombination(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Shape shape1, Shape shape2, double weighting2, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        public double k;    //  Weighting for how smooth combination is
+        public Combination(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Shape shape1, Shape shape2, double weighting, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
         {
 
             this.shape1 = shape1;
             this.shape2 = shape2;
-            this.weighting2 = weighting2;
+            this.k = weighting;
+            
 
         }
 
         public override double SDF(Vec3 rayLocation)
         {
-            double signedDistance = shape1.SDF(rayLocation) + weighting2 * shape2.SDF(rayLocation);
-            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with the shape they started in
+            double signedDistance = -Math.Log(Math.Exp(- k *shape1.SDF(rayLocation)) + Math.Exp(- k * shape2.SDF(rayLocation)))/k;
+            return signedDistance;
         }
 
         public override Vec3 FindNormal(Vec3 rayLocation)
@@ -164,6 +178,65 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 normal = rayLocation - this.position;
             normal.Normalise();
             return normal;
+        }
+
+        public Vec3 FindNormalNumerically(Vec3 rayLocation)
+        {
+            //  Hardcoded precision
+            double epsilon = 0.0001;
+            Vec3 normal = 1 / (2 * epsilon) * new Vec3(
+                this.SDF(new Vec3(rayLocation.x + epsilon, rayLocation.y, rayLocation.z)) - this.SDF(new Vec3(rayLocation.x - epsilon, rayLocation.y, rayLocation.z)),
+                this.SDF(new Vec3(rayLocation.x, rayLocation.y + epsilon, rayLocation.z)) - this.SDF(new Vec3(rayLocation.x, rayLocation.y - epsilon, rayLocation.z)),
+                this.SDF(new Vec3(rayLocation.x, rayLocation.y, rayLocation.z + epsilon)) - this.SDF(new Vec3(rayLocation.x, rayLocation.y, rayLocation.z - epsilon)));
+            normal.Normalise();
+            return normal;
+        }
+        
+    }
+
+    class InfiniteSphere : Shape
+    {
+        double radius { get; set; }
+        Vec3 repetitionDistancesVector;
+        public InfiniteSphere(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, double radius, Vec3 repetitionVector, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        {
+            //  Only extra info that a sphere needs is the radius
+            this.radius = radius;
+            
+            this.repetitionDistancesVector = repetitionVector;
+            this.position = VecModulus(position, this.repetitionDistancesVector);
+
+        }
+
+        public override double SDF(Vec3 rayLocation)
+        {
+            rayLocation = VecModulus(rayLocation, repetitionDistancesVector);
+            double signedDistance = Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
+            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
+            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
+        }
+
+
+
+        public override Vec3 FindNormal(Vec3 rayLocation)
+        {
+            rayLocation = VecModulus(rayLocation, repetitionDistancesVector);
+            Vec3 normal = rayLocation - this.position;
+            normal.Normalise();
+            return normal;
+        }
+
+        public double Modulus(double a, double b)   //  Used in infite repetitions
+        {
+            double k = Math.Floor(a / b);
+            double modVal = a - k * b;
+            return modVal;
+        }
+
+        public Vec3 VecModulus(Vec3 a, Vec3 b)
+        {
+            Vec3 modVec = new Vec3(Modulus(a.x, b.x), Modulus(a.y, b.y), Modulus(a.z, b.z));
+            return modVec;
         }
     }
 }
