@@ -60,7 +60,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         SettingInfo currentSettings = new(
                 res_x: 640,
                 res_y: 320,
-                rayCountPerPixel: 30,
+                rayCountPerPixel: 10,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
@@ -233,15 +233,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  First Point light source
             lightPoints.Add(new PointLight(
-                position: new Vec3(50, 0, 30),
-                lightColour: new Vec3(0.6, 0.6, 0),
-                lightBrightness: 3
+                position: new Vec3(50, -80, 30),
+                lightColour: new Vec3(0.2, 0.3, 0.7),
+                lightBrightness: 1.5
 
                 ));
 
             //  Second Point light source
             lightPoints.Add(new PointLight(
-                position: new Vec3(70, 40, 10),
+                position: new Vec3(200, 40, -30),
                 lightColour: new Vec3(0.6, 0, 0.6),
                 lightBrightness: 1.2
 
@@ -249,12 +249,21 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  Infite sphere
             shapes.Add(new InfiniteSphere(
-                position: new Vec3(40, 40, 40)
+                position: new Vec3(60, 40, 140)
                 , specularComponent: new Vec3(.7, .1, .9)
                 , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
                 , alpha: 6
-                , radius: 20
-                , repetitionVector: new Vec3(100, 100, 100)
+                , radius: 10
+                , repetitionVector: new Vec3(100, 100, 200)
+                ));
+
+            shapes.Add(new InfiniteSphere(
+                position: new Vec3(50, 50, 50)
+                , specularComponent: new Vec3(.7, .9, .1)
+                , diffuseComponent: new Vec3(0.3, 0.1, 0.9)
+                , alpha: 6
+                , radius: 5
+                , repetitionVector: new Vec3(100, 100, 200)
                 ));
 
             //  DEBUG CODE
