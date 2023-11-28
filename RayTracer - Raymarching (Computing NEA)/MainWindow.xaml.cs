@@ -58,14 +58,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Settings for each image
         SettingInfo currentSettings = new(
-                res_x: 640,
-                res_y: 320,
-                rayCountPerPixel: 10,
+                res_x: 60,
+                res_y: 40,
+                rayCountPerPixel: 15,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
                 minJumpDistance: 0.01d,
                 maxBounceCount: 20,
+                startOffset: 1,
 
                 isAntiAliasing: true,
                 AA_Strength: 0.02d,
@@ -90,6 +91,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             public double maxJumpDistance = 400;
             public double minJumpDistance = 0.01;
             public int maxBounceCount = 12;
+            public double startOffset = 0.05;
 
             //  Low performance impact
             public bool isAntiAliasing = true;
@@ -99,7 +101,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  Precomputed
             public double screenRatio;
             public double FoVScale;
-            public SettingInfo(int res_x, int res_y, int rayCountPerPixel, int maxIterations, double maxJumpDistance, double minJumpDistance, int maxBounceCount, bool isAntiAliasing, double AA_Strength, double FoVangle)
+            public SettingInfo(int res_x, int res_y, int rayCountPerPixel, int maxIterations, double maxJumpDistance, double minJumpDistance, int maxBounceCount, double startOffset, bool isAntiAliasing, double AA_Strength, double FoVangle)
             {
                 this.res_x = res_x;
                 this.res_y = res_y;
@@ -109,6 +111,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 this.maxJumpDistance = maxJumpDistance;
                 this.minJumpDistance = minJumpDistance;
                 this.maxBounceCount = maxBounceCount;
+                this.startOffset = startOffset;
 
                 this.isAntiAliasing = isAntiAliasing;
                 this.AA_Strength = AA_Strength;
@@ -158,25 +161,25 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //Vec3 k_d1 = new Vec3(0.9, 0.2, 0.1);
             //double alpha1 = 2;
             //double radius1 = 15;
-            //Vec3 lightStrength1 = 10*new Vec3(0.1, .1, 1);
+            //Vec3 lightStrength1 = 10 * new Vec3(0.1, .1, 1);
             //lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
-            
+
             //  Second sphere
             Vec3 pos2 = new Vec3(0, 0, -20000);
-            Vec3 k_s2 = 1*new Vec3(0.3, 0.2, 0.9);
-            Vec3 k_d2 = 1*new Vec3(0.7, 0.8, 0.1);
+            Vec3 k_s2 = 1 * new Vec3(0.3, 0.2, 0.9);
+            Vec3 k_d2 = 1 * new Vec3(0.7, 0.8, 0.1);
             double alpha2 = 3;
-            double radius2 = 20000;
-            //shapes.Add(new Sphere(pos2, k_s2, k_d2, alpha2, radius2));
+            double radius2 = 19800;
+            shapes.Add(new Sphere(pos2, k_s2, k_d2, alpha2, radius2));
 
             //  Third sphere
             Vec3 pos3 = new Vec3(0, -20050, 0);
             Vec3 k_s3 = new Vec3(.9, 0.9, 0.1);
             Vec3 k_d3 = new Vec3(0.1, 0.1, 0.9);
             double alpha3 = 20;
-            double radius3 = 20000;
-            //shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
-            
+            double radius3 = 19800;
+            shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
+
             //  Fourth sphere
             //Vec3 pos4 = new Vec3(50, 0, 30);
             //Vec3 k_s4 = new Vec3(0, 0, 0);
@@ -195,22 +198,22 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //shapes.Add(new Sphere(pos5, k_s5, k_d5, alpha5, radius5));
 
             //  Sixth sphere
-            //shapes.Add(new Sphere(
-            //    position:new Vec3(20100, 0, 0)
-            //    , specularComponent: new Vec3(.7, .1, .9)
-            //    , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-            //    , alpha: 6
-            //    , radius: 20000
-            //    ));
+            shapes.Add(new Sphere(
+                position: new Vec3(20100, 0, 0)
+                , specularComponent: new Vec3(.7, .1, .9)
+                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+                , alpha: 6
+                , radius: 19800
+                ));
 
             //  Seventh sphere
-            //shapes.Add(new Sphere(
-            //    position: new Vec3(-20100, 0, 0)
-            //    , specularComponent: new Vec3(.7, .1, .9)
-            //    , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-            //    , alpha: 6
-            //    , radius: 20000
-            //    ));
+            shapes.Add(new Sphere(
+                position: new Vec3(-20100, 0, 0)
+                , specularComponent: new Vec3(.7, .1, .9)
+                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+                , alpha: 6
+                , radius: 19800
+                ));
 
             //  Eigth sphere
             //lights.Add(new Sphere(
@@ -228,43 +231,84 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //    , specularComponent: new Vec3(.7, .1, .9)
             //    , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
             //    , alpha: 6
-            //    , radius: 20000
+            //    , radius: 19900
             //    ));
+
+            //  Tenth Sphere
+            //shapes.Add(new Sphere(
+            //    position: new Vec3(60, 40, 140)
+            //    , specularComponent: new Vec3(.1, .1, .9)
+            //    , diffuseComponent: new Vec3(0.9, .9, 0.1)
+            //    , alpha: 6
+            //    , radius: 50
+            //    ));
+
+
+            //  Combo sphere 1
+            Shape comboSphere1 = new Sphere(
+                position: new Vec3(25, -25, 20)
+                , specularComponent: new Vec3(.7, .1, .9)
+                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+                , alpha: 6
+                , radius: 20
+                );
+
+            //  Combo Sphere 2
+            Shape comboSphere2 = new Sphere(
+                position: new Vec3(25, -25, 60)
+                , specularComponent: new Vec3(.1, .1, .9)
+                , diffuseComponent: new Vec3(0.9, .9, 0.1)
+                , alpha: 6
+                , radius: 30
+                );
+            //  First Combo sphere
+            shapes.Add(new Combination(
+                specularComponent: new Vec3(.1, .7, .7),
+                diffuseComponent: new Vec3(.9, .3, .3),
+                alpha: 6,
+                shape1: comboSphere1,
+                shape2: comboSphere2,
+                weighting: 0.7,
+                type: comboType.Union
+
+
+
+                ));
 
             //  First Point light source
             lightPoints.Add(new PointLight(
-                position: new Vec3(50, -80, 30),
-                lightColour: new Vec3(0.2, 0.3, 0.7),
-                lightBrightness: 1.5
+                position: new Vec3(-20, -30, 30),
+                lightColour: new Vec3(1, 1, 1),
+                lightBrightness: 1.4
 
                 ));
 
             //  Second Point light source
-            lightPoints.Add(new PointLight(
-                position: new Vec3(200, 40, -30),
-                lightColour: new Vec3(0.6, 0, 0.6),
-                lightBrightness: 1.2
+            //lightPoints.Add(new PointLight(
+            //    position: new Vec3(130, 80, -30),
+            //    lightColour: new Vec3(1, 1, 1),
+            //    lightBrightness: .7
 
-                ));
+            //    ));
 
             //  Infite sphere
-            shapes.Add(new InfiniteSphere(
-                position: new Vec3(60, 40, 140)
-                , specularComponent: new Vec3(.7, .1, .9)
-                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-                , alpha: 6
-                , radius: 10
-                , repetitionVector: new Vec3(100, 100, 200)
-                ));
+            //shapes.Add(new InfiniteSphere(
+            //    position: new Vec3(60, 40, 140)
+            //    , specularComponent: new Vec3(.7, .1, .9)
+            //    , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+            //    , alpha: 6
+            //    , radius: 10
+            //    , repetitionVector: new Vec3(100, 100, 200)
+            //    ));
 
-            shapes.Add(new InfiniteSphere(
-                position: new Vec3(50, 50, 50)
-                , specularComponent: new Vec3(.7, .9, .1)
-                , diffuseComponent: new Vec3(0.3, 0.1, 0.9)
-                , alpha: 6
-                , radius: 5
-                , repetitionVector: new Vec3(100, 100, 200)
-                ));
+            //shapes.Add(new InfiniteSphere(
+            //    position: new Vec3(50, 50, 50)
+            //    , specularComponent: new Vec3(.7, .9, .1)
+            //    , diffuseComponent: new Vec3(0.3, 0.1, 0.9)
+            //    , alpha: 6
+            //    , radius: 5
+            //    , repetitionVector: new Vec3(100, 100, 200)
+            //    ));
 
             //  DEBUG CODE
             //SettingsWindow SettingsWindow01 = new SettingsWindow();
@@ -516,11 +560,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         IntersectionInfo DetermineIntersections(Ray currentRay)
         {
-            Shape? previousShape = currentRay.previousShape;
+            //Shape? previousShape = currentRay.previousShape;      DEBUGGING, for testing switching to an offset method to allow for concave shapes
+            Shape? previousShape = null;
+
             //	previousShape stops us colliding with what we just hit
             currentRay.direction.Normalise();
             //  We want normalised versions
-            Vec3 currPos = currentRay.position;
+            Vec3 currPos = currentRay.position + currentRay.direction * currentSettings.startOffset;
 
             bool searching = true;
             int iterationCount = 0;

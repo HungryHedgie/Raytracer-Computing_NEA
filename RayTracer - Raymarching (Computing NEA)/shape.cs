@@ -69,7 +69,19 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  Each component is how much of the colour is reflected
             return reflectance;
         }
-    
+
+        public Vec3 FindNormalNumerically(Vec3 rayLocation)
+        {
+            //  Hardcoded precision
+            double epsilon = 0.0001;
+            Vec3 normal = 1 / (2 * epsilon) * new Vec3(
+                this.SDF(new Vec3(rayLocation.x + epsilon, rayLocation.y, rayLocation.z)) - this.SDF(new Vec3(rayLocation.x - epsilon, rayLocation.y, rayLocation.z)),
+                this.SDF(new Vec3(rayLocation.x, rayLocation.y + epsilon, rayLocation.z)) - this.SDF(new Vec3(rayLocation.x, rayLocation.y - epsilon, rayLocation.z)),
+                this.SDF(new Vec3(rayLocation.x, rayLocation.y, rayLocation.z + epsilon)) - this.SDF(new Vec3(rayLocation.x, rayLocation.y, rayLocation.z - epsilon)));
+            normal.Normalise();
+            return normal;
+        }
+
     }
 
     class Sphere : Shape
@@ -93,6 +105,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public override Vec3 FindNormal(Vec3 rayLocation)
         {
+            //Vec3 normal = FindNormalNumerically(rayLocation);
             Vec3 normal = rayLocation - this.position;
             normal.Normalise();
             return normal;
@@ -157,40 +170,40 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public Shape shape2;
 
         public double k;    //  Weighting for how smooth combination is
-        public Combination(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Shape shape1, Shape shape2, double weighting, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        public comboType type;
+        public Combination(Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Shape shape1, Shape shape2, double weighting, comboType type, Vec3 lightStrength = null, Vec3 position = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
         {
 
             this.shape1 = shape1;
             this.shape2 = shape2;
             this.k = weighting;
+            this.type = type;
             
 
         }
 
         public override double SDF(Vec3 rayLocation)
         {
-            double signedDistance = -Math.Log(Math.Exp(- k *shape1.SDF(rayLocation)) + Math.Exp(- k * shape2.SDF(rayLocation)))/k;
+            double signedDistance;
+            if (type == comboType.Union)
+            {
+                signedDistance = -Math.Log(Math.Exp(-k * shape1.SDF(rayLocation)) + Math.Exp(-k * shape2.SDF(rayLocation))) / k;
+            }
+            else
+            {
+                //  Only union is implemented so far
+                throw new Exception();
+            }
             return signedDistance;
         }
 
         public override Vec3 FindNormal(Vec3 rayLocation)
         {
-            Vec3 normal = rayLocation - this.position;
-            normal.Normalise();
+            Vec3 normal = FindNormalNumerically(rayLocation);
             return normal;
         }
 
-        public Vec3 FindNormalNumerically(Vec3 rayLocation)
-        {
-            //  Hardcoded precision
-            double epsilon = 0.0001;
-            Vec3 normal = 1 / (2 * epsilon) * new Vec3(
-                this.SDF(new Vec3(rayLocation.x + epsilon, rayLocation.y, rayLocation.z)) - this.SDF(new Vec3(rayLocation.x - epsilon, rayLocation.y, rayLocation.z)),
-                this.SDF(new Vec3(rayLocation.x, rayLocation.y + epsilon, rayLocation.z)) - this.SDF(new Vec3(rayLocation.x, rayLocation.y - epsilon, rayLocation.z)),
-                this.SDF(new Vec3(rayLocation.x, rayLocation.y, rayLocation.z + epsilon)) - this.SDF(new Vec3(rayLocation.x, rayLocation.y, rayLocation.z - epsilon)));
-            normal.Normalise();
-            return normal;
-        }
+        
         
     }
 
