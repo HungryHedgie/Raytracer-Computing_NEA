@@ -169,14 +169,16 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public Shape shape1;
         public Shape shape2;
 
-        public double k;    //  Weighting for how smooth combination is
+        public double sdfMergeStrength;    //  Weighting for how smooth combination is
+        public double colourMergeStrength;
         public comboType type;
-        public Combination(Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Shape shape1, Shape shape2, double weighting, comboType type, Vec3 lightStrength = null, Vec3 position = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        public Combination(Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Shape shape1, Shape shape2, double sdfWeighting, comboType type, double colourMergeStrength = 15, Vec3 lightStrength = null, Vec3 position = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
         {
 
             this.shape1 = shape1;
             this.shape2 = shape2;
-            this.k = weighting;
+            this.sdfMergeStrength = sdfWeighting;
+            this.colourMergeStrength = colourMergeStrength;
             this.type = type;
             
 
@@ -185,21 +187,56 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public override double SDF(Vec3 rayLocation)
         {
             double signedDistance;
+            double shape1Dist = shape1.SDF(rayLocation);
+            double shape2Dist = shape2.SDF(rayLocation);
             if (type == comboType.Union)
             {
-                signedDistance = -Math.Log(Math.Exp(-k * shape1.SDF(rayLocation)) + Math.Exp(-k * shape2.SDF(rayLocation))) / k;
+                signedDistance = -Math.Log(Math.Exp(-sdfMergeStrength * shape1Dist) + Math.Exp(-sdfMergeStrength * shape2Dist)) / sdfMergeStrength;
+            }
+            else if(type == comboType.Intersection)
+            {
+                signedDistance = Math.Log(Math.Exp(sdfMergeStrength * shape1Dist) + Math.Exp(sdfMergeStrength * shape2Dist)) / sdfMergeStrength;
+
+
             }
             else
             {
                 //  Only union is implemented so far
                 throw new Exception();
             }
+
+            
+            
+            
             return signedDistance;
         }
+        private double f(double lt)
+        {
+            double v1 = lt * lt;
+            double v2 = Math.Sqrt(lt);
 
-        public override Vec3 FindNormal(Vec3 rayLocation)
+            return v1;
+            //return lerpDoub(v1, v2, lt); // f(lt)
+        }
+        private Vec3 lerp(Vec3 lP0, Vec3 lP1, double lt)
+        {
+            double newX = (1 - lt) * lP0.x + lt * lP1.x;
+            double newY = (1 - lt) * lP0.y + lt * lP1.y;
+            double newZ = (1 - lt) * lP0.z + lt * lP1.z;
+
+            Vec3 lP2 = new Vec3(newX, newY, newZ);
+            return lP2;
+        }
+
+        public override Vec3 FindNormal(Vec3 rayLocation)   //  Also calculates new shape colour at the point
         {
             Vec3 normal = FindNormalNumerically(rayLocation);
+
+            double shape1Dist = shape1.SDF(rayLocation);
+            double shape2Dist = shape2.SDF(rayLocation);
+            double t = Math.Exp(shape1Dist/ colourMergeStrength) / (Math.Exp(shape1Dist/ colourMergeStrength) + Math.Exp(shape2Dist/ colourMergeStrength));
+            this.k_s = lerp(shape1.k_s, shape2.k_s, t);
+            this.k_d = lerp(shape1.k_d, shape2.k_d, t);
             return normal;
         }
 

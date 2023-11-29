@@ -43,7 +43,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Controls initial camera sections
         
-        static Vec3 camLocation = new Vec3(-30, 0, 20);
+        static Vec3 camLocation = new Vec3(-50, 0, 40);
         double[] camRotations = new double[] { -20, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
@@ -58,9 +58,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Settings for each image
         SettingInfo currentSettings = new(
-                res_x: 60,
-                res_y: 40,
-                rayCountPerPixel: 15,
+                res_x: 120,
+                res_y: 80,
+                rayCountPerPixel: 20,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
@@ -132,13 +132,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
             public Shape previousShape;
             //currentRay.direction = null;
             public double distance;
+            public double closestRayCameToObject;
 
-            public IntersectionInfo(bool hasHitLight, Vec3 position, Shape previousShape, double distance)
+        public IntersectionInfo(bool hasHitLight, Vec3 position, Shape previousShape, double distance, double closestRayCameToObject)
             {
                 this.hasHitLight = hasHitLight;
                 this.position = position;
                 this.previousShape = previousShape;
                 this.distance = distance;
+                this.closestRayCameToObject = closestRayCameToObject;
             }
         }
 
@@ -246,29 +248,29 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  Combo sphere 1
             Shape comboSphere1 = new Sphere(
-                position: new Vec3(25, -25, 20)
-                , specularComponent: new Vec3(.7, .1, .9)
-                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+                position: new Vec3(45, -25, 25)
+                , specularComponent: new Vec3(.9, 0.9, 0)
+                , diffuseComponent: new Vec3(.1, .1, 1)
                 , alpha: 6
-                , radius: 20
+                , radius: 32
                 );
 
             //  Combo Sphere 2
             Shape comboSphere2 = new Sphere(
-                position: new Vec3(25, -25, 60)
-                , specularComponent: new Vec3(.1, .1, .9)
-                , diffuseComponent: new Vec3(0.9, .9, 0.1)
+                position: new Vec3(45, -35, 60)
+                , specularComponent: new Vec3(0, .9, .9)
+                , diffuseComponent: new Vec3(1, .1, 0.1)
                 , alpha: 6
-                , radius: 30
+                , radius: 20
                 );
             //  First Combo sphere
             shapes.Add(new Combination(
-                specularComponent: new Vec3(.1, .7, .7),
-                diffuseComponent: new Vec3(.9, .3, .3),
+                specularComponent: new Vec3(.9, 0, .9),
+                diffuseComponent: new Vec3(.1, 1, .1),
                 alpha: 6,
                 shape1: comboSphere1,
                 shape2: comboSphere2,
-                weighting: 0.7,
+                sdfWeighting: 0.7,
                 type: comboType.Union
 
 
@@ -277,9 +279,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  First Point light source
             lightPoints.Add(new PointLight(
-                position: new Vec3(-20, -30, 30),
+                position: new Vec3(-20, -60, 60),
                 lightColour: new Vec3(1, 1, 1),
-                lightBrightness: 1.4
+                lightBrightness: 2
 
                 ));
 
@@ -445,15 +447,16 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             IntersectionInfo intersectionReturnInfo1 = DetermineIntersections(currentRay);
                             double intersectionDistance = intersectionReturnInfo1.distance;
                             Shape shapeIntersected = intersectionReturnInfo1.previousShape;
-                            
+                            double closestRayCameToObject = intersectionReturnInfo1.closestRayCameToObject;
+
                             //  If distance to nearest shape is further than the light, then the ray will reach the light source unoccluded
                             //  If the ray intersects nothing then the ray reaches the light source as well
-                            if(lightDistance < intersectionDistance || shapeIntersected == null)
+                            if (lightDistance < intersectionDistance || shapeIntersected == null)
                             {
                                 Vec3 finalShapeReflectance = currentRay.previousShape.BRDF_phong(currPosToLight, initialDirection, normal);
                                 Vec3 tmpProductOfReflectance = Vec3.ColorCombination(finalShapeReflectance, currentRay.productOfReflectance);
                                 Vec3 pointLightContribution = Vec3.ColorCombination(tmpProductOfReflectance, currLight.lightStrength);
-                                finalColor += pointLightContribution;
+                                finalColor += pointLightContribution * (Math.Min(closestRayCameToObject, 10)/10);
                             }
 
                         }
@@ -574,6 +577,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  Distance not used, but provides a point to check against
             double distance = 0;
+            double closestRayCameToObject = currentSettings.maxJumpDistance;
 
             Shape closestObject = null;
 
@@ -596,6 +600,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             closestObject = currentShape;
                             hitLight = false;
                         }
+                        if(newDistance < closestRayCameToObject)
+                        {
+                            closestRayCameToObject = newDistance;
+                        }
                     }
                 }
                 //  For now lights are treated (intersection wise) as the same as shape
@@ -611,6 +619,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             lowestDistance = newDistance;
                             closestObject = currentLight;
                             hitLight = true;
+                        }
+                        if (newDistance < closestRayCameToObject)
+                        {
+                            closestRayCameToObject = newDistance;
                         }
                     }
                 }
@@ -639,7 +651,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 hasHitLight: hitLight,
                 position: currPos,
                 previousShape: closestObject,
-                distance: distance
+                distance: distance,
+                closestRayCameToObject: closestRayCameToObject
                 );
             return intersectionReturnInfo;
         }
