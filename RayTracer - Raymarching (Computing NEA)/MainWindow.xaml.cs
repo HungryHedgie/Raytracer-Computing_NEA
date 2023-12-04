@@ -60,13 +60,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
         SettingInfo currentSettings = new(
                 res_x: 120,
                 res_y: 80,
-                rayCountPerPixel: 20,
+                rayCountPerPixel: 10,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
                 minJumpDistance: 0.01d,
                 maxBounceCount: 20,
                 startOffset: 1,
+                lightArea: 14,  //  Higher is sharper shadows
 
                 isAntiAliasing: true,
                 AA_Strength: 0.02d,
@@ -97,11 +98,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
             public bool isAntiAliasing = true;
             public double AA_Strength = 0.02d;
             public double FoVangle = 110;
+            public double lightArea = 4; // Used in soft shadows for point light sources
 
             //  Precomputed
             public double screenRatio;
             public double FoVScale;
-            public SettingInfo(int res_x, int res_y, int rayCountPerPixel, int maxIterations, double maxJumpDistance, double minJumpDistance, int maxBounceCount, double startOffset, bool isAntiAliasing, double AA_Strength, double FoVangle)
+            public SettingInfo(int res_x, int res_y, int rayCountPerPixel, int maxIterations, double maxJumpDistance, double minJumpDistance, int maxBounceCount, double startOffset, bool isAntiAliasing, double AA_Strength, double lightArea, double FoVangle)
             {
                 this.res_x = res_x;
                 this.res_y = res_y;
@@ -112,6 +114,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 this.minJumpDistance = minJumpDistance;
                 this.maxBounceCount = maxBounceCount;
                 this.startOffset = startOffset;
+                this.lightArea = lightArea;
 
                 this.isAntiAliasing = isAntiAliasing;
                 this.AA_Strength = AA_Strength;
@@ -132,15 +135,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
             public Shape previousShape;
             //currentRay.direction = null;
             public double distance;
-            public double closestRayCameToObject;
+            public double shadowContribution;
 
-        public IntersectionInfo(bool hasHitLight, Vec3 position, Shape previousShape, double distance, double closestRayCameToObject)
+        public IntersectionInfo(bool hasHitLight, Vec3 position, Shape previousShape, double distance, double shadowContribution)
             {
                 this.hasHitLight = hasHitLight;
                 this.position = position;
                 this.previousShape = previousShape;
                 this.distance = distance;
-                this.closestRayCameToObject = closestRayCameToObject;
+                this.shadowContribution = shadowContribution;
             }
         }
 
@@ -264,18 +267,18 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 , radius: 20
                 );
             //  First Combo sphere
-            shapes.Add(new Combination(
-                specularComponent: new Vec3(.9, 0, .9),
-                diffuseComponent: new Vec3(.1, 1, .1),
-                alpha: 6,
-                shape1: comboSphere1,
-                shape2: comboSphere2,
-                sdfWeighting: 0.7,
-                type: comboType.Union
+            //shapes.Add(new Combination(
+            //    specularComponent: new Vec3(.9, 0, .9),
+            //    diffuseComponent: new Vec3(.1, 1, .1),
+            //    alpha: 6,
+            //    shape1: comboSphere1,
+            //    shape2: comboSphere2,
+            //    sdfWeighting: 0.7,
+            //    type: comboType.Union
 
 
 
-                ));
+            //    ));
 
             //  First Point light source
             lightPoints.Add(new PointLight(
@@ -311,6 +314,16 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //    , radius: 5
             //    , repetitionVector: new Vec3(100, 100, 200)
             //    ));
+
+            //  First line
+            shapes.Add(new Line(
+                specularComponent: new Vec3(0, 1, 1),
+                diffuseComponent: new Vec3(1, 0, 0),
+                alpha: 6,
+                pointA: new Vec3(50,-90,60),
+                pointB: new Vec3(50,60,70),
+                radius: 10
+                ));
 
             //  DEBUG CODE
             //SettingsWindow SettingsWindow01 = new SettingsWindow();
@@ -444,10 +457,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             double lightDistance = currPosToLight.Magnitude();
 
                             currentRay.direction = currPosToLight;
-                            IntersectionInfo intersectionReturnInfo1 = DetermineIntersections(currentRay);
+                            IntersectionInfo intersectionReturnInfo1 = DetermineIntersections(currentRay, lightDistance);
                             double intersectionDistance = intersectionReturnInfo1.distance;
                             Shape shapeIntersected = intersectionReturnInfo1.previousShape;
-                            double closestRayCameToObject = intersectionReturnInfo1.closestRayCameToObject;
+
+                            //  Not implemented yet
+                            double shadowContribution = intersectionReturnInfo1.shadowContribution;
 
                             //  If distance to nearest shape is further than the light, then the ray will reach the light source unoccluded
                             //  If the ray intersects nothing then the ray reaches the light source as well
@@ -456,7 +471,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                                 Vec3 finalShapeReflectance = currentRay.previousShape.BRDF_phong(currPosToLight, initialDirection, normal);
                                 Vec3 tmpProductOfReflectance = Vec3.ColorCombination(finalShapeReflectance, currentRay.productOfReflectance);
                                 Vec3 pointLightContribution = Vec3.ColorCombination(tmpProductOfReflectance, currLight.lightStrength);
-                                finalColor += pointLightContribution * (Math.Min(closestRayCameToObject, 10)/10);
+                                finalColor += pointLightContribution * shadowContribution;
                             }
 
                         }
@@ -561,7 +576,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return rayDirection;
         }
 
-        IntersectionInfo DetermineIntersections(Ray currentRay)
+        IntersectionInfo DetermineIntersections(Ray currentRay, double maxTravelDistance=double.MaxValue)
         {
             //Shape? previousShape = currentRay.previousShape;      DEBUGGING, for testing switching to an offset method to allow for concave shapes
             Shape? previousShape = null;
@@ -577,7 +592,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  Distance not used, but provides a point to check against
             double distance = 0;
-            double closestRayCameToObject = currentSettings.maxJumpDistance;
+            double shadowContribution = 1;
+
 
             Shape closestObject = null;
 
@@ -586,6 +602,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 //  Find closest surface
                 //  anything below current lowest distance will be set as te new lowest distance
                 double lowestDistance = currentSettings.maxJumpDistance;
+
+                
+
                 foreach (Shape currentShape in shapes)
                 {
                     //  Check we aren't colliding with the same object as where we started
@@ -600,10 +619,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             closestObject = currentShape;
                             hitLight = false;
                         }
-                        if(newDistance < closestRayCameToObject)
-                        {
-                            closestRayCameToObject = newDistance;
-                        }
+                        
                     }
                 }
                 //  For now lights are treated (intersection wise) as the same as shape
@@ -620,22 +636,28 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             closestObject = currentLight;
                             hitLight = true;
                         }
-                        if (newDistance < closestRayCameToObject)
-                        {
-                            closestRayCameToObject = newDistance;
-                        }
+                        
                     }
                 }
                 //  Iteration counts prevents iteration going on forever
                 iterationCount++;
 
                 //  Dist to closest surface used to find new position
+                
+
                 currPos += currentRay.direction * lowestDistance;
                 distance += lowestDistance;
+
+                double newShadowContribution = currentSettings.lightArea * lowestDistance / distance;
+
+                if (shadowContribution > newShadowContribution)
+                {
+                    shadowContribution = newShadowContribution;
+                }
                 //  Tolerance check:
                 //  Have we travelled further than the max jump distance?
                 //  Have we gone through too many iterations?
-                if (iterationCount > currentSettings.maxIterations || lowestDistance == currentSettings.maxJumpDistance){
+                if (iterationCount > currentSettings.maxIterations || lowestDistance == currentSettings.maxJumpDistance || distance > maxTravelDistance){
                     searching = false;
                     closestObject = null;
                     hitLight=false;
@@ -652,7 +674,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 position: currPos,
                 previousShape: closestObject,
                 distance: distance,
-                closestRayCameToObject: closestRayCameToObject
+                shadowContribution: shadowContribution 
                 );
             return intersectionReturnInfo;
         }

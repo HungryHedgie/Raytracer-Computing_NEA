@@ -142,24 +142,59 @@ namespace RayTracer___Raymarching__Computing_NEA_
     {
         //  Radius is how much area around the line is taken up
         double radius { get; set; }
-        public Line(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, double radius, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        double segmentDist;
+
+        Vec3 pointA;
+        Vec3 pointB;
+
+        double LB = double.MinValue; //   Upper bound and Lower bound for lambda values, either -infinity or 0 and 1 or +infinity
+        double UB = double.MaxValue;  //  Technically not actually an infinite line because of this, but will have no actual effect
+        public Line(Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Vec3 pointA, Vec3 pointB, double radius, bool haltA = true, bool haltB = true, Vec3 lightStrength = null, Vec3 position=null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
         {
 
             this.radius = radius;
+            this.pointA = pointA;
+            this.pointB = pointB;
+            this.segmentDist = Math.Sqrt((pointB - pointA) * (pointB - pointA));
+            if (haltA)
+            {
+                this.LB = 0;
+            }
+            if (haltB)
+            {
+                this.UB = 1;
+            }
 
         }
 
         public override double SDF(Vec3 rayLocation)
         {
-            double signedDistance = Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
-            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
-            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
+            double lambdaInfinite = Math.Sqrt((rayLocation - pointA) * (rayLocation - pointA)) / segmentDist;  //  Doesn't account for end points
+            double lambdaActual = Math.Min(Math.Max(lambdaInfinite, LB), UB);
+            //  Use how far along the line we are to get a specific point
+            Vec3 closestPointOnLine = pointA + lambdaActual * (pointB - pointA);
+
+            //  Now we take dist from the raylocation to closestPoint lying on the line
+            double signedDistance = Math.Sqrt((rayLocation - closestPointOnLine) * (rayLocation - closestPointOnLine)) - radius;
+
+
+            return signedDistance;
         }
 
         public override Vec3 FindNormal(Vec3 rayLocation)
         {
-            Vec3 normal = rayLocation - this.position;
-            normal.Normalise();
+            Vec3 normal = FindNormalNumerically(rayLocation);
+
+            //  Exact calculations
+            /*
+            double lambdaInfinite = Math.Sqrt((rayLocation - pointA) * (rayLocation - pointA)) / segmentDist;  //  Doesn't account for end points
+            
+            double lambdaActual = Math.Min(Math.Max(lambdaInfinite, LB), UB);
+            //  Use how far along the line we are to get a specific point
+            Vec3 closestPointOnLine = pointA + lambdaActual * (pointB - pointA);
+
+            //  Now we take dist from the raylocation to closestPoint lying on the line
+            Vec3 normal = Vec3.Normalise(rayLocation - closestPointOnLine);*/
             return normal;
         }
     }
