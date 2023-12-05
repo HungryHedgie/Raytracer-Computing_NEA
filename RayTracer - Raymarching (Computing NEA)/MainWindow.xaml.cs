@@ -43,8 +43,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Controls initial camera sections
         
-        static Vec3 camLocation = new Vec3(-100, 0, 40);
-        double[] camRotations = new double[] { -20, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
+        static Vec3 camLocation = new Vec3(-150, 0, 80);
+        double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
         //  All Shapes
@@ -58,9 +58,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Settings for each image
         SettingInfo currentSettings = new(
-                res_x: 120,
-                res_y: 80,
-                rayCountPerPixel: 100,
+                res_x: 80,
+                res_y: 40,
+                rayCountPerPixel: 20,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
@@ -71,7 +71,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                 isAntiAliasing: true,
                 AA_Strength: 0.02d,
-                FoVangle: 110
+                FoVangle: 100
 
                 );
 
@@ -169,21 +169,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //Vec3 lightStrength1 = 10 * new Vec3(0.1, .1, 1);
             //lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
 
-            //  Second sphere
-            Vec3 pos2 = new Vec3(0, 0, -20000);
-            Vec3 k_s2 = 1 * new Vec3(0.3, 0.2, 0.9);
-            Vec3 k_d2 = 1 * new Vec3(0.7, 0.8, 0.1);
-            double alpha2 = 3;
-            double radius2 = 19800;
-            shapes.Add(new Sphere(pos2, k_s2, k_d2, alpha2, radius2));
-
-            //  Third sphere
-            Vec3 pos3 = new Vec3(0, -20050, 0);
-            Vec3 k_s3 = new Vec3(.9, 0.9, 0.1);
-            Vec3 k_d3 = new Vec3(0.1, 0.1, 0.9);
-            double alpha3 = 20;
-            double radius3 = 19800;
-            shapes.Add(new Sphere(pos3, k_s3, k_d3, alpha3, radius3));
+            
 
             //  Fourth sphere
             //Vec3 pos4 = new Vec3(50, 0, 30);
@@ -202,42 +188,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             double radius5 = 10;
             //shapes.Add(new Sphere(pos5, k_s5, k_d5, alpha5, radius5));
 
-            //  Sixth sphere
-            shapes.Add(new Sphere(
-                position: new Vec3(20100, 0, 0)
-                , specularComponent: new Vec3(.7, .1, .9)
-                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-                , alpha: 6
-                , radius: 19800
-                ));
-
-            //  Seventh sphere
-            shapes.Add(new Sphere(
-                position: new Vec3(-20100, 0, 0)
-                , specularComponent: new Vec3(.7, .1, .9)
-                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-                , alpha: 6
-                , radius: 19800
-                ));
-
-            //  Eigth sphere
-            //lights.Add(new Sphere(
-            //    position: new Vec3(0, 20100, 0)
-            //    , specularComponent: new Vec3(.7, .1, .9)
-            //    , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-            //    , alpha: 6
-            //    , radius: 20000
-            //    , lightStrength:3*new Vec3(1, 1, 1)
-            //    ));
-
-            //  Ninth sphere
-            //shapes.Add(new Sphere(
-            //    position: new Vec3(0, 0, 20200)
-            //    , specularComponent: new Vec3(.7, .1, .9)
-            //    , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-            //    , alpha: 6
-            //    , radius: 19900
-            //    ));
+            
 
             //  Tenth Sphere
             //shapes.Add(new Sphere(
@@ -281,22 +232,22 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //    ));
 
             //  First Point light source
-            //lightPoints.Add(new PointLight(
-            //    position: new Vec3(-20, -60, 60),
-            //    lightColour: new Vec3(1, 1, 1),
-            //    lightBrightness: 2
+            lightPoints.Add(new PointLight(
+                position: new Vec3(-20, -60, 60),
+                lightColour: new Vec3(1, 1, 1),
+                lightBrightness: 5
 
-            //    ));
+                ));
 
             //  Second Point light source
-            //lightPoints.Add(new PointLight(
-            //    position: new Vec3(130, 80, -30),
-            //    lightColour: new Vec3(1, 1, 1),
-            //    lightBrightness: .7
+            lightPoints.Add(new PointLight(
+                position: new Vec3(130, 80, 150),
+                lightColour: new Vec3(1, 1, 1),
+                lightBrightness: 2
 
-            //    ));
+                ));
 
-            //  Infite sphere
+            //  Infinite sphere
             //shapes.Add(new InfiniteSphere(
             //    position: new Vec3(60, 40, 140)
             //    , specularComponent: new Vec3(.7, .1, .9)
@@ -316,16 +267,67 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //    ));
 
             //  First line
-            lights.Add(new Line(
-                specularComponent: new Vec3(0.8, .4, .6),
-                diffuseComponent: new Vec3(0.2, 0.6, 0.4),
-                alpha: 6,
-                pointA: new Vec3(50,-90,60),
-                pointB: new Vec3(50,60,70),
-                radius: 30,
-                lightStrength: 30 * new Vec3(1, 0.2, 0.2),
-                haltB: false
+            //lights.Add(new Line(
+            //    specularComponent: new Vec3(0.9, .9, .3),
+            //    diffuseComponent: new Vec3(0.1, 0.1, 0.7),
+            //    alpha: 6,
+            //    pointA: new Vec3(50,-90,60),
+            //    pointB: new Vec3(50,60,70),
+            //    radius: 30,
+            //    lightStrength: 20 * new Vec3(.5, 0.2, 0.8),
+            //    haltB: false
                 
+            //    ));
+
+            //  Bottom plane
+            shapes.Add(new Plane(
+                pointOnPlane: new Vec3(0, 0, 0),
+                specularComponent: new Vec3(0.3, .3, .9),
+                diffuseComponent: new Vec3(.7, .7, .1),
+                alpha: 6,
+                normal: new Vec3(0, 0, 1)
+
+
+
+                ));
+
+            //  Rightside plane
+
+            shapes.Add(new Plane(
+                pointOnPlane: new Vec3(0, -60, 0),
+                specularComponent: new Vec3(0.7, .3, .9),
+                diffuseComponent: new Vec3(.3, .7, .1),
+                alpha: 6,
+                normal: new Vec3(0, 1, 0)
+
+
+
+                ));
+
+            //  Back plane
+
+            shapes.Add(new Plane(
+                pointOnPlane: new Vec3(200, 0, 0),
+                specularComponent: new Vec3(0.5, .9, .5),
+                diffuseComponent: new Vec3(.5, .1, .5),
+                alpha: 6,
+                normal: new Vec3(-1, 0, 0)
+
+
+                ));
+
+            //  Box One
+            shapes.Add(new Cuboid(
+                position: new Vec3(-60, 0, 70),
+                cornerPosition: new Vec3(10, 10, 20),
+                fullRotationInfo: new double[] {90, 45, 0},
+                diffuseComponent: new Vec3(.5, .9, .6),
+                specularComponent: new Vec3(.5, .1, .4),
+                alpha: 6,
+                cornerSmoothing: 4
+
+
+
                 ));
 
             //  DEBUG CODE

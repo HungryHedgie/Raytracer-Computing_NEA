@@ -49,7 +49,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  We rotate only by the xyQuat as if you try to move forwards you should move on the horizontal plane, not upwards
             //  Multiplying only by the xyQuat ensures we still move along that plane correctly
-            this.position += rotatePoint(deltaXY, this.xyQuat);
+            this.position += Vec3.RotatePoint(deltaXY, this.xyQuat);
 
             //  Change in height is unaffected by this so is fine
             this.position += deltaZ;
@@ -57,17 +57,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public Vec3 camSpaceToWorldSpace(Vec3 point_relCam) {
             //  Converts a point relative to the camera into a point relative to the world center
-            Vec3 point_relWorld = this.position + rotatePoint(point_relCam, this.rotation);
+            Vec3 point_relWorld = this.position + Vec3.RotatePoint(point_relCam, this.rotation);
             return point_relWorld;
         }
 
 
-        private Vec3 rotatePoint(Vec3 initialVec, Quaternion rotation) {
-            //  Rotating by a quaternion is currently only used by the camera, so we keep it here to minimise global functions
-            Quaternion initialQuat = initialVec.AsQuaternion();
-            Quaternion finalQuat = rotation * initialQuat * Quaternion.Conjugate(rotation);
-            return new Vec3(finalQuat);
-        }
+        
 
     }
 }

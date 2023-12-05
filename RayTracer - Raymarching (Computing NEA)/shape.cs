@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 
 namespace RayTracer___Raymarching__Computing_NEA_
 {
@@ -118,7 +119,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
     {
         Vec3 pointOnPlane { get; set; }
         Vec3 normal { get; set; }
-        public Plane(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Vec3 pointOnPlane, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        public Plane(Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Vec3 pointOnPlane, Vec3 normal, Vec3 position=null, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
         {
 
             this.pointOnPlane = pointOnPlane;
@@ -138,7 +139,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         }
     }
 
-    class Line : Shape  //  NOT FINISHED YET
+    class Line : Shape
     {
         //  Radius is how much area around the line is taken up
         double radius { get; set; }
@@ -196,6 +197,70 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  Now we take dist from the raylocation to closestPoint lying on the line
             Vec3 normal = Vec3.Normalise(rayLocation - closestPointOnLine);
             return normal;
+        }
+    }
+
+    class Cuboid : Shape
+    {
+        double cornerSmoothing { get; set; }
+        Vec3 centerPosition { get; set; }
+        Vec3 cornerPosition { get; set; }
+        Quaternion rotation { get; set; }
+        public Cuboid(Vec3 position, Vec3 cornerPosition, double[] fullRotationInfo, Vec3 diffuseComponent, Vec3 specularComponent, double alpha, double cornerSmoothing = 0, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        {
+            
+            this.cornerSmoothing = cornerSmoothing;
+            this.centerPosition = position;
+            this.cornerPosition = cornerPosition;
+            newRotation(fullRotationInfo);
+
+        }
+
+        public override double SDF(Vec3 rayLocation)
+        {
+            Vec3 transformedPoint = InverseRigidTransformation(rayLocation);
+            transformedPoint = new Vec3(Math.Abs(transformedPoint.x), Math.Abs(transformedPoint.y), Math.Abs(transformedPoint.z));
+            Vec3 relOuterCourner = transformedPoint - this.cornerPosition;
+            Vec3 outerCase = new Vec3(Math.Max(relOuterCourner.x, 0), Math.Max(relOuterCourner.y, 0), Math.Max(relOuterCourner.z, 0));
+            double signedDistance = Math.Sqrt(outerCase * outerCase) + Math.Min(Math.Max(Math.Max(relOuterCourner.x, relOuterCourner.y), relOuterCourner.z), 0) - cornerSmoothing;
+            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
+            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
+        }
+
+
+
+        public override Vec3 FindNormal(Vec3 rayLocation)
+        {
+            //Vec3 normal = FindNormalNumerically(rayLocation);
+            Vec3 normal = FindNormalNumerically(rayLocation);
+            
+            return normal;
+        }
+
+        public Vec3 InverseRigidTransformation(Vec3 startPoint)
+        {
+            Vec3 endPoint = Vec3.RotatePoint(startPoint - this.position, Quaternion.Conjugate(this.rotation));
+
+            return endPoint;
+        }
+        
+
+
+        public void newRotation(double[] fullRotationInfo)
+        {
+            double xyPlaneRot = fullRotationInfo[0];
+            double yzPlaneRot = fullRotationInfo[1];
+            double xzPlaneRot = fullRotationInfo[2];
+
+            //  Generates corresponding quaternions for xy, yz and xy plane rotations, then combines them
+            Quaternion xyQuat = new Quaternion(0, 0, MathF.Sin((float)(xyPlaneRot / 2) * MathF.PI / 180), MathF.Cos((float)(xyPlaneRot / 2) * MathF.PI / 180));
+            Quaternion yzQuat = new Quaternion(MathF.Sin((float)(yzPlaneRot / 2) * MathF.PI / 180), 0, 0, MathF.Cos((float)(yzPlaneRot / 2) * MathF.PI / 180));
+
+            //  We take negative of the xzPlaneRot for the xzQuat as for quaternions as positive xz rotation points downwards
+            //  This can be checked on the linked interactive quaternion page by Ben Eater
+            Quaternion xzQuat = new Quaternion(0, -MathF.Sin((float)(xzPlaneRot / 2) * MathF.PI / 180), 0, MathF.Cos((float)(xzPlaneRot / 2) * MathF.PI / 180));
+
+            this.rotation = yzQuat * xyQuat * xzQuat;
         }
     }
 

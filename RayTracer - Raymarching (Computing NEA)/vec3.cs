@@ -27,7 +27,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             x = input.X;
             y = input.Y;
             z = input.Z;
-            if(input.W > 0.0001)    //  Debug and could be removed
+            if(input.W > 0.1)
             {
                 MessageBox.Show("Error with quaternion to vector, real component is non zero");
             }
@@ -39,12 +39,22 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return quat;
         }
 
+        
+
         public void Normalise() 
         {
             double normFraction = 1 / Math.Sqrt(Math.Pow(this.x, 2) + Math.Pow(this.y, 2) + Math.Pow(this.z, 2));
             x *= normFraction;
             y *= normFraction;
             z *= normFraction;
+        }
+
+        public static Vec3 RotatePoint(Vec3 initialVec, Quaternion rotation)
+        {
+            //  Rotating by a quaternion is currently only used by the camera, so we keep it here to minimise global functions
+            Quaternion initialQuat = initialVec.AsQuaternion();
+            Quaternion finalQuat = rotation * initialQuat * Quaternion.Conjugate(rotation);
+            return new Vec3(finalQuat);
         }
 
         public static Vec3 Cross(Vec3 a, Vec3 b)    //  Cross product, not currently used so could remove
