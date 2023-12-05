@@ -155,7 +155,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             this.radius = radius;
             this.pointA = pointA;
             this.pointB = pointB;
-            this.segmentDist = Math.Sqrt((pointB - pointA) * (pointB - pointA));
+            this.segmentDist = (pointB - pointA) * (pointB - pointA);
             if (haltA)
             {
                 this.LB = 0;
@@ -169,7 +169,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public override double SDF(Vec3 rayLocation)
         {
-            double lambdaInfinite = Math.Sqrt((rayLocation - pointA) * (rayLocation - pointA)) / segmentDist;  //  Doesn't account for end points
+            double lambdaInfinite = (rayLocation - pointA) * (pointB - pointA) / segmentDist;  //  Doesn't account for end points
             double lambdaActual = Math.Min(Math.Max(lambdaInfinite, LB), UB);
             //  Use how far along the line we are to get a specific point
             Vec3 closestPointOnLine = pointA + lambdaActual * (pointB - pointA);
@@ -183,18 +183,18 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public override Vec3 FindNormal(Vec3 rayLocation)
         {
-            Vec3 normal = FindNormalNumerically(rayLocation);
+            //Vec3 normal = FindNormalNumerically(rayLocation);
 
             //  Exact calculations
-            /*
-            double lambdaInfinite = Math.Sqrt((rayLocation - pointA) * (rayLocation - pointA)) / segmentDist;  //  Doesn't account for end points
+            
+            double lambdaInfinite = (rayLocation - pointA) * (pointB - pointA) / segmentDist;  //  Doesn't account for end points
             
             double lambdaActual = Math.Min(Math.Max(lambdaInfinite, LB), UB);
             //  Use how far along the line we are to get a specific point
             Vec3 closestPointOnLine = pointA + lambdaActual * (pointB - pointA);
 
             //  Now we take dist from the raylocation to closestPoint lying on the line
-            Vec3 normal = Vec3.Normalise(rayLocation - closestPointOnLine);*/
+            Vec3 normal = Vec3.Normalise(rayLocation - closestPointOnLine);
             return normal;
         }
     }

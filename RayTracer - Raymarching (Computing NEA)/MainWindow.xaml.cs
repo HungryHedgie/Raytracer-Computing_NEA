@@ -43,7 +43,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Controls initial camera sections
         
-        static Vec3 camLocation = new Vec3(-50, 0, 40);
+        static Vec3 camLocation = new Vec3(-100, 0, 40);
         double[] camRotations = new double[] { -20, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
@@ -60,7 +60,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         SettingInfo currentSettings = new(
                 res_x: 120,
                 res_y: 80,
-                rayCountPerPixel: 10,
+                rayCountPerPixel: 100,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
@@ -281,12 +281,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //    ));
 
             //  First Point light source
-            lightPoints.Add(new PointLight(
-                position: new Vec3(-20, -60, 60),
-                lightColour: new Vec3(1, 1, 1),
-                lightBrightness: 2
+            //lightPoints.Add(new PointLight(
+            //    position: new Vec3(-20, -60, 60),
+            //    lightColour: new Vec3(1, 1, 1),
+            //    lightBrightness: 2
 
-                ));
+            //    ));
 
             //  Second Point light source
             //lightPoints.Add(new PointLight(
@@ -316,13 +316,16 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //    ));
 
             //  First line
-            shapes.Add(new Line(
-                specularComponent: new Vec3(0, 1, 1),
-                diffuseComponent: new Vec3(1, 0, 0),
+            lights.Add(new Line(
+                specularComponent: new Vec3(0.8, .4, .6),
+                diffuseComponent: new Vec3(0.2, 0.6, 0.4),
                 alpha: 6,
                 pointA: new Vec3(50,-90,60),
                 pointB: new Vec3(50,60,70),
-                radius: 10
+                radius: 30,
+                lightStrength: 30 * new Vec3(1, 0.2, 0.2),
+                haltB: false
+                
                 ));
 
             //  DEBUG CODE
@@ -432,7 +435,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                     //  Calculates what object (if any) the ray hits, using the direction last calculated
                     IntersectionInfo intersectionReturnInfo0 = DetermineIntersections(currentRay);
 
-                    //  We won't need to update all these class variables each time, so we handle it seperately
+                    //  We won't need to update all these class variables in some cases of running determine intersections, so we handle it seperately
                     currentRay.hasHitLight = intersectionReturnInfo0.hasHitLight;
                     currentRay.position = intersectionReturnInfo0.position;
                     currentRay.previousShape = intersectionReturnInfo0.previousShape;
@@ -440,7 +443,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                     //  Result of collision checks is saved to currentRay
 
-                    //  If we hit something that was not a light, we work out the colour of the object and send out a new ray
+                    //  If we have hit an object and it isn't a light, we work out the colour of the object and account for point light sources and send out a new ray
                     if (currentRay.previousShape != null && !currentRay.hasHitLight)
                     {
                         //  Get the normal to the shape at the intersection point
@@ -461,7 +464,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             double intersectionDistance = intersectionReturnInfo1.distance;
                             Shape shapeIntersected = intersectionReturnInfo1.previousShape;
 
-                            //  Not implemented yet
+                            
                             double shadowContribution = intersectionReturnInfo1.shadowContribution;
 
                             //  If distance to nearest shape is further than the light, then the ray will reach the light source unoccluded
@@ -475,20 +478,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             }
 
                         }
-                        
-                        
-
-
-
                         //  Find new direction and that affect on the reflectance
                         currentRay.direction = FindingNewRayDirection(normal);
                         Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(currentRay.direction, initialDirection, normal);
                         currentRay.productOfReflectance = Vec3.ColorCombination(shapeReflectance, currentRay.productOfReflectance);
 
                         //  Need to setup how this affects final colour, should it run every time? What do we divide it by?
-
-                        
-
                     }
                     else
                     {
@@ -508,7 +503,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(1, 0, 0), 0), 128);
                             Vec3 sunColour = 0 * new Vec3(1, 0.8, 0.4);
                             double skyMagnitude = Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 0.4);
-                            Vec3 skyColour = 1 * new Vec3(0.3, 0.3, 0.7);
+                            Vec3 skyColour = 1 * new Vec3(0.7, 0.3, 0.3);
                             Vec3 ambientColour = 1 * new Vec3(0.1, 0.1, 0.1);
                             lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour;
                         }
