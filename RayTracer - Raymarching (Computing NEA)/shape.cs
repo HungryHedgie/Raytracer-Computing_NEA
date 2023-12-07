@@ -30,11 +30,18 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public Vec3 lightStrength = new Vec3(0, 0, 0);
 
-        public Shape(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Vec3 lightStrength = null) //  Need to change
+        public Shape(Vec3 position,  Vec3 diffuseComponent, double alpha, Vec3 specularComponent = null, Vec3 lightStrength = null) //  Need to change
         {
             //  General info all shapes will need
-            this.position = position;   
-            this.k_s = specularComponent;
+            this.position = position;
+            if (specularComponent != null || diffuseComponent == null)
+            {
+                this.k_s = specularComponent;
+            }
+            else
+            {
+                this.k_s = new Vec3(1, 1, 1) - diffuseComponent;
+            }
             this.k_d = diffuseComponent;
             this.alpha = alpha;
 
@@ -88,7 +95,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
     class Sphere : Shape
     {
         double radius {get; set;}
-        public Sphere(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, double radius, Vec3 lightStrength = null) : base (position, specularComponent, diffuseComponent, alpha, lightStrength)
+        public Sphere(Vec3 position,  Vec3 diffuseComponent, double alpha, double radius, Vec3 specularComponent = null, Vec3 lightStrength = null) : base (position,  diffuseComponent, alpha, specularComponent, lightStrength)
         {
             //  Only extra info that a sphere needs is the radius
             this.radius = radius;
@@ -119,10 +126,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
     {
         Vec3 pointOnPlane { get; set; }
         Vec3 normal { get; set; }
-        public Plane(Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Vec3 pointOnPlane, Vec3 normal, Vec3 position=null, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        public Plane(Vec3 diffuseComponent, double alpha, Vec3 position, Vec3 normal, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position,  diffuseComponent, alpha, specularComponent, lightStrength)
         {
 
-            this.pointOnPlane = pointOnPlane;
+            this.pointOnPlane = position;
             this.normal = Vec3.Normalise(normal);
 
         }
@@ -150,7 +157,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         double LB = double.MinValue; //   Upper bound and Lower bound for lambda values, either -infinity or 0 and 1 or +infinity
         double UB = double.MaxValue;  //  Technically not actually an infinite line because of this, but will have no actual effect
-        public Line(Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Vec3 pointA, Vec3 pointB, double radius, bool haltA = true, bool haltB = true, Vec3 lightStrength = null, Vec3 position=null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        public Line(Vec3 diffuseComponent, double alpha, Vec3 pointA, Vec3 pointB, double radius, bool haltA = true, bool haltB = true, Vec3 specularComponent = null, Vec3 lightStrength = null, Vec3 position=null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
 
             this.radius = radius;
@@ -206,9 +213,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Vec3 centerPosition { get; set; }
         Vec3 cornerPosition { get; set; }
         Quaternion rotation { get; set; }
-        public Cuboid(Vec3 position, Vec3 cornerPosition, double[] fullRotationInfo, Vec3 diffuseComponent, Vec3 specularComponent, double alpha, double cornerSmoothing = 0, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        public Cuboid(Vec3 position, Vec3 cornerPosition, Vec3 diffuseComponent, double alpha, double[] fullRotationInfo = null, double cornerSmoothing = 0, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
-            
+            if(fullRotationInfo == null)
+            {
+                fullRotationInfo = new double[] {0 , 0, 0};
+            }
             this.cornerSmoothing = cornerSmoothing;
             this.centerPosition = position;
             this.cornerPosition = cornerPosition;
@@ -272,7 +282,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public double sdfMergeStrength;    //  Weighting for how smooth combination is
         public double colourMergeStrength;
         public comboType type;
-        public Combination(Vec3 specularComponent, Vec3 diffuseComponent, double alpha, Shape shape1, Shape shape2, double sdfWeighting, comboType type, double colourMergeStrength = 15, Vec3 lightStrength = null, Vec3 position = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        public Combination(Vec3 diffuseComponent, double alpha, Shape shape1, Shape shape2, double sdfWeighting, comboType type, double colourMergeStrength = 15, Vec3 specularComponent = null, Vec3 lightStrength = null, Vec3 position = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
 
             this.shape1 = shape1;
@@ -348,7 +358,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
     {
         double radius { get; set; }
         Vec3 repetitionDistancesVector;
-        public InfiniteSphere(Vec3 position, Vec3 specularComponent, Vec3 diffuseComponent, double alpha, double radius, Vec3 repetitionVector, Vec3 lightStrength = null) : base(position, specularComponent, diffuseComponent, alpha, lightStrength)
+        public InfiniteSphere(Vec3 position, Vec3 diffuseComponent, double alpha, double radius, Vec3 repetitionVector, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
             //  Only extra info that a sphere needs is the radius
             this.radius = radius;

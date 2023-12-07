@@ -43,8 +43,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Controls initial camera sections
         
-        static Vec3 camLocation = new Vec3(-150, 0, 80);
-        double[] camRotations = new double[] { 0, 0, 0 };   //  Rotations in xy, yz, and xz planes respectively
+        static Vec3 camLocation = new Vec3(-200, 75, 100);
+        double[] camRotations = new double[] { -25, 0, -10 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
         //  All Shapes
@@ -58,16 +58,16 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Settings for each image
         SettingInfo currentSettings = new(
-                res_x: 80,
-                res_y: 40,
-                rayCountPerPixel: 20,
+                res_x: 360,
+                res_y: 170,
+                rayCountPerPixel: 5,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
                 minJumpDistance: 0.01d,
                 maxBounceCount: 20,
                 startOffset: 1,
-                lightArea: 14,  //  Higher is sharper shadows
+                lightArea: 14,  //  Higher is sharper shadows from point light sources
 
                 isAntiAliasing: true,
                 AA_Strength: 0.02d,
@@ -160,6 +160,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             cameraOne = new Camera(camLocation, camRotations);
 
+            #region Testing shapes:
             //  First sphere
             //Vec3 pos1 = new Vec3(100, -50, 0);
             //Vec3 k_s1 = new Vec3(0.1, 0.8, 0.9);
@@ -169,7 +170,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //Vec3 lightStrength1 = 10 * new Vec3(0.1, .1, 1);
             //lights.Add(new Sphere(pos1, k_s1, k_d1, alpha1, radius1, lightStrength1));
 
-            
+
 
             //  Fourth sphere
             //Vec3 pos4 = new Vec3(50, 0, 30);
@@ -188,7 +189,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             double radius5 = 10;
             //shapes.Add(new Sphere(pos5, k_s5, k_d5, alpha5, radius5));
 
-            
+
 
             //  Tenth Sphere
             //shapes.Add(new Sphere(
@@ -201,22 +202,22 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
 
             //  Combo sphere 1
-            Shape comboSphere1 = new Sphere(
-                position: new Vec3(45, -25, 25)
-                , specularComponent: new Vec3(.9, 0.9, 0)
-                , diffuseComponent: new Vec3(.1, .1, 1)
-                , alpha: 6
-                , radius: 32
-                );
+            //Shape comboSphere1 = new Sphere(
+            //    position: new Vec3(45, -25, 25)
+            //    , specularComponent: new Vec3(.9, 0.9, 0)
+            //    , diffuseComponent: new Vec3(.1, .1, 1)
+            //    , alpha: 6
+            //    , radius: 32
+            //    );
 
-            //  Combo Sphere 2
-            Shape comboSphere2 = new Sphere(
-                position: new Vec3(45, -35, 60)
-                , specularComponent: new Vec3(0, .9, .9)
-                , diffuseComponent: new Vec3(1, .1, 0.1)
-                , alpha: 6
-                , radius: 20
-                );
+            ////  Combo Sphere 2
+            //Shape comboSphere2 = new Sphere(
+            //    position: new Vec3(45, -35, 60)
+            //    , specularComponent: new Vec3(0, .9, .9)
+            //    , diffuseComponent: new Vec3(1, .1, 0.1)
+            //    , alpha: 6
+            //    , radius: 20
+            //    );
             //  First Combo sphere
             //shapes.Add(new Combination(
             //    specularComponent: new Vec3(.9, 0, .9),
@@ -231,21 +232,21 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //    ));
 
-            //  First Point light source
-            lightPoints.Add(new PointLight(
-                position: new Vec3(-20, -60, 60),
-                lightColour: new Vec3(1, 1, 1),
-                lightBrightness: 5
+            ////  First Point light source
+            //lightPoints.Add(new PointLight(
+            //    position: new Vec3(-20, -60, 60),
+            //    lightColour: new Vec3(1, 1, 1),
+            //    lightBrightness: 5
 
-                ));
+            //    ));
 
-            //  Second Point light source
-            lightPoints.Add(new PointLight(
-                position: new Vec3(130, 80, 150),
-                lightColour: new Vec3(1, 1, 1),
-                lightBrightness: 2
+            ////  Second Point light source
+            //lightPoints.Add(new PointLight(
+            //    position: new Vec3(130, 80, 150),
+            //    lightColour: new Vec3(1, 1, 1),
+            //    lightBrightness: 2
 
-                ));
+            //    ));
 
             //  Infinite sphere
             //shapes.Add(new InfiniteSphere(
@@ -276,59 +277,165 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //    radius: 30,
             //    lightStrength: 20 * new Vec3(.5, 0.2, 0.8),
             //    haltB: false
-                
+
             //    ));
 
             //  Bottom plane
-            shapes.Add(new Plane(
-                pointOnPlane: new Vec3(0, 0, 0),
-                specularComponent: new Vec3(0.3, .3, .9),
-                diffuseComponent: new Vec3(.7, .7, .1),
-                alpha: 6,
-                normal: new Vec3(0, 0, 1)
-
-
-
-                ));
+            //shapes.Add(new Plane(
+            //    pointOnPlane: new Vec3(0, 0, 0),
+            //    specularComponent: new Vec3(0.3, .3, .9),
+            //    diffuseComponent: new Vec3(.7, .7, .1),
+            //    alpha: 6,
+            //    normal: new Vec3(0, 0, 1)
+            //    ));
 
             //  Rightside plane
 
-            shapes.Add(new Plane(
-                pointOnPlane: new Vec3(0, -60, 0),
-                specularComponent: new Vec3(0.7, .3, .9),
-                diffuseComponent: new Vec3(.3, .7, .1),
-                alpha: 6,
-                normal: new Vec3(0, 1, 0)
-
-
-
-                ));
+            //shapes.Add(new Plane(
+            //    pointOnPlane: new Vec3(0, -60, 0),
+            //    specularComponent: new Vec3(0.7, .3, .9),
+            //    diffuseComponent: new Vec3(.3, .7, .1),
+            //    alpha: 6,
+            //    normal: new Vec3(0, 1, 0)
+            //    ));
 
             //  Back plane
 
-            shapes.Add(new Plane(
-                pointOnPlane: new Vec3(200, 0, 0),
-                specularComponent: new Vec3(0.5, .9, .5),
-                diffuseComponent: new Vec3(.5, .1, .5),
-                alpha: 6,
-                normal: new Vec3(-1, 0, 0)
-
-
-                ));
+            //shapes.Add(new Plane(
+            //    pointOnPlane: new Vec3(200, 0, 0),
+            //    specularComponent: new Vec3(0.5, .9, .5),
+            //    diffuseComponent: new Vec3(.5, .1, .5),
+            //    alpha: 6,
+            //    normal: new Vec3(-1, 0, 0)
+            //    ));
 
             //  Box One
-            shapes.Add(new Cuboid(
-                position: new Vec3(-60, 0, 70),
-                cornerPosition: new Vec3(10, 10, 20),
-                fullRotationInfo: new double[] {90, 45, 0},
-                diffuseComponent: new Vec3(.5, .9, .6),
-                specularComponent: new Vec3(.5, .1, .4),
-                alpha: 6,
-                cornerSmoothing: 4
+            //shapes.Add(new Cuboid(
+            //    position: new Vec3(-60, 0, 70),
+            //    cornerPosition: new Vec3(10, 10, 20),
+            //    fullRotationInfo: new double[] {90, 45, 0},
+            //    diffuseComponent: new Vec3(.5, .9, .6),
+            //    specularComponent: new Vec3(.5, .1, .4),
+            //    alpha: 6,
+            //    cornerSmoothing: 4
+            //    ));
+
+            #endregion
+
+            #region Table scene
+
+            //  Lights
+
+            lights.Add(new Cuboid(
+                position: new Vec3(0, 0, 200),
+                cornerPosition: new Vec3(100, 100, 3),
+                cornerSmoothing: 0.2,
+                lightStrength: 30 * new Vec3(1, 1, 1),
+                fullRotationInfo: new double[] {45, 0, 0},
+                alpha: 5,
+                diffuseComponent: null
+
 
 
 
                 ));
+
+            //  Shapes
+
+            //  Floor plane
+            shapes.Add(new Plane(
+                position: new Vec3(0, 0, 0),
+                normal: new Vec3(0, 0, 1),
+                diffuseComponent: new Vec3(0.43, 0.31, 0),
+                alpha: 6,
+                specularComponent: new Vec3(0.3, 0.3, 0.5)
+                ));
+
+            //  Back wall
+            shapes.Add(new Plane(
+                position: new Vec3(200, 0, 0),
+                normal: new Vec3(-1, 0, 0),
+                diffuseComponent: new Vec3(0.90, 0.86, 0.59),
+                alpha: 6,
+                specularComponent: new Vec3(0.05, 0.07, 0.2)
+                ));
+
+            //  Side wall
+            shapes.Add(new Plane(
+                position: new Vec3(0, -300, 0),
+                normal: new Vec3(0, 1, 0),
+                diffuseComponent: new Vec3(0.90, 0.86, 0.59),
+                alpha: 6,
+                specularComponent: new Vec3(0.05, 0.07, 0.2)
+                ));
+
+            //  Carpet
+
+            shapes.Add(new Cuboid(
+                position: new Vec3(0, 0, 0.4),
+                cornerPosition: new Vec3(50, 150, 0.5),
+                cornerSmoothing: 0.5,
+                alpha: 6,
+                diffuseComponent: new Vec3(0.78, 0.31, 0.31),
+                specularComponent: new Vec3(0, 0, 0)
+                ));
+
+            //  Table top
+            shapes.Add(new Cuboid(
+                position: new Vec3(0, 0, 54.8),
+                cornerPosition: new Vec3(50, 75, 54.8),
+                cornerSmoothing: 0.1,
+                alpha: 6,
+                diffuseComponent: new Vec3(.54, .51, .33)
+                ));
+
+            //  Table leg One   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(45, 65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
+
+            //  Table leg Two   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(45, -65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
+
+            //  Table leg Three   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(-45, 65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
+
+            //  Table leg Four   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(-45, -65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
+
+            //  Sphere on table
+            shapes.Add(new Sphere(
+                position: new Vec3(015, -10, 68.8),
+                radius: 10,
+                alpha: 6,
+                diffuseComponent: new Vec3(0, 0.75, 1)
+                
+                
+                ));
+
+            #endregion
 
             //  DEBUG CODE
             //SettingsWindow SettingsWindow01 = new SettingsWindow();
