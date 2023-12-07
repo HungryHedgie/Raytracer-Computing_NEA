@@ -58,9 +58,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Settings for each image
         SettingInfo currentSettings = new(
-                res_x: 360,
-                res_y: 170,
-                rayCountPerPixel: 5,
+                res_x: 500,
+                res_y: 350,
+                rayCountPerPixel: 3 00,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
