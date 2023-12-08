@@ -120,7 +120,34 @@ namespace RayTracer___Raymarching__Computing_NEA_
         }
     }
 
-    
+    class DistortedSphere : Shape
+    {
+        double radius { get; set; }
+        public DistortedSphere(Vec3 position, Vec3 diffuseComponent, double alpha, double radius, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
+        {
+            //  Only extra info that a sphere needs is the radius
+            this.radius = radius;
+
+        }
+
+        public override double SDF(Vec3 rayLocation)
+        {
+            double signedDistance = Math.Sqrt(Math.Pow((10*Math.Sin(rayLocation.y) + rayLocation.x - position.x), 2) + Math.Pow((10 * Math.Sin(rayLocation.x) + rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
+            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
+            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
+        }
+
+
+
+        public override Vec3 FindNormal(Vec3 rayLocation)
+        {
+            //Vec3 normal = FindNormalNumerically(rayLocation);
+            Vec3 normal = rayLocation - this.position;
+            normal.Normalise();
+            return normal;
+        }
+    }
+
 
     class Plane : Shape
     {

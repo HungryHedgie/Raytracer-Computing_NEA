@@ -58,9 +58,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Settings for each image
         SettingInfo currentSettings = new(
-                res_x: 500,
-                res_y: 350,
-                rayCountPerPixel: 3 00,
+                res_x: 200,
+                res_y: 80,
+                rayCountPerPixel: 100,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
@@ -70,7 +70,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 lightArea: 14,  //  Higher is sharper shadows from point light sources
 
                 isAntiAliasing: true,
-                AA_Strength: 0.02d,
+                AA_Strength: 0.01d,
                 FoVangle: 100
 
                 );
@@ -324,115 +324,135 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             #region Table scene
 
-            //  Lights
+            ////  Lights
 
-            lights.Add(new Cuboid(
-                position: new Vec3(0, 0, 200),
-                cornerPosition: new Vec3(100, 100, 3),
-                cornerSmoothing: 0.2,
-                lightStrength: 30 * new Vec3(1, 1, 1),
-                fullRotationInfo: new double[] {45, 0, 0},
-                alpha: 5,
-                diffuseComponent: null
-
-
+            //lights.Add(new Cuboid(
+            //    position: new Vec3(0, 0, 200),
+            //    cornerPosition: new Vec3(100, 100, 3),
+            //    cornerSmoothing: 0.2,
+            //    lightStrength: 30 * new Vec3(1, 1, 1),
+            //    fullRotationInfo: new double[] {45, 0, 0},
+            //    alpha: 5,
+            //    diffuseComponent: null
 
 
-                ));
 
-            //  Shapes
 
-            //  Floor plane
-            shapes.Add(new Plane(
-                position: new Vec3(0, 0, 0),
-                normal: new Vec3(0, 0, 1),
-                diffuseComponent: new Vec3(0.43, 0.31, 0),
+            //    ));
+
+            ////  Shapes
+
+            ////  Floor plane
+            //shapes.Add(new Plane(
+            //    position: new Vec3(0, 0, 0),
+            //    normal: new Vec3(0, 0, 1),
+            //    diffuseComponent: new Vec3(0.43, 0.31, 0),
+            //    alpha: 6,
+            //    specularComponent: new Vec3(0.3, 0.3, 0.5)
+            //    ));
+
+            ////  Back wall
+            //shapes.Add(new Plane(
+            //    position: new Vec3(200, 0, 0),
+            //    normal: new Vec3(-1, 0, 0),
+            //    diffuseComponent: new Vec3(0.90, 0.86, 0.59),
+            //    alpha: 6,
+            //    specularComponent: new Vec3(0.05, 0.07, 0.2)
+            //    ));
+
+            ////  Side wall
+            //shapes.Add(new Plane(
+            //    position: new Vec3(0, -300, 0),
+            //    normal: new Vec3(0, 1, 0),
+            //    diffuseComponent: new Vec3(0.90, 0.86, 0.59),
+            //    alpha: 6,
+            //    specularComponent: new Vec3(0.05, 0.07, 0.2)
+            //    ));
+
+            ////  Carpet
+
+            //shapes.Add(new Cuboid(
+            //    position: new Vec3(0, 0, 0.4),
+            //    cornerPosition: new Vec3(50, 150, 0.5),
+            //    cornerSmoothing: 0.5,
+            //    alpha: 6,
+            //    diffuseComponent: new Vec3(0.78, 0.31, 0.31),
+            //    specularComponent: new Vec3(0, 0, 0)
+            //    ));
+
+            ////  Table top
+            //shapes.Add(new Cuboid(
+            //    position: new Vec3(0, 0, 54.8),
+            //    cornerPosition: new Vec3(50, 75, 4.1),
+            //    cornerSmoothing: 0.1,
+            //    alpha: 6,
+            //    diffuseComponent: new Vec3(.54, .51, .33)
+            //    ));
+
+            ////  Table leg One   -   These really should be done as the same object and repeated
+            //shapes.Add(new Cuboid(
+            //    position: new Vec3(45, 65, 25.8),
+            //    cornerPosition: new Vec3(3, 3, 25),
+            //    diffuseComponent: new Vec3(.54, .51, .33),
+            //    cornerSmoothing: 0.5,
+            //    alpha: 6
+            //    ));
+
+            ////  Table leg Two   -   These really should be done as the same object and repeated
+            //shapes.Add(new Cuboid(
+            //    position: new Vec3(45, -65, 25.8),
+            //    cornerPosition: new Vec3(3, 3, 25),
+            //    diffuseComponent: new Vec3(.54, .51, .33),
+            //    cornerSmoothing: 0.5,
+            //    alpha: 6
+            //    ));
+
+            ////  Table leg Three   -   These really should be done as the same object and repeated
+            //shapes.Add(new Cuboid(
+            //    position: new Vec3(-45, 65, 25.8),
+            //    cornerPosition: new Vec3(3, 3, 25),
+            //    diffuseComponent: new Vec3(.54, .51, .33),
+            //    cornerSmoothing: 0.5,
+            //    alpha: 6
+            //    ));
+
+            ////  Table leg Four   -   These really should be done as the same object and repeated
+            //shapes.Add(new Cuboid(
+            //    position: new Vec3(-45, -65, 25.8),
+            //    cornerPosition: new Vec3(3, 3, 25),
+            //    diffuseComponent: new Vec3(.54, .51, .33),
+            //    cornerSmoothing: 0.5,
+            //    alpha: 6
+            //    ));
+
+            ////  Sphere on table
+            //shapes.Add(new Sphere(
+            //    position: new Vec3(015, -10, 68.8),
+            //    radius: 10,
+            //    alpha: 6,
+            //    diffuseComponent: new Vec3(0, 0.75, 1)
+
+
+            //    ));
+
+            #endregion
+
+            #region Tree test
+
+            shapes.Add(new DistortedSphere(
+                position: new Vec3(0, 0, 60),
+                radius: 40,
+
                 alpha: 6,
-                specularComponent: new Vec3(0.3, 0.3, 0.5)
+                diffuseComponent: new Vec3(.2, .55, .31),
+                specularComponent: new Vec3(0.2, .2, .2)
+
                 ));
 
-            //  Back wall
-            shapes.Add(new Plane(
-                position: new Vec3(200, 0, 0),
-                normal: new Vec3(-1, 0, 0),
-                diffuseComponent: new Vec3(0.90, 0.86, 0.59),
-                alpha: 6,
-                specularComponent: new Vec3(0.05, 0.07, 0.2)
-                ));
-
-            //  Side wall
-            shapes.Add(new Plane(
-                position: new Vec3(0, -300, 0),
-                normal: new Vec3(0, 1, 0),
-                diffuseComponent: new Vec3(0.90, 0.86, 0.59),
-                alpha: 6,
-                specularComponent: new Vec3(0.05, 0.07, 0.2)
-                ));
-
-            //  Carpet
-
-            shapes.Add(new Cuboid(
-                position: new Vec3(0, 0, 0.4),
-                cornerPosition: new Vec3(50, 150, 0.5),
-                cornerSmoothing: 0.5,
-                alpha: 6,
-                diffuseComponent: new Vec3(0.78, 0.31, 0.31),
-                specularComponent: new Vec3(0, 0, 0)
-                ));
-
-            //  Table top
-            shapes.Add(new Cuboid(
-                position: new Vec3(0, 0, 54.8),
-                cornerPosition: new Vec3(50, 75, 54.8),
-                cornerSmoothing: 0.1,
-                alpha: 6,
-                diffuseComponent: new Vec3(.54, .51, .33)
-                ));
-
-            //  Table leg One   -   These really should be done as the same object and repeated
-            shapes.Add(new Cuboid(
-                position: new Vec3(45, 65, 25.8),
-                cornerPosition: new Vec3(3, 3, 25),
-                diffuseComponent: new Vec3(.54, .51, .33),
-                cornerSmoothing: 0.5,
-                alpha: 6
-                ));
-
-            //  Table leg Two   -   These really should be done as the same object and repeated
-            shapes.Add(new Cuboid(
-                position: new Vec3(45, -65, 25.8),
-                cornerPosition: new Vec3(3, 3, 25),
-                diffuseComponent: new Vec3(.54, .51, .33),
-                cornerSmoothing: 0.5,
-                alpha: 6
-                ));
-
-            //  Table leg Three   -   These really should be done as the same object and repeated
-            shapes.Add(new Cuboid(
-                position: new Vec3(-45, 65, 25.8),
-                cornerPosition: new Vec3(3, 3, 25),
-                diffuseComponent: new Vec3(.54, .51, .33),
-                cornerSmoothing: 0.5,
-                alpha: 6
-                ));
-
-            //  Table leg Four   -   These really should be done as the same object and repeated
-            shapes.Add(new Cuboid(
-                position: new Vec3(-45, -65, 25.8),
-                cornerPosition: new Vec3(3, 3, 25),
-                diffuseComponent: new Vec3(.54, .51, .33),
-                cornerSmoothing: 0.5,
-                alpha: 6
-                ));
-
-            //  Sphere on table
-            shapes.Add(new Sphere(
-                position: new Vec3(015, -10, 68.8),
-                radius: 10,
-                alpha: 6,
-                diffuseComponent: new Vec3(0, 0.75, 1)
-                
-                
+            lightPoints.Add(new PointLight(
+                position: new Vec3(30, -90, 90),
+                lightColour: new Vec3(1, 1, 1),
+                lightBrightness: 100
                 ));
 
             #endregion
