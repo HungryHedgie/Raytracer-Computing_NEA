@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RayTracer___Raymarching__Computing_NEA_
+﻿namespace RayTracer___Raymarching__Computing_NEA_
 {
     public class PointLight
     {
@@ -15,7 +9,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public PointLight(Vec3 position, Vec3 lightColour, double lightBrightness)
         {
             this.position = position;
-            this.lightStrength = lightBrightness*lightColour;
+            this.lightStrength = lightBrightness * lightColour;
         }
 
     }

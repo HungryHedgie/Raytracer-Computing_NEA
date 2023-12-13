@@ -1,22 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 //using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Numerics;
-using System.IO;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Diagnostics;
 
 namespace RayTracer___Raymarching__Computing_NEA_
 {
@@ -27,7 +18,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
     public partial class MainWindow : Window
     {
         //  Constants for testing:
-        
+
 
 
         //  Hard constants (never change)
@@ -42,14 +33,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
 
         //  Controls initial camera sections
-        
-        static Vec3 camLocation = new Vec3(-200, 75, 100);
-        double[] camRotations = new double[] { -25, 0, -10 };   //  Rotations in xy, yz, and xz planes respectively
+
+        static Vec3 camLocation = new Vec3(-20, -20, 33);
+        double[] camRotations = new double[] { 45, 0, -30 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
         //  All Shapes
         List<Shape> shapes = new List<Shape>();
-        
+
         //  All non point light sources
         List<Shape> lights = new List<Shape>();
 
@@ -58,19 +49,19 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Settings for each image
         SettingInfo currentSettings = new(
-                res_x: 200,
-                res_y: 80,
-                rayCountPerPixel: 100,
+                res_x: 60,
+                res_y: 40,
+                rayCountPerPixel: 60,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
                 minJumpDistance: 0.01d,
                 maxBounceCount: 20,
-                startOffset: 1,
+                startOffset: 0.3,
                 lightArea: 14,  //  Higher is sharper shadows from point light sources
 
                 isAntiAliasing: true,
-                AA_Strength: 0.01d,
+                AA_Strength: 0.005d,
                 FoVangle: 100
 
                 );
@@ -137,7 +128,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             public double distance;
             public double shadowContribution;
 
-        public IntersectionInfo(bool hasHitLight, Vec3 position, Shape previousShape, double distance, double shadowContribution)
+            public IntersectionInfo(bool hasHitLight, Vec3 position, Shape previousShape, double distance, double shadowContribution)
             {
                 this.hasHitLight = hasHitLight;
                 this.position = position;
@@ -155,7 +146,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  Constant initialisation
 
             bmpFinalImage = new Bitmap(currentSettings.res_x, currentSettings.res_y);
-            
+
             //  Shape and camera initialisation
 
             cameraOne = new Camera(camLocation, camRotations);
@@ -438,21 +429,111 @@ namespace RayTracer___Raymarching__Computing_NEA_
             #endregion
 
             #region Tree test
+            //  Hasn't really worked, though i haven't had that long to test it either though
+            //shapes.Add(new DistortedSphere(
+            //    position: new Vec3(0, 0, 60),
+            //    radius: 40,
 
-            shapes.Add(new DistortedSphere(
-                position: new Vec3(0, 0, 60),
-                radius: 40,
+            //    alpha: 6,
+            //    diffuseComponent: new Vec3(.2, .55, .31),
+            //    specularComponent: new Vec3(0.2, .2, .2)
 
+            //    ));
+
+            //lightPoints.Add(new PointLight(
+            //    position: new Vec3(30, -90, 90),
+            //    lightColour: new Vec3(1, 1, 1),
+            //    lightBrightness: 100
+            //    ));
+
+            #endregion
+
+            #region Spheres with light scene
+
+            //  Sphere 1 - Light
+            lights.Add(new Sphere(
+                position: new Vec3(3, -3, 15),
+                radius: 4,
                 alpha: 6,
-                diffuseComponent: new Vec3(.2, .55, .31),
-                specularComponent: new Vec3(0.2, .2, .2)
-
+                lightStrength: 15 * new Vec3(0, 1, 1),
+                diffuseComponent: null
                 ));
 
+            //  Sphere 2
+            shapes.Add(new Sphere(
+                position: new Vec3(4, 1, 19),
+                radius: 4.5,
+                alpha: 2,
+                diffuseComponent: new Vec3(0.75, 0.75, .75)
+                ));
+
+            //  Sphere 3 - Light
+            lights.Add(new Sphere(
+                position: new Vec3(0, 2, 17),
+                radius: 3.7,
+                alpha: 10,
+                lightStrength: 15 * new Vec3(.64, 0, 1),
+                diffuseComponent: null
+                ));
+
+            //  Sphere 4
+            shapes.Add(new Sphere(
+                position: new Vec3(-1, -1, 23),
+                radius: 4.2,
+                alpha: 4,
+                diffuseComponent: new Vec3(0.08, 0.66, 0)
+                ));
+
+            //  Sphere 5
+            shapes.Add(new Sphere(
+                position: new Vec3(-3, -3, 17),
+                radius: 5.1,
+                alpha: 6,
+                diffuseComponent: new Vec3(1, .43, .43)
+                ));
+
+            // Sphere 6 - Light
+            lights.Add(new Sphere(
+                position: new Vec3(015, -10, 68.8),
+                radius: 3.2,
+                alpha: 6,
+                lightStrength: 15*new Vec3(1, 0.8, .85),
+                diffuseComponent: null
+                ));
+
+
+            // Stalk/Capsule 1
+            Line stalk = new Line(
+                pointA: new Vec3(0, 0, 0),
+                pointB: new Vec3(0, 0, 20),
+                diffuseComponent: new Vec3(.8, .8, .8),
+                radius: 2.5,
+                alpha: 5
+
+                );
+
+            //  Floor plane
+            Plane floorPlane = new Plane(
+                position: new Vec3(0, 0, 0),
+                normal: new Vec3(0, 0, 1),
+                diffuseComponent: new Vec3(.7, .7, .7),
+                alpha: 5
+
+                );
+
+            shapes.Add(new Combination(
+                alpha: 5,
+                shape1: stalk,
+                shape2: floorPlane,
+                sdfWeighting: 0.2,
+                type: comboType.Union
+                ));
+
+            //  Point light source
             lightPoints.Add(new PointLight(
-                position: new Vec3(30, -90, 90),
+                position: new Vec3(-10, -30, 50),
                 lightColour: new Vec3(1, 1, 1),
-                lightBrightness: 100
+                lightBrightness: 1
                 ));
 
             #endregion
@@ -469,11 +550,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Stopwatch timer = Stopwatch.StartNew();
             GenerateAllPixels();
             timer.Stop();
-            double secOverallTime = timer.ElapsedMilliseconds/1000;
+            double secOverallTime = timer.ElapsedMilliseconds / 1000;
             //  Assume overall time, T is given by T = res_x * res_y * rayCountPerPixel * meanTimePerRay
             double totalRayCount = currentSettings.res_x * currentSettings.res_y * currentSettings.rayCountPerPixel;
             double meanTimePerRay = secOverallTime / totalRayCount;
-            MessageBox.Show("There were " + totalRayCount + " ray(s) in total, taking " + secOverallTime + " seconds in total, with a mean time of " + 1000*meanTimePerRay + " milliseconds per ray", "Timing info");
+            MessageBox.Show("There were " + totalRayCount + " ray(s) in total, taking " + secOverallTime + " seconds in total, with a mean time of " + 1000 * meanTimePerRay + " milliseconds per ray", "Timing info");
 
         }
 
@@ -492,7 +573,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                     //Color pixelColor = Color.FromArgb(brightness, brightness, brightness);
 
                     //  Testing randomness
-                    
+
                     /*
                     Color pixelColor;
                     Vec3 sumOfColour = new(0, 0, 0);
@@ -514,7 +595,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                     bmpFinalImage.SetPixel(x, y, pixelColor);
                 }
             }
-            
+
 
             //  COPIED FROM INTERNET
             //  Converts from Bitmap to BitmapSource, which can be shown on screen
@@ -534,7 +615,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             }
             //  END OF COPIED CODE
 
-            
+
         }
 
         Color GetPixelColor(int x, int y)
@@ -546,7 +627,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  Loop through to run a ray calculation as many times as needed
             for (int i = 0; i < currentSettings.rayCountPerPixel; i++)
             {
-                
+
                 //  Based of the pixels co-ordinate, finds the ray direction
                 Vec3 rayDirection = FindPixelsRayDirection(x, y);
                 Ray currentRay = new Ray(cameraOne.position, rayDirection);
@@ -579,11 +660,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         Vec3 normal = currentRay.previousShape.FindNormal(currentRay.position);
 
                         //  Accounting for Point Light sources:
-                        
+
                         foreach (PointLight currLight in lightPoints)
                         {
                             //  Determine intersections changes these variables, but we don't want that (yet)
-                            
+
                             //  Check occlusion
                             Vec3 currPosToLight = currLight.position - currentRay.position;
                             double lightDistance = currPosToLight.Magnitude();
@@ -593,7 +674,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             double intersectionDistance = intersectionReturnInfo1.distance;
                             Shape shapeIntersected = intersectionReturnInfo1.previousShape;
 
-                            
+
                             double shadowContribution = intersectionReturnInfo1.shadowContribution;
 
                             //  If distance to nearest shape is further than the light, then the ray will reach the light source unoccluded
@@ -626,7 +707,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             //  If we hit a light then we add
                             lightStrength = currentRay.previousShape.lightStrength;
                         }
-                        if(currentRay.previousShape == null)
+                        if (currentRay.previousShape == null)
                         {
                             //  Simulate a sun and skyline
                             double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(1, 0, 0), 0), 128);
@@ -636,14 +717,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             Vec3 ambientColour = 1 * new Vec3(0.1, 0.1, 0.1);
                             lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour;
                         }
-                        
-                        
+
+
                         finalColor += Vec3.ColorCombination(currentRay.productOfReflectance, lighting + lightStrength);
                     }
                     pseudoRayCount++;
                 }
             }
-            finalColor *= 1/(double)currentSettings.rayCountPerPixel;
+            finalColor *= 1 / (double)currentSettings.rayCountPerPixel;
 
 
 
@@ -677,7 +758,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             // Random offset generation
             double xOffset = 0;
             double zOffset = 0;
-            if (currentSettings.isAntiAliasing == true) {
+            if (currentSettings.isAntiAliasing == true)
+            {
                 double R = (currentSettings.AA_Strength) * Math.Sqrt(rnd.NextDouble());  //   Sqrt ensures uniform distribution
                 double theta = 2 * Math.PI * rnd.NextDouble();
                 xOffset = R * Math.Cos(theta);
@@ -696,11 +778,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 rayDirection = cameraOne.camSpaceToWorldSpace(pixelVector) - cameraOne.position;
             rayDirection.Normalise();
 
-            
+
             return rayDirection;
         }
 
-        IntersectionInfo DetermineIntersections(Ray currentRay, double maxTravelDistance=double.MaxValue)
+        IntersectionInfo DetermineIntersections(Ray currentRay, double maxTravelDistance = double.MaxValue)
         {
             //Shape? previousShape = currentRay.previousShape;      DEBUGGING, for testing switching to an offset method to allow for concave shapes
             Shape? previousShape = null;
@@ -721,13 +803,13 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             Shape closestObject = null;
 
-            while(searching)
+            while (searching)
             {
                 //  Find closest surface
                 //  anything below current lowest distance will be set as te new lowest distance
                 double lowestDistance = currentSettings.maxJumpDistance;
 
-                
+
 
                 foreach (Shape currentShape in shapes)
                 {
@@ -743,7 +825,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             closestObject = currentShape;
                             hitLight = false;
                         }
-                        
+
                     }
                 }
                 //  For now lights are treated (intersection wise) as the same as shape
@@ -760,14 +842,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
                             closestObject = currentLight;
                             hitLight = true;
                         }
-                        
+
                     }
                 }
                 //  Iteration counts prevents iteration going on forever
                 iterationCount++;
 
                 //  Dist to closest surface used to find new position
-                
+
 
                 currPos += currentRay.direction * lowestDistance;
                 distance += lowestDistance;
@@ -781,29 +863,32 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 //  Tolerance check:
                 //  Have we travelled further than the max jump distance?
                 //  Have we gone through too many iterations?
-                if (iterationCount > currentSettings.maxIterations || lowestDistance == currentSettings.maxJumpDistance || distance > maxTravelDistance){
+                if (iterationCount > currentSettings.maxIterations || lowestDistance == currentSettings.maxJumpDistance || distance > maxTravelDistance)
+                {
                     searching = false;
                     closestObject = null;
-                    hitLight=false;
+                    hitLight = false;
                     //  NO INTERSECTION
                 }
-                else if(lowestDistance <= currentSettings.minJumpDistance){
+                else if (lowestDistance <= currentSettings.minJumpDistance)
+                {
                     searching = false;
                     //  INTERSECTION
                 }
             }
-            
+
             IntersectionInfo intersectionReturnInfo = new IntersectionInfo(
                 hasHitLight: hitLight,
                 position: currPos,
                 previousShape: closestObject,
                 distance: distance,
-                shadowContribution: shadowContribution 
+                shadowContribution: shadowContribution
                 );
             return intersectionReturnInfo;
         }
 
-        Vec3 FindingNewRayDirection(Vec3 normal) {
+        Vec3 FindingNewRayDirection(Vec3 normal)
+        {
             Vec3 newDir = new(rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
             double magnitude = newDir.Magnitude();
             while (magnitude > 1 || magnitude < 0.00001)
@@ -818,68 +903,68 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             return newDir * (1 / magnitude);
         }
-    
-    
+
+
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             bool change = false;
-            
-            
-            if (e.Key == Key.Left) 
+
+
+            if (e.Key == Key.Left)
             {
                 camRotations[0] += distRotPerKeyPress;
             }
-            else if(e.Key == Key.Right)
+            else if (e.Key == Key.Right)
             {
                 camRotations[0] += -distRotPerKeyPress;
             }
             else if (e.Key == Key.Up)
             {
-                if(camRotations[2] <= 90 - distRotPerKeyPress)
+                if (camRotations[2] <= 90 - distRotPerKeyPress)
                 {
                     camRotations[2] += distRotPerKeyPress;
                 }
-                
+
             }
             else if (e.Key == Key.Down)
             {
-                if(camRotations[2] >= -90 + distRotPerKeyPress)
+                if (camRotations[2] >= -90 + distRotPerKeyPress)
                 {
                     camRotations[2] += -distRotPerKeyPress;
                 }
             }
-            else if(e.Key == Key.W)
+            else if (e.Key == Key.W)
             {
                 newMovement.x += distMovedPerKeyPress;
             }
-            else if(e.Key == Key.D)
+            else if (e.Key == Key.D)
             {
                 newMovement.y -= distMovedPerKeyPress;
             }
-            else if(e.Key == Key.A)
+            else if (e.Key == Key.A)
             {
                 newMovement.y += distMovedPerKeyPress;
             }
-            else if(e.Key == Key.S)
+            else if (e.Key == Key.S)
             {
                 newMovement.x -= distMovedPerKeyPress;
             }
-            else if(e.Key == Key.LeftCtrl)
+            else if (e.Key == Key.LeftCtrl)
             {
                 newMovement.z -= distMovedPerKeyPress;
             }
-            else if(e.Key == Key.Space)
+            else if (e.Key == Key.Space)
             {
                 newMovement.z += distMovedPerKeyPress;
             }
-            else if(e.Key == Key.D1)    //  "1" brings up updating image
+            else if (e.Key == Key.D1)    //  "1" brings up updating image
             {
                 MessageBox.Show("Image will start updating upon pressing Ok", "Updating");
 
                 change = true;
 
-                
+
             }
             if (change)
             {
@@ -904,7 +989,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                 }
             }
-            
+
 
         }
     }

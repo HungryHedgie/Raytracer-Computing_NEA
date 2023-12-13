@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace RayTracer___Raymarching__Computing_NEA_
@@ -27,7 +23,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             x = input.X;
             y = input.Y;
             z = input.Z;
-            if(input.W > 0.1)
+            if (input.W > 0.1)
             {
                 MessageBox.Show("Error with quaternion to vector, real component is non zero");
             }
@@ -39,9 +35,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return quat;
         }
 
-        
 
-        public void Normalise() 
+
+        public void Normalise()
         {
             double normFraction = 1 / Math.Sqrt(Math.Pow(this.x, 2) + Math.Pow(this.y, 2) + Math.Pow(this.z, 2));
             x *= normFraction;

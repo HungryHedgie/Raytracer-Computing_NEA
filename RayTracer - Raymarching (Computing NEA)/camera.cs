@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Numerics;
 
 namespace RayTracer___Raymarching__Computing_NEA_
@@ -19,7 +15,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             position = startPos;
 
             newRotation(fullRotationInfo);
-            
+
         }
 
         public void newRotation(double[] fullRotationInfo)
@@ -36,10 +32,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  This can be checked on the linked interactive quaternion page by Ben Eater
             Quaternion xzQuat = new Quaternion(0, -MathF.Sin((float)(xzPlaneRot / 2) * MathF.PI / 180), 0, MathF.Cos((float)(xzPlaneRot / 2) * MathF.PI / 180));
 
-            this.rotation =  yzQuat * xyQuat * xzQuat;
+            this.rotation = yzQuat * xyQuat * xzQuat;
 
 
-            
+
         }
 
         public void newDirection(Vec3 newMovement)
@@ -55,14 +51,15 @@ namespace RayTracer___Raymarching__Computing_NEA_
             this.position += deltaZ;
         }
 
-        public Vec3 camSpaceToWorldSpace(Vec3 point_relCam) {
+        public Vec3 camSpaceToWorldSpace(Vec3 point_relCam)
+        {
             //  Converts a point relative to the camera into a point relative to the world center
             Vec3 point_relWorld = this.position + Vec3.RotatePoint(point_relCam, this.rotation);
             return point_relWorld;
         }
 
 
-        
+
 
     }
 }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Numerics;
 
 namespace RayTracer___Raymarching__Computing_NEA_
@@ -17,20 +13,20 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
 
     }
-    
+
     abstract public class Shape
     {
         public abstract double SDF(Vec3 rayLocation);
         public abstract Vec3 FindNormal(Vec3 rayLocation);
         public Vec3 position;
-        
+
         public Vec3 k_s;
         public Vec3 k_d;
         public double alpha;
 
         public Vec3 lightStrength = new Vec3(0, 0, 0);
 
-        public Shape(Vec3 position,  Vec3 diffuseComponent, double alpha, Vec3 specularComponent = null, Vec3 lightStrength = null) //  Need to change
+        public Shape(Vec3 position, Vec3 diffuseComponent, double alpha, Vec3 specularComponent = null, Vec3 lightStrength = null) //  Need to change
         {
             //  General info all shapes will need
             this.position = position;
@@ -45,7 +41,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             this.k_d = diffuseComponent;
             this.alpha = alpha;
 
-            if(lightStrength == null)
+            if (lightStrength == null)
             {
                 this.lightStrength = new(0, 0, 0);
             }
@@ -94,8 +90,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
     class Sphere : Shape
     {
-        double radius {get; set;}
-        public Sphere(Vec3 position,  Vec3 diffuseComponent, double alpha, double radius, Vec3 specularComponent = null, Vec3 lightStrength = null) : base (position,  diffuseComponent, alpha, specularComponent, lightStrength)
+        double radius { get; set; }
+        public Sphere(Vec3 position, Vec3 diffuseComponent, double alpha, double radius, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
             //  Only extra info that a sphere needs is the radius
             this.radius = radius;
@@ -104,12 +100,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public override double SDF(Vec3 rayLocation)
         {
-            double signedDistance =  Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
+            double signedDistance = Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
             //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
             return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
         }
 
-        
+
 
         public override Vec3 FindNormal(Vec3 rayLocation)
         {
@@ -132,7 +128,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public override double SDF(Vec3 rayLocation)
         {
-            double signedDistance = Math.Sqrt(Math.Pow((10*Math.Sin(rayLocation.y) + rayLocation.x - position.x), 2) + Math.Pow((10 * Math.Sin(rayLocation.x) + rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
+            double signedDistance = Math.Sqrt(Math.Pow((10 * Math.Sin(rayLocation.y) + rayLocation.x - position.x), 2) + Math.Pow((10 * Math.Sin(rayLocation.x) + rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
             //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
             return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
         }
@@ -153,7 +149,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
     {
         Vec3 pointOnPlane { get; set; }
         Vec3 normal { get; set; }
-        public Plane(Vec3 diffuseComponent, double alpha, Vec3 position, Vec3 normal, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position,  diffuseComponent, alpha, specularComponent, lightStrength)
+        public Plane(Vec3 diffuseComponent, double alpha, Vec3 position, Vec3 normal, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
 
             this.pointOnPlane = position;
@@ -164,7 +160,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public override double SDF(Vec3 rayLocation)
         {
             double signedDistance = rayLocation * this.normal - this.pointOnPlane * this.normal;
-            return signedDistance;    
+            return signedDistance;
         }
 
         public override Vec3 FindNormal(Vec3 rayLocation)
@@ -184,7 +180,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         double LB = double.MinValue; //   Upper bound and Lower bound for lambda values, either -infinity or 0 and 1 or +infinity
         double UB = double.MaxValue;  //  Technically not actually an infinite line because of this, but will have no actual effect
-        public Line(Vec3 diffuseComponent, double alpha, Vec3 pointA, Vec3 pointB, double radius, bool haltA = true, bool haltB = true, Vec3 specularComponent = null, Vec3 lightStrength = null, Vec3 position=null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
+        public Line(Vec3 diffuseComponent, double alpha, Vec3 pointA, Vec3 pointB, double radius, bool haltA = true, bool haltB = true, Vec3 specularComponent = null, Vec3 lightStrength = null, Vec3 position = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
 
             this.radius = radius;
@@ -221,9 +217,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //Vec3 normal = FindNormalNumerically(rayLocation);
 
             //  Exact calculations
-            
+
             double lambdaInfinite = (rayLocation - pointA) * (pointB - pointA) / segmentDist;  //  Doesn't account for end points
-            
+
             double lambdaActual = Math.Min(Math.Max(lambdaInfinite, LB), UB);
             //  Use how far along the line we are to get a specific point
             Vec3 closestPointOnLine = pointA + lambdaActual * (pointB - pointA);
@@ -242,9 +238,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Quaternion rotation { get; set; }
         public Cuboid(Vec3 position, Vec3 cornerPosition, Vec3 diffuseComponent, double alpha, double[] fullRotationInfo = null, double cornerSmoothing = 0, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
-            if(fullRotationInfo == null)
+            if (fullRotationInfo == null)
             {
-                fullRotationInfo = new double[] {0 , 0, 0};
+                fullRotationInfo = new double[] { 0, 0, 0 };
             }
             this.cornerSmoothing = cornerSmoothing;
             this.centerPosition = position;
@@ -270,7 +266,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             //Vec3 normal = FindNormalNumerically(rayLocation);
             Vec3 normal = FindNormalNumerically(rayLocation);
-            
+
             return normal;
         }
 
@@ -280,7 +276,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             return endPoint;
         }
-        
+
 
 
         public void newRotation(double[] fullRotationInfo)
@@ -309,7 +305,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public double sdfMergeStrength;    //  Weighting for how smooth combination is
         public double colourMergeStrength;
         public comboType type;
-        public Combination(Vec3 diffuseComponent, double alpha, Shape shape1, Shape shape2, double sdfWeighting, comboType type, double colourMergeStrength = 15, Vec3 specularComponent = null, Vec3 lightStrength = null, Vec3 position = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
+        public Combination(double alpha, Shape shape1, Shape shape2, double sdfWeighting, comboType type, Vec3 diffuseComponent = null, double colourMergeStrength = 15, Vec3 specularComponent = null, Vec3 lightStrength = null, Vec3 position = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
 
             this.shape1 = shape1;
@@ -317,7 +313,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             this.sdfMergeStrength = sdfWeighting;
             this.colourMergeStrength = colourMergeStrength;
             this.type = type;
-            
+
 
         }
 
@@ -330,7 +326,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             {
                 signedDistance = -Math.Log(Math.Exp(-sdfMergeStrength * shape1Dist) + Math.Exp(-sdfMergeStrength * shape2Dist)) / sdfMergeStrength;
             }
-            else if(type == comboType.Intersection)
+            else if (type == comboType.Intersection)
             {
                 signedDistance = Math.Log(Math.Exp(sdfMergeStrength * shape1Dist) + Math.Exp(sdfMergeStrength * shape2Dist)) / sdfMergeStrength;
 
@@ -342,9 +338,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 throw new Exception();
             }
 
-            
-            
-            
+
+
+
             return signedDistance;
         }
         private double f(double lt)
@@ -371,14 +367,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             double shape1Dist = shape1.SDF(rayLocation);
             double shape2Dist = shape2.SDF(rayLocation);
-            double t = Math.Exp(shape1Dist/ colourMergeStrength) / (Math.Exp(shape1Dist/ colourMergeStrength) + Math.Exp(shape2Dist/ colourMergeStrength));
+            double t = Math.Exp(shape1Dist / colourMergeStrength) / (Math.Exp(shape1Dist / colourMergeStrength) + Math.Exp(shape2Dist / colourMergeStrength));
             this.k_s = lerp(shape1.k_s, shape2.k_s, t);
             this.k_d = lerp(shape1.k_d, shape2.k_d, t);
             return normal;
         }
 
-        
-        
+
+
     }
 
     class InfiniteSphere : Shape
@@ -389,7 +385,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             //  Only extra info that a sphere needs is the radius
             this.radius = radius;
-            
+
             this.repetitionDistancesVector = repetitionVector;
             this.position = VecModulus(position, this.repetitionDistancesVector);
 
