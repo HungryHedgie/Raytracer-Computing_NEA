@@ -49,15 +49,26 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Settings for each image
         SettingInfo currentSettings = new(
+<<<<<<< Updated upstream
                 res_x: 60,
                 res_y: 40,
                 rayCountPerPixel: 60,
+=======
+                res_x: 720,
+                res_y: 480,
+                rayCountPerPixel: 650,
+>>>>>>> Stashed changes
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
                 minJumpDistance: 0.01d,
+<<<<<<< Updated upstream
                 maxBounceCount: 20,
                 startOffset: 0.3,
+=======
+                maxBounceCount: 8,
+                startOffset: 0.5,
+>>>>>>> Stashed changes
                 lightArea: 14,  //  Higher is sharper shadows from point light sources
 
                 isAntiAliasing: true,
@@ -529,11 +540,97 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 type: comboType.Union
                 ));
 
+<<<<<<< Updated upstream
             //  Point light source
             lightPoints.Add(new PointLight(
                 position: new Vec3(-10, -30, 50),
                 lightColour: new Vec3(1, 1, 1),
                 lightBrightness: 1
+=======
+            //  Back wall
+            shapes.Add(new Plane(
+                position: new Vec3(200, 0, 0),
+                normal: new Vec3(-1, 0, 0),
+                diffuseComponent: new Vec3(0.90, 0.86, 0.59),
+                alpha: 6,
+                specularComponent: new Vec3(0.05, 0.07, 0.2)
+                ));
+
+            //  Side wall
+            shapes.Add(new Plane(
+                position: new Vec3(0, -300, 0),
+                normal: new Vec3(0, 1, 0),
+                diffuseComponent: new Vec3(0.90, 0.86, 0.59),
+                alpha: 6,
+                specularComponent: new Vec3(0.05, 0.07, 0.2)
+                ));
+
+            //  Carpet
+
+            shapes.Add(new Cuboid(
+                position: new Vec3(0, 0, 0.4),
+                cornerPosition: new Vec3(50, 150, 0.5),
+                cornerSmoothing: 0.5,
+                alpha: 6,
+                diffuseComponent: new Vec3(0.78, 0.31, 0.31),
+                specularComponent: new Vec3(0, 0, 0)
+                ));
+
+            //  Table top
+            shapes.Add(new Cuboid(
+                position: new Vec3(0, 0, 54.8),
+                cornerPosition: new Vec3(50, 75, 4.1),
+                cornerSmoothing: 0.1,
+                alpha: 6,
+                diffuseComponent: .3*new Vec3(.54, .51, .33)
+                
+                ));
+
+            //  Table leg One   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(45, 65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
+
+            //  Table leg Two   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(45, -65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
+
+            //  Table leg Three   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(-45, 65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
+
+            //  Table leg Four   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(-45, -65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
+
+            //  Sphere on table
+            shapes.Add(new Sphere(
+                position: new Vec3(015, -10, 68.8),
+                radius: 10,
+                alpha: 6,
+                diffuseComponent: new Vec3(0, 0.75, 1)
+                
+                
+>>>>>>> Stashed changes
                 ));
 
             #endregion
