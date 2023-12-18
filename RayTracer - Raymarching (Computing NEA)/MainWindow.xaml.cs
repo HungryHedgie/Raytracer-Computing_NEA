@@ -34,8 +34,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Controls initial camera sections
 
-        static Vec3 camLocation = new Vec3(-50, 7, 40);
-        double[] camRotations = new double[] {3, 0, -5 };   //  Rotations in xy, yz, and xz planes respectively
+        static Vec3 camLocation = new Vec3(-90, -20, 20);
+        double[] camRotations = new double[] {-27, 0, -20 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
         //  All Shapes
@@ -50,9 +50,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  Settings for each image
         SettingInfo currentSettings = new(
 
-                res_x: 60,
-                res_y: 40,
-                rayCountPerPixel: 60,
+                res_x: 200,
+                res_y: 120,
+                rayCountPerPixel: 5,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
@@ -243,14 +243,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //    ));
 
             //  Infinite sphere
-            //shapes.Add(new InfiniteSphere(
-            //    position: new Vec3(60, 40, 140)
-            //    , specularComponent: new Vec3(.7, .1, .9)
-            //    , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-            //    , alpha: 6
-            //    , radius: 10
-            //    , repetitionVector: new Vec3(100, 100, 200)
-            //    ));
+            shapes.Add(new InfiniteSphere(
+                position: new Vec3(60, 40, 140)
+                , specularComponent: new Vec3(.7, .1, .9)
+                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+                , alpha: 6
+                , radius: 25
+                , repetitionVector: new Vec3(100, 100, 100)
+                ));
 
             //shapes.Add(new InfiniteSphere(
             //    position: new Vec3(50, 50, 50)
@@ -543,52 +543,91 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             #region Showing off phong model
 
-            //  Sphere 1 - Light
-            lights.Add(new Sphere(
-                position: new Vec3(10, 10, 50),
-                radius: 20,
-                alpha: 6,
-                lightStrength: 15 * new Vec3(1, 1, 1),
-                diffuseComponent: null
-                ));
+            ////  Sphere 1 - Light
+            //lights.Add(new Sphere(
+            //    position: new Vec3(15, -15, 50),
+            //    radius: 15,
+            //    alpha: 6,
+            //    lightStrength: 15 * new Vec3(1, 1, 1),
+            //    diffuseComponent: null
+            //    ));
+
+            ////  Sphere 2
+            //shapes.Add(new Sphere(
+            //    position: new Vec3(8, 15, 30),
+            //    radius: 13,
+            //    alpha: 6,
+            //    diffuseComponent: new Vec3(.6, 0, .6)
+            //    ));
+
+
+            ////  Floor plane
+            //shapes.Add(new Plane(
+            //    position: new Vec3(0, 0, 0),
+            //    normal: new Vec3(0, 0, 1),
+            //    diffuseComponent: new Vec3(0, 0.7, 1),
+            //    alpha: 6
+            //    //specularComponent: new Vec3(0.3, 0.3, 0.5)
+            //    ));
+
+            ////  Back wall
+            //shapes.Add(new Plane(
+            //    position: new Vec3(100, 0, 0),
+            //    normal: new Vec3(-1, 0, 0),
+            //    diffuseComponent: new Vec3(.54, .44, 1),
+            //    alpha: 6
+            //    //specularComponent: new Vec3(0.05, 0.07, 0.2)
+            //    ));
+
+            ////  Side wall
+            //shapes.Add(new Plane(
+            //    position: new Vec3(0, 34, 0),
+            //    normal: new Vec3(0, -1, 0),
+            //    diffuseComponent: new Vec3(.4, .3, 1),
+            //    alpha: 6
+            //    //specularComponent: new Vec3(0.05, 0.07, 0.2)
+            //    ));
+
+
+            #endregion
+
+            #region Showing individual SDFs
+
+            //  Sphere on plane background:
+            //  Floor plane
+            //shapes.Add(new Plane(
+            //    position: new Vec3(0, 0, 0),
+            //    normal: new Vec3(0, 0, 1),
+            //    diffuseComponent: 1*new Vec3(.7, .4, 0),
+            //    alpha: 20
+            //    //specularComponent: new Vec3(0.3, 0.3, 0.5)
+            //    ));
 
             //  Sphere 2
-            shapes.Add(new Sphere(
-                position: new Vec3(0, -15, 30),
-                radius: 15,
-                alpha: 6,
-                diffuseComponent: new Vec3(.6, 0, .6)
+            //shapes.Add(new Sphere(
+            //    position: new Vec3(0, 0, 30),
+            //    radius: 20,
+            //    alpha: 6,
+            //    diffuseComponent: new Vec3(.6, 0, .6)
+            //    ));
+
+            //  Cuboid
+            //shapes.Add(new Cuboid(
+            //    position: new Vec3(5, 5, 30),
+            //    cornerPosition: new Vec3(10, 8, 6),
+            //    fullRotationInfo: new double[] { 0, 20, 55 },
+            //    alpha: 10,
+            //    diffuseComponent: 1*new Vec3(0, .6, .6),
+            //    specularComponent: 0.6*new Vec3(1, .4, .4),
+            //    cornerSmoothing: 2
+            //    ));
+
+            //  Light points
+            lightPoints.Add(new PointLight(
+                position: new Vec3(100, 100, -10),
+                lightColour: new Vec3(1, 1, 1),
+                lightBrightness: 4
                 ));
-
-
-            //  Floor plane
-            shapes.Add(new Plane(
-                position: new Vec3(0, 0, 0),
-                normal: new Vec3(0, 0, 1),
-                diffuseComponent: new Vec3(0, 0.7, 1),
-                alpha: 6
-                //specularComponent: new Vec3(0.3, 0.3, 0.5)
-                ));
-
-            //  Back wall
-            shapes.Add(new Plane(
-                position: new Vec3(100, 0, 0),
-                normal: new Vec3(-1, 0, 0),
-                diffuseComponent: new Vec3(.54, .44, 1),
-                alpha: 6
-                //specularComponent: new Vec3(0.05, 0.07, 0.2)
-                ));
-
-            //  Side wall
-            shapes.Add(new Plane(
-                position: new Vec3(0, 60, 0),
-                normal: new Vec3(0, -1, 0),
-                diffuseComponent: new Vec3(.4, .3, 1),
-                alpha: 6
-                //specularComponent: new Vec3(0.05, 0.07, 0.2)
-                ));
-
-
             #endregion
 
 
@@ -1046,7 +1085,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             if(e.Key == Key.D3)
             {
-                MessageBox.Show("Camera pos is: " + cameraOne.position + "\nCamera rotation is: " + cameraOne.rotation, "Camera Info");
+                string camPosAsString = "(" + cameraOne.position.x + ", " + cameraOne.position.y + ", " + cameraOne.position.z + ")";
+                string camRotAsString = "(" + camRotations[0] + ", " + camRotations[1] + ", " + camRotations[2] + ")";
+
+                MessageBox.Show("Camera pos is: " + camPosAsString + "\nCamera rotation is: " + camRotAsString, "Camera Info");
 
 
 
