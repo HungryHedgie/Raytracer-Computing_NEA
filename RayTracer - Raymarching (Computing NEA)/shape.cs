@@ -6,12 +6,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
     public enum comboType
     {
         Union,
-        Intersection,
-        Exclusion
-
-
-
-
+        Intersection
     }
 
     abstract public class Shape
@@ -26,6 +21,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public Vec3 lightStrength = new Vec3(0, 0, 0);
 
+        //  Some are kept as null as we may not want to define them every case
         public Shape(Vec3 position, Vec3 diffuseComponent, double alpha, Vec3 specularComponent = null, Vec3 lightStrength = null) //  Need to change
         {
             //  General info all shapes will need
@@ -78,6 +74,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             //  Hardcoded precision
             double epsilon = 0.0001;
+
+            //  Numeric differentiation (Can usually be calculated explicitly for speed, but this is still fast enough in our case)
             Vec3 normal = 1 / (2 * epsilon) * new Vec3(
                 this.SDF(new Vec3(rayLocation.x + epsilon, rayLocation.y, rayLocation.z)) - this.SDF(new Vec3(rayLocation.x - epsilon, rayLocation.y, rayLocation.z)),
                 this.SDF(new Vec3(rayLocation.x, rayLocation.y + epsilon, rayLocation.z)) - this.SDF(new Vec3(rayLocation.x, rayLocation.y - epsilon, rayLocation.z)),
@@ -101,21 +99,21 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public override double SDF(Vec3 rayLocation)
         {
             double signedDistance = Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
-            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
-            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
+            
+            return signedDistance;
         }
 
 
 
         public override Vec3 FindNormal(Vec3 rayLocation)
         {
-            //Vec3 normal = FindNormalNumerically(rayLocation);
             Vec3 normal = rayLocation - this.position;
             normal.Normalise();
             return normal;
         }
     }
 
+    //  Don't copy in
     class DistortedSphere : Shape
     {
         double radius { get; set; }

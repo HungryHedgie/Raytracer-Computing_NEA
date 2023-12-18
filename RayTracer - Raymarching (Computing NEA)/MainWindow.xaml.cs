@@ -34,8 +34,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Controls initial camera sections
 
-        static Vec3 camLocation = new Vec3(-90, -20, 20);
-        double[] camRotations = new double[] {-27, 0, -20 };   //  Rotations in xy, yz, and xz planes respectively
+        static Vec3 camLocation = new Vec3(-200, 75, 100);
+        double[] camRotations = new double[] {-25, 0, -10 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
         //  All Shapes
@@ -50,9 +50,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
         //  Settings for each image
         SettingInfo currentSettings = new(
 
-                res_x: 200,
-                res_y: 120,
-                rayCountPerPixel: 5,
+                res_x: 350,
+                res_y: 300,
+                rayCountPerPixel: 1100,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
@@ -74,25 +74,25 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public struct SettingInfo
         {
-            //  Given values here are all place holders
+            
             //  High performance impact
-            public int res_x = 10;
-            public int res_y = 10;
-            public int rayCountPerPixel = 3; //  Rays sent out for each pixel
+            public int res_x;
+            public int res_y;
+            public int rayCountPerPixel; //  Rays sent out for each pixel
 
             //  Unkown/Medium performance impact
             //  Controls cutoff and precision the ray-marching uses
-            public int maxIterations = 150;
-            public double maxJumpDistance = 400;
-            public double minJumpDistance = 0.01;
-            public int maxBounceCount = 12;
-            public double startOffset = 0.05;
+            public int maxIterations;
+            public double maxJumpDistance;
+            public double minJumpDistance;
+            public int maxBounceCount;
+            public double startOffset;
 
             //  Low performance impact
-            public bool isAntiAliasing = true;
-            public double AA_Strength = 0.02d;
-            public double FoVangle = 110;
-            public double lightArea = 4; // Used in soft shadows for point light sources
+            public bool isAntiAliasing;
+            public double AA_Strength;
+            public double FoVangle;
+            public double lightArea; // Used in soft shadows for point light sources
 
             //  Precomputed
             public double screenRatio;
@@ -122,17 +122,18 @@ namespace RayTracer___Raymarching__Computing_NEA_
             }
         }
 
-        public struct IntersectionInfo
+        public struct IntersectionInfo  //  Used as the return type for DetermineIntersections
         {
             public bool hasHitLight;
             public Vec3 position = new Vec3(0, 0, 0);
             public Shape previousShape;
-            //currentRay.direction = null;
+            
             public double distance;
             public double shadowContribution;
 
             public IntersectionInfo(bool hasHitLight, Vec3 position, Shape previousShape, double distance, double shadowContribution)
             {
+
                 this.hasHitLight = hasHitLight;
                 this.position = position;
                 this.previousShape = previousShape;
@@ -176,11 +177,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //lights.Add(new Sphere(pos4, k_s4, k_d4, alpha4, radius4, lightStrength4));
 
             //  Fifth sphere 105,76,179
-            Vec3 pos5 = new Vec3(25, -25, 20);
-            Vec3 k_s5 = 1 * new Vec3(0.3, 0.2, 0.9);
-            Vec3 k_d5 = 1 * new Vec3(0.4, 0.3, 0.8);
-            double alpha5 = 3;
-            double radius5 = 10;
+            //Vec3 pos5 = new Vec3(25, -25, 20);
+            //Vec3 k_s5 = 1 * new Vec3(0.3, 0.2, 0.9);
+            //Vec3 k_d5 = 1 * new Vec3(0.4, 0.3, 0.8);
+            //double alpha5 = 3;
+            //double radius5 = 10;
             //shapes.Add(new Sphere(pos5, k_s5, k_d5, alpha5, radius5));
 
 
@@ -243,14 +244,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //    ));
 
             //  Infinite sphere
-            shapes.Add(new InfiniteSphere(
-                position: new Vec3(60, 40, 140)
-                , specularComponent: new Vec3(.7, .1, .9)
-                , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
-                , alpha: 6
-                , radius: 25
-                , repetitionVector: new Vec3(100, 100, 100)
-                ));
+            //shapes.Add(new InfiniteSphere(
+            //    position: new Vec3(60, 40, 140)
+            //    , specularComponent: new Vec3(.7, .1, .9)
+            //    , diffuseComponent: new Vec3(0.3, 0.9, 0.1)
+            //    , alpha: 6
+            //    , radius: 25
+            //    , repetitionVector: new Vec3(100, 100, 100)
+            //    ));
 
             //shapes.Add(new InfiniteSphere(
             //    position: new Vec3(50, 50, 50)
@@ -318,116 +319,118 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             #region Table scene
 
-            ////  Lights
+            //  Lights
 
-            //lights.Add(new Cuboid(
-            //    position: new Vec3(0, 0, 200),
-            //    cornerPosition: new Vec3(100, 100, 3),
-            //    cornerSmoothing: 0.2,
-            //    lightStrength: 30 * new Vec3(1, 1, 1),
-            //    fullRotationInfo: new double[] {45, 0, 0},
-            //    alpha: 5,
-            //    diffuseComponent: null
+            lights.Add(new Line(
+                pointA: new Vec3(0, 55, 80),
+                pointB: new Vec3(0, 55, 130),
+                radius: 10,
+                lightStrength: 30 * new Vec3(1, 1, 1),
+                diffuseComponent: null,
+                alpha: 6
+                ));
 
+            lights.Add(new Line(
+                pointA: new Vec3(0, -55, 80),
+                pointB: new Vec3(0, -55, 130),
+                radius: 10,
+                lightStrength: 30 * new Vec3(1, 1, 1),
+                diffuseComponent: null,
+                alpha: 6
+                ));
 
+            //  Shapes
 
+            //  Floor plane
+            shapes.Add(new Plane(
+                position: new Vec3(0, 0, 0),
+                normal: new Vec3(0, 0, 1),
+                diffuseComponent: new Vec3(0.43, 0.31, 0),
+                alpha: 6,
+                specularComponent: new Vec3(0.3, 0.3, 0.5)
+                ));
 
-            //    ));
+            //  Back wall
+            shapes.Add(new Plane(
+                position: new Vec3(200, 0, 0),
+                normal: new Vec3(-1, 0, 0),
+                diffuseComponent: new Vec3(0.90, 0.86, 0.59),
+                alpha: 6,
+                specularComponent: new Vec3(0.05, 0.07, 0.2)
+                ));
 
-            ////  Shapes
+            //  Side wall
+            shapes.Add(new Plane(
+                position: new Vec3(0, -300, 0),
+                normal: new Vec3(0, 1, 0),
+                diffuseComponent: new Vec3(0.90, 0.86, 0.59),
+                alpha: 6,
+                specularComponent: new Vec3(0.05, 0.07, 0.2)
+                ));
 
-            ////  Floor plane
-            //shapes.Add(new Plane(
-            //    position: new Vec3(0, 0, 0),
-            //    normal: new Vec3(0, 0, 1),
-            //    diffuseComponent: new Vec3(0.43, 0.31, 0),
-            //    alpha: 6,
-            //    specularComponent: new Vec3(0.3, 0.3, 0.5)
-            //    ));
+            //  Carpet
 
-            ////  Back wall
-            //shapes.Add(new Plane(
-            //    position: new Vec3(200, 0, 0),
-            //    normal: new Vec3(-1, 0, 0),
-            //    diffuseComponent: new Vec3(0.90, 0.86, 0.59),
-            //    alpha: 6,
-            //    specularComponent: new Vec3(0.05, 0.07, 0.2)
-            //    ));
+            shapes.Add(new Cuboid(
+                position: new Vec3(0, 0, 0.4),
+                cornerPosition: new Vec3(50, 150, 0.5),
+                cornerSmoothing: 0.5,
+                alpha: 6,
+                diffuseComponent: new Vec3(0.78, 0.31, 0.31),
+                specularComponent: new Vec3(0, 0, 0)
+                ));
 
-            ////  Side wall
-            //shapes.Add(new Plane(
-            //    position: new Vec3(0, -300, 0),
-            //    normal: new Vec3(0, 1, 0),
-            //    diffuseComponent: new Vec3(0.90, 0.86, 0.59),
-            //    alpha: 6,
-            //    specularComponent: new Vec3(0.05, 0.07, 0.2)
-            //    ));
+            //  Table top
+            shapes.Add(new Cuboid(
+                position: new Vec3(0, 0, 54.8),
+                cornerPosition: new Vec3(50, 75, 4.1),
+                cornerSmoothing: 0.1,
+                alpha: 6,
+                diffuseComponent: new Vec3(.54, .51, .33)
+                ));
 
-            ////  Carpet
+            //  Table leg One   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(45, 65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
 
-            //shapes.Add(new Cuboid(
-            //    position: new Vec3(0, 0, 0.4),
-            //    cornerPosition: new Vec3(50, 150, 0.5),
-            //    cornerSmoothing: 0.5,
-            //    alpha: 6,
-            //    diffuseComponent: new Vec3(0.78, 0.31, 0.31),
-            //    specularComponent: new Vec3(0, 0, 0)
-            //    ));
+            //  Table leg Two   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(45, -65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
 
-            ////  Table top
-            //shapes.Add(new Cuboid(
-            //    position: new Vec3(0, 0, 54.8),
-            //    cornerPosition: new Vec3(50, 75, 4.1),
-            //    cornerSmoothing: 0.1,
-            //    alpha: 6,
-            //    diffuseComponent: new Vec3(.54, .51, .33)
-            //    ));
+            //  Table leg Three   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(-45, 65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
 
-            ////  Table leg One   -   These really should be done as the same object and repeated
-            //shapes.Add(new Cuboid(
-            //    position: new Vec3(45, 65, 25.8),
-            //    cornerPosition: new Vec3(3, 3, 25),
-            //    diffuseComponent: new Vec3(.54, .51, .33),
-            //    cornerSmoothing: 0.5,
-            //    alpha: 6
-            //    ));
+            //  Table leg Four   -   These really should be done as the same object and repeated
+            shapes.Add(new Cuboid(
+                position: new Vec3(-45, -65, 25.8),
+                cornerPosition: new Vec3(3, 3, 25),
+                diffuseComponent: new Vec3(.54, .51, .33),
+                cornerSmoothing: 0.5,
+                alpha: 6
+                ));
 
-            ////  Table leg Two   -   These really should be done as the same object and repeated
-            //shapes.Add(new Cuboid(
-            //    position: new Vec3(45, -65, 25.8),
-            //    cornerPosition: new Vec3(3, 3, 25),
-            //    diffuseComponent: new Vec3(.54, .51, .33),
-            //    cornerSmoothing: 0.5,
-            //    alpha: 6
-            //    ));
-
-            ////  Table leg Three   -   These really should be done as the same object and repeated
-            //shapes.Add(new Cuboid(
-            //    position: new Vec3(-45, 65, 25.8),
-            //    cornerPosition: new Vec3(3, 3, 25),
-            //    diffuseComponent: new Vec3(.54, .51, .33),
-            //    cornerSmoothing: 0.5,
-            //    alpha: 6
-            //    ));
-
-            ////  Table leg Four   -   These really should be done as the same object and repeated
-            //shapes.Add(new Cuboid(
-            //    position: new Vec3(-45, -65, 25.8),
-            //    cornerPosition: new Vec3(3, 3, 25),
-            //    diffuseComponent: new Vec3(.54, .51, .33),
-            //    cornerSmoothing: 0.5,
-            //    alpha: 6
-            //    ));
-
-            ////  Sphere on table
-            //shapes.Add(new Sphere(
-            //    position: new Vec3(015, -10, 68.8),
-            //    radius: 10,
-            //    alpha: 6,
-            //    diffuseComponent: new Vec3(0, 0.75, 1)
-
-
-            //    ));
+            //  Sphere on table
+            shapes.Add(new Sphere(
+                position: new Vec3(015, -10, 68.8),
+                radius: 10,
+                alpha: 6,
+                diffuseComponent: new Vec3(0, 0.75, 1)
+                ));
 
             #endregion
 
@@ -598,45 +601,61 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //shapes.Add(new Plane(
             //    position: new Vec3(0, 0, 0),
             //    normal: new Vec3(0, 0, 1),
-            //    diffuseComponent: 1*new Vec3(.7, .4, 0),
+            //    diffuseComponent: 1 * new Vec3(.4, .54, 0),
             //    alpha: 20
             //    //specularComponent: new Vec3(0.3, 0.3, 0.5)
             //    ));
 
             //  Sphere 2
-            //shapes.Add(new Sphere(
+            //Sphere comboSphere1 = new Sphere(
             //    position: new Vec3(0, 0, 30),
             //    radius: 20,
-            //    alpha: 6,
-            //    diffuseComponent: new Vec3(.6, 0, .6)
+            //    alpha: 10,
+            //    diffuseComponent: new Vec3(.6, 0, .8)
+            //    );
+
+            //  Sphere 3
+            //Cuboid combo2 = new Cuboid(
+            //    position: new Vec3(0, 5, 50),
+            //    cornerPosition: new Vec3(10, 20, 10),
+            //    alpha: 10,
+            //    cornerSmoothing: 4,
+            //    diffuseComponent: new Vec3(.5, .8, .2)
+            //    );
+
+            ////shapes.Add(comboSphere1);
+            ////shapes.Add(combo2 );
+            ////  First Combo
+            //shapes.Add(new Combination(
+            //    //specularComponent: new Vec3(.9, 0, .9),
+            //    //diffuseComponent: new Vec3(.1, 1, .1),
+            //    alpha: 20,
+            //    shape1: comboSphere1,
+            //    shape2: combo2,
+            //    sdfWeighting: 0.7,
+            //    type: comboType.Union
             //    ));
 
             //  Cuboid
             //shapes.Add(new Cuboid(
-            //    position: new Vec3(5, 5, 30),
-            //    cornerPosition: new Vec3(10, 8, 6),
+            //    position: new Vec3(5, 5, 40),
+            //    cornerPosition: new Vec3(8, 20, 6),
             //    fullRotationInfo: new double[] { 0, 20, 55 },
-            //    alpha: 10,
-            //    diffuseComponent: 1*new Vec3(0, .6, .6),
-            //    specularComponent: 0.6*new Vec3(1, .4, .4),
-            //    cornerSmoothing: 2
+            //    alpha: 100,
+            //    diffuseComponent: 1 * new Vec3(.55, 1, .41),
+            //    specularComponent: 0 * new Vec3(1, .4, .4),
+            //    cornerSmoothing: 8
             //    ));
 
-            //  Light points
-            lightPoints.Add(new PointLight(
-                position: new Vec3(100, 100, -10),
-                lightColour: new Vec3(1, 1, 1),
-                lightBrightness: 4
-                ));
+            ////  Light points
+            //lightPoints.Add(new PointLight(
+            //    position: new Vec3(-50, -40, 50),
+            //    lightColour: new Vec3(1, 1, 1),
+            //    lightBrightness: 2
+            //    ));
             #endregion
 
 
-            //  DEBUG CODE
-            //SettingsWindow SettingsWindow01 = new SettingsWindow();
-            //SettingsWindow.
-            //SettingsWindow01.Show();
-
-            //  END OF DEBUG CODE
 
 
             //  Main loop
@@ -644,7 +663,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
             GenerateAllPixels();
             timer.Stop();
             double secOverallTime = timer.ElapsedMilliseconds / 1000;
-            //  Assume overall time, T is given by T = res_x * res_y * rayCountPerPixel * meanTimePerRay
+
+            //  Assume overall time, T is given by T = res_x * res_y * rayCountPerPixel * meanTimePerRay, for predicted time calculations
             double totalRayCount = currentSettings.res_x * currentSettings.res_y * currentSettings.rayCountPerPixel;
             double meanTimePerRay = secOverallTime / totalRayCount;
             MessageBox.Show("There were " + totalRayCount + " ray(s) in total, taking " + secOverallTime + " seconds in total, with a mean time of " + 1000 * meanTimePerRay + " milliseconds per ray", "Timing info");
@@ -660,30 +680,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 {
 
                     Color pixelColor = GetPixelColor(x, currentSettings.res_y - y);
-
-                    //  Old code for testing directions
-                    //int brightness = (255 * x) / currentSettings.res_x;
-                    //Color pixelColor = Color.FromArgb(brightness, brightness, brightness);
-
-                    //  Testing randomness
-
-                    /*
-                    Color pixelColor;
-                    Vec3 sumOfColour = new(0, 0, 0);
-                    double sampleCount = 15000;
-                    for (int i = 0; i < sampleCount; i++)
-                    {
-                        if(rnd.NextDouble() < 0.02)
-                        {
-                            sumOfColour += new Vec3(50, 50, 50);
-                        }
-                        
-                    }
-                    sumOfColour = (1 / sampleCount) * sumOfColour;
-                    pixelColor = Color.FromArgb((int)Math.Min(255 * sumOfColour.x, 255), (int)Math.Min(sumOfColour.y * 255, 255), (int)Math.Min(sumOfColour.z * 255, 255));
-                    */
-                    //  End
-
 
                     bmpFinalImage.SetPixel(x, y, pixelColor);
                 }
@@ -785,28 +781,27 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         currentRay.direction = FindingNewRayDirection(normal);
                         Vec3 shapeReflectance = currentRay.previousShape.BRDF_phong(currentRay.direction, initialDirection, normal);
                         currentRay.productOfReflectance = Vec3.ColorCombination(shapeReflectance, currentRay.productOfReflectance);
-
-                        //  Need to setup how this affects final colour, should it run every time? What do we divide it by?
                     }
                     else
                     {
                         //  If we have hit a light or the sky we start our final pixel calculations
                         checkForNewIntersections = false;
+
                         //  Get colour from lights
                         Vec3 lightStrength = new(0, 0, 0);
                         Vec3 lighting = new(0, 0, 0);
                         if (currentRay.previousShape != null && currentRay.hasHitLight)
                         {
-                            //  If we hit a light then we add
+                            //  If we hit a light then we add that lighting to finalColor
                             lightStrength = currentRay.previousShape.lightStrength;
                         }
                         if (currentRay.previousShape == null)
                         {
                             //  Simulate a sun and skyline
                             double sunMagnitude = 10 * Math.Pow(Math.Max(initialDirection * new Vec3(1, 0, 0), 0), 128);
-                            Vec3 sunColour = 0 * new Vec3(1, 0.8, 0.4);
+                            Vec3 sunColour = 0 * new Vec3(1, 0.8, 0.4); //  Set to zero for no sun
                             double skyMagnitude = Math.Pow(Math.Max(initialDirection * new Vec3(0, 0, 1), 0), 0.4);
-                            Vec3 skyColour = 1 * new Vec3(0.7, 0.3, 0.3);
+                            Vec3 skyColour = 1 * new Vec3(0.4, .65, 1);
                             Vec3 ambientColour = 1 * new Vec3(0.1, 0.1, 0.1);
                             lighting = sunMagnitude * sunColour + skyMagnitude * skyColour + ambientColour;
                         }
@@ -815,26 +810,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         finalColor += Vec3.ColorCombination(currentRay.productOfReflectance, lighting + lightStrength);
                     }
                     pseudoRayCount++;
+                    
                 }
             }
             finalColor *= 1 / (double)currentSettings.rayCountPerPixel;
-
-
-
-            //  Code for checking specific directions
-            //double testDirection = Math.Max(new vec3(0, -1, 0) * testRay, 0);
-            //return Color.FromArgb((int)(255 * testDirection), (int)(255 * testDirection), (int)(255 * testDirection));
-
+            
             return Color.FromArgb((int)Math.Min(255 * finalColor.x, 255), (int)Math.Min(finalColor.y * 255, 255), (int)Math.Min(finalColor.z * 255, 255));
-        }
-
-        Color GetPixelColor_DEBUG(int x, int y)
-        {
-            //double testDirection = Math.Max(new vec3(0, -1, 0) * testRay, 0);
-            //return Color.FromArgb((int)(255 * testDirection), (int)(255 * testDirection), (int)(255 * testDirection));
-            Vec3 rayDirection = FindPixelsRayDirection(x, y);
-
-            return Color.FromArgb((int)Math.Max(255 * rayDirection.x, 0), (int)Math.Max(rayDirection.y * 255, 0), (int)Math.Max(rayDirection.z * 255, 0));
         }
 
         Vec3 FindPixelsRayDirection(int x, int y)
@@ -877,10 +858,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         IntersectionInfo DetermineIntersections(Ray currentRay, double maxTravelDistance = double.MaxValue)
         {
-            //Shape? previousShape = currentRay.previousShape;      DEBUGGING, for testing switching to an offset method to allow for concave shapes
-            Shape? previousShape = null;
+            
+            
 
-            //	previousShape stops us colliding with what we just hit
+            
             currentRay.direction.Normalise();
             //  We want normalised versions
             Vec3 currPos = currentRay.position + currentRay.direction * currentSettings.startOffset;
@@ -906,49 +887,40 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                 foreach (Shape currentShape in shapes)
                 {
-                    //  Check we aren't colliding with the same object as where we started
-                    if (currentShape != previousShape)
+                    
+                    double newDistance = currentShape.SDF(currPos);
+                    // SDF - Signed Distance Function
+                    if (newDistance < lowestDistance)
                     {
-                        double newDistance = currentShape.SDF(currPos);
-                        // SDF - Signed Distance Function
-
-                        if (newDistance < lowestDistance)
-                        {
-                            lowestDistance = newDistance;
-                            closestObject = currentShape;
-                            hitLight = false;
-                        }
-
-                    }
+                        lowestDistance = newDistance;
+                        closestObject = currentShape;
+                        hitLight = false;
+                    }                    
                 }
-                //  For now lights are treated (intersection wise) as the same as shape
+                //  Lights are treated (intersection wise) as the same as shapes
+                //  They are handled in a seperate loop as we want to different things if we hit one
                 foreach (Shape currentLight in lights)
                 {
-                    if (currentLight != previousShape)
+                    double newDistance = currentLight.SDF(currPos);
+                    // SDF - Signed Distance Function
+
+                    if (newDistance < lowestDistance)
                     {
-                        double newDistance = currentLight.SDF(currPos);
-                        // SDF - Signed Distance Function
-
-                        if (newDistance < lowestDistance)
-                        {
-                            lowestDistance = newDistance;
-                            closestObject = currentLight;
-                            hitLight = true;
-                        }
-
+                        lowestDistance = newDistance;
+                        closestObject = currentLight;
+                        hitLight = true;
                     }
                 }
                 //  Iteration counts prevents iteration going on forever
                 iterationCount++;
 
                 //  Dist to closest surface used to find new position
-
-
                 currPos += currentRay.direction * lowestDistance;
                 distance += lowestDistance;
 
                 double newShadowContribution = currentSettings.lightArea * lowestDistance / distance;
 
+                //  We want to track and find the greatest shadow
                 if (shadowContribution > newShadowContribution)
                 {
                     shadowContribution = newShadowContribution;
@@ -977,13 +949,17 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 distance: distance,
                 shadowContribution: shadowContribution
                 );
+
             return intersectionReturnInfo;
         }
 
         Vec3 FindingNewRayDirection(Vec3 normal)
         {
+            //  Generates a point in a box
             Vec3 newDir = new(rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
             double magnitude = newDir.Magnitude();
+
+            //  Rejects points outside the defined circle, and points that could cause division by zero errors
             while (magnitude > 1 || magnitude < 0.00001)
             {
                 newDir = new(rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1, rnd.NextDouble() * 2 - 1);
@@ -1001,9 +977,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            bool change = false;
+            bool startUpdatingImage = false;
 
-
+            //  Movement and camera rotation controls
             if (e.Key == Key.Left)
             {
                 camRotations[0] += distRotPerKeyPress;
@@ -1055,11 +1031,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
             {
                 MessageBox.Show("Image will start updating upon pressing Ok", "Updating");
 
-                change = true;
+                startUpdatingImage = true;
 
 
             }
-            if (change)
+            if (startUpdatingImage)
             {
                 cameraOne.newDirection(newMovement);
                 cameraOne.newRotation(camRotations);
@@ -1067,7 +1043,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 GenerateAllPixels();
                 MessageBox.Show("Finished updating", "Updating complete");
                 newMovement = new(0, 0, 0);
-                change = false;
+                startUpdatingImage = false;
             }
 
             if (e.Key == Key.D2)  //  "2" key brings up save menu
@@ -1085,14 +1061,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             if(e.Key == Key.D3)
             {
+                //  Shows current camera position and rotation
                 string camPosAsString = "(" + cameraOne.position.x + ", " + cameraOne.position.y + ", " + cameraOne.position.z + ")";
                 string camRotAsString = "(" + camRotations[0] + ", " + camRotations[1] + ", " + camRotations[2] + ")";
 
                 MessageBox.Show("Camera pos is: " + camPosAsString + "\nCamera rotation is: " + camRotAsString, "Camera Info");
-
-
-
-
             }
 
 
