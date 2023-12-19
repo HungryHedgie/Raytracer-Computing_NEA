@@ -9,6 +9,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Intersection
     }
 
+    //  Complex class structure is used, with inheritance and polymorphism
     abstract public class Shape
     {
         public abstract double SDF(Vec3 rayLocation);
@@ -26,6 +27,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             //  General info all shapes will need
             this.position = position;
+
             if (specularComponent != null || diffuseComponent == null)
             {
                 this.k_s = specularComponent;
@@ -49,7 +51,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public Vec3 BRDF_phong(Vec3 omega_i, Vec3 omega_o, Vec3 normal)
         {
-            //  NOT SAME AS PSEUDOCODE
+            
             omega_o *= -1;  //  Added line, accounts for that we want the direction to heading outwards
             omega_i.Normalise();    //  Incoming light (From a physics perspective)
             omega_o.Normalise();    //  Outgoing from a physics perspective, so these are the opposite of the order we got our rays
@@ -75,7 +77,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             //  Hardcoded precision
             double epsilon = 0.0001;
 
-            //  Numeric differentiation (Can usually be calculated explicitly for speed, but this is still fast enough in our case)
+            //  Numeric differentiation (The explicit equation can usually be found for optimising time taken per calculation, but this is still fast enough in our case, and faster to implement)
             Vec3 normal = 1 / (2 * epsilon) * new Vec3(
                 this.SDF(new Vec3(rayLocation.x + epsilon, rayLocation.y, rayLocation.z)) - this.SDF(new Vec3(rayLocation.x - epsilon, rayLocation.y, rayLocation.z)),
                 this.SDF(new Vec3(rayLocation.x, rayLocation.y + epsilon, rayLocation.z)) - this.SDF(new Vec3(rayLocation.x, rayLocation.y - epsilon, rayLocation.z)),
@@ -119,7 +121,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Vec3 normal { get; set; }
         public Plane(Vec3 diffuseComponent, double alpha, Vec3 position, Vec3 normal, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
-
+            //  A plane can be definined by a point on the plane and it's normal
             this.pointOnPlane = position;
             this.normal = Vec3.Normalise(normal);
 
@@ -170,6 +172,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             double lambdaInfinite = (rayLocation - pointA) * (pointB - pointA) / segmentDist;  //  Doesn't account for end points
             double lambdaActual = Math.Min(Math.Max(lambdaInfinite, LB), UB);
+
             //  Use how far along the line we are to get a specific point
             Vec3 closestPointOnLine = pointA + lambdaActual * (pointB - pointA);
 
@@ -182,10 +185,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public override Vec3 FindNormal(Vec3 rayLocation)
         {
-
-
-            //  Exact calculations
-
             double lambdaInfinite = (rayLocation - pointA) * (pointB - pointA) / segmentDist;  //  Doesn't account for end points
 
             double lambdaActual = Math.Min(Math.Max(lambdaInfinite, LB), UB);
@@ -195,6 +194,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             //  Now we take dist from the raylocation to closestPoint lying on the line
             Vec3 normal = Vec3.Normalise(rayLocation - closestPointOnLine);
+
             return normal;
         }
     }
@@ -207,6 +207,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Quaternion rotation { get; set; }
         public Cuboid(Vec3 position, Vec3 cornerPosition, Vec3 diffuseComponent, double alpha, double[] fullRotationInfo = null, double cornerSmoothing = 0, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
+            //  We input the position of the center of the cuboid, and the position of a corner relative to that
+            //  Along with the usual info for the BRDF and a parameter for smoothing the corner
             if (fullRotationInfo == null)
             {
                 fullRotationInfo = new double[] { 0, 0, 0 };
@@ -238,7 +240,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return normal;
         }
 
-        public Vec3 InverseRigidTransformation(Vec3 startPoint)
+        public Vec3 InverseRigidTransformation(Vec3 startPoint) //  Allows us to use any possible rotation or translation of an axis aligned cuboid (What our SDF actually works with)
         {
             Vec3 endPoint = Vec3.RotatePoint(startPoint - this.position, Quaternion.Conjugate(this.rotation));
 
@@ -335,7 +337,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Vec3 repetitionDistancesVector;
         public InfiniteSphere(Vec3 position, Vec3 diffuseComponent, double alpha, double radius, Vec3 repetitionVector, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
-            //  The edge case where an object steps outside of it's boundary will currently cause artifacts
+            //  The edge case where an object steps outside of it's repetition boundary will currently cause artifacts
             this.radius = radius;
 
             this.repetitionDistancesVector = repetitionVector;

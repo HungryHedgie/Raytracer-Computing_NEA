@@ -6,7 +6,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
 {
     public class Vec3
     {
-        //  Co-ordinates
         public double x;
         public double y;
         public double z;
@@ -29,7 +28,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             }
         }
 
-        public Quaternion AsQuaternion()    //  Converts vector to quaternion (Real part is kept zero
+        public Quaternion AsQuaternion()    //  Converts vector to quaternion (Real part is kept zero)
         {
             Quaternion quat = new Quaternion((float)x, (float)y, (float)z, 0);
             return quat;
@@ -47,19 +46,9 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public static Vec3 RotatePoint(Vec3 initialVec, Quaternion rotation)
         {
-            //  Rotating by a quaternion is currently only used by the camera, so we keep it here to minimise global functions
             Quaternion initialQuat = initialVec.AsQuaternion();
             Quaternion finalQuat = rotation * initialQuat * Quaternion.Conjugate(rotation);
             return new Vec3(finalQuat);
-        }
-
-        public static Vec3 Cross(Vec3 a, Vec3 b)    //  Cross product, not currently used so could remove
-        {
-            double s_1 = a.y * b.z - a.z * b.y;
-            double s_2 = a.z * b.x - a.x * b.z;
-            double s_3 = a.x * b.y - a.y * b.x;
-            return new Vec3(s_1, s_2, s_3);
-
         }
 
         static public Vec3 Normalise(Vec3 a)
@@ -73,7 +62,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return Math.Sqrt(x * x + y * y + z * z);
         }
 
-        //  Should colour be its own class?
         static public Vec3 ColorCombination(Vec3 a, Vec3 b) //  For combining reflectance, we treat this as an array
         {
             //  Each element is multiplied individually
@@ -81,7 +69,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return c;
         }
 
-        static public double operator *(Vec3 a, Vec3 b)
+        static public double operator *(Vec3 a, Vec3 b) //  Dot/Scalar product
         {
             return a.x * b.x + a.y * b.y + a.z * b.z;
         }

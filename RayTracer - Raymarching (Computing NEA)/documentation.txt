@@ -1,4 +1,4 @@
-﻿arrow keys control camera direction, left is left, up looks up
+﻿Arrow keys control camera direction, left is left, up looks up
 
 "1" applies changes arrow keys have made
 "2" triggers a save menu
