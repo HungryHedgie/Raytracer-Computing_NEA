@@ -34,8 +34,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         //  Controls initial camera sections
 
-        static Vec3 camLocation = new Vec3(-90, -65, 100);
-        double[] camRotations = new double[] {35, 0, -25 };   //  Rotations in xy, yz, and xz planes respectively
+        static Vec3 camLocation = new Vec3(-80, -65, 90);
+        double[] camRotations = new double[] { 35, 0, -25 };   //  Rotations in xy, yz, and xz planes respectively
         Vec3 newMovement = new(0, 0, 0);
 
         //  All Shapes
@@ -52,7 +52,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                 res_x: 100,
                 res_y: 80,
-                rayCountPerPixel: 700,
+                rayCountPerPixel: 2000,
 
                 maxIterations: 400,
                 maxJumpDistance: 300,
@@ -74,7 +74,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public struct SettingInfo
         {
-            
+
             //  High performance impact
             public int res_x;
             public int res_y;
@@ -127,7 +127,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
             public bool hasHitLight;
             public Vec3 position = new Vec3(0, 0, 0);
             public Shape previousShape;
-            
+
             public double distance;
             public double shadowContribution;
 
@@ -620,7 +620,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 pointB: new Vec3(30, 10, 40),
                 alpha: 10,
                 radius: 16,
-                lightStrength: 5 * new Vec3(1, 1, 1),
+                lightStrength: 15 * new Vec3(1, 1, 1),
                 diffuseComponent: null
                 ));
 
@@ -811,11 +811,11 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         finalColor += Vec3.ColorCombination(currentRay.productOfReflectance, lighting + lightStrength);
                     }
                     pseudoRayCount++;
-                    
+
                 }
             }
             finalColor *= 1 / (double)currentSettings.rayCountPerPixel;
-            
+
             return Color.FromArgb((int)Math.Min(255 * finalColor.x, 255), (int)Math.Min(finalColor.y * 255, 255), (int)Math.Min(finalColor.z * 255, 255));
         }
 
@@ -859,10 +859,10 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         IntersectionInfo DetermineIntersections(Ray currentRay, double maxTravelDistance = double.MaxValue)
         {
-            
-            
 
-            
+
+
+
             currentRay.direction.Normalise();
             //  We want normalised versions
             Vec3 currPos = currentRay.position + currentRay.direction * currentSettings.startOffset;
@@ -888,7 +888,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
                 foreach (Shape currentShape in shapes)
                 {
-                    
+
                     double newDistance = currentShape.SDF(currPos);
                     // SDF - Signed Distance Function
                     if (newDistance < lowestDistance)
@@ -896,7 +896,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                         lowestDistance = newDistance;
                         closestObject = currentShape;
                         hitLight = false;
-                    }                    
+                    }
                 }
                 //  Lights are treated (intersection wise) as the same as shapes
                 //  They are handled in a seperate loop as we want to different things if we hit one
@@ -1060,7 +1060,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
                 }
             }
 
-            if(e.Key == Key.D3)
+            if (e.Key == Key.D3)
             {
                 //  Shows current camera position and rotation
                 string camPosAsString = "(" + cameraOne.position.x + ", " + cameraOne.position.y + ", " + cameraOne.position.z + ")";

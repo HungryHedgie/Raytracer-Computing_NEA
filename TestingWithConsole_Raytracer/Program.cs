@@ -12,17 +12,18 @@ namespace TestingWithConsole_Raytracer
         }
         static void Main(string[] args)
         {
-            Console.WriteLine(modulus(10, 3));
-            Console.WriteLine(modulus(-10, 3));
-            Console.WriteLine(modulus(10, 0.5));
-            Console.WriteLine(modulus(10, 9.5));
+            
 
-            Vec3 vec = new Vec3(1, 2, 1);
-            vec.Equals(vec);
-            List<Vec3> list = new List<Vec3> { new Vec3(1, 2, 1) };
 
-            //Console.WriteLine(list.Contains(vec));
-
+            Vec3 normal = new(0, 0, 1);
+            string allPoints = "";
+            for (int i = 0; i < pointCount; i++)
+            {
+                Vec3 currPoint = FindingNewRayDirection_RejectionMethodUniform(normal);
+                string vecInfo = currPoint.x.ToString() + "," + currPoint.y.ToString() + "," + currPoint.z.ToString();
+                allPoints += vecInfo + "\n";
+            }
+            Console.WriteLine(allPoints);
         }
 
         public static double modulus(double a, double b)

@@ -99,7 +99,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         public override double SDF(Vec3 rayLocation)
         {
             double signedDistance = Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
-            
+
             return signedDistance;
         }
 
@@ -112,36 +112,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return normal;
         }
     }
-
-    //  Don't copy in
-    class DistortedSphere : Shape
-    {
-        double radius { get; set; }
-        public DistortedSphere(Vec3 position, Vec3 diffuseComponent, double alpha, double radius, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
-        {
-            //  Only extra info that a sphere needs is the radius
-            this.radius = radius;
-
-        }
-
-        public override double SDF(Vec3 rayLocation)
-        {
-            double signedDistance = Math.Sqrt(Math.Pow((10 * Math.Sin(rayLocation.y) + rayLocation.x - position.x), 2) + Math.Pow((10 * Math.Sin(rayLocation.x) + rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
-            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
-            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
-        }
-
-
-
-        public override Vec3 FindNormal(Vec3 rayLocation)
-        {
-            //Vec3 normal = FindNormalNumerically(rayLocation);
-            Vec3 normal = rayLocation - this.position;
-            normal.Normalise();
-            return normal;
-        }
-    }
-
 
     class Plane : Shape
     {
@@ -176,8 +146,8 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Vec3 pointA;
         Vec3 pointB;
 
-        double LB = double.MinValue; //   Upper bound and Lower bound for lambda values, either -infinity or 0 and 1 or +infinity
-        double UB = double.MaxValue;  //  Technically not actually an infinite line because of this, but will have no actual effect
+        double LB = double.MinValue;    //   Upper bound and Lower bound for lambda values, either -infinity or 0 and 1 or +infinity
+        double UB = double.MaxValue;    //  Technically not actually an infinite line because of this, but will have no actual effect
         public Line(Vec3 diffuseComponent, double alpha, Vec3 pointA, Vec3 pointB, double radius, bool haltA = true, bool haltB = true, Vec3 specularComponent = null, Vec3 lightStrength = null, Vec3 position = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
 
@@ -212,13 +182,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
         public override Vec3 FindNormal(Vec3 rayLocation)
         {
-            //Vec3 normal = FindNormalNumerically(rayLocation);
+
 
             //  Exact calculations
 
             double lambdaInfinite = (rayLocation - pointA) * (pointB - pointA) / segmentDist;  //  Doesn't account for end points
 
             double lambdaActual = Math.Min(Math.Max(lambdaInfinite, LB), UB);
+
             //  Use how far along the line we are to get a specific point
             Vec3 closestPointOnLine = pointA + lambdaActual * (pointB - pointA);
 
@@ -254,15 +225,14 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 relOuterCourner = transformedPoint - this.cornerPosition;
             Vec3 outerCase = new Vec3(Math.Max(relOuterCourner.x, 0), Math.Max(relOuterCourner.y, 0), Math.Max(relOuterCourner.z, 0));
             double signedDistance = Math.Sqrt(outerCase * outerCase) + Math.Min(Math.Max(Math.Max(relOuterCourner.x, relOuterCourner.y), relOuterCourner.z), 0) - cornerSmoothing;
-            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
-            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
+
+            return signedDistance;
         }
 
 
 
         public override Vec3 FindNormal(Vec3 rayLocation)
         {
-            //Vec3 normal = FindNormalNumerically(rayLocation);
             Vec3 normal = FindNormalNumerically(rayLocation);
 
             return normal;
@@ -295,12 +265,12 @@ namespace RayTracer___Raymarching__Computing_NEA_
         }
     }
 
-    class Combination : Shape       //  Not implemented yet, normal needs some work to be done
+    class Combination : Shape
     {
         public Shape shape1;
         public Shape shape2;
 
-        public double sdfMergeStrength;    //  Weighting for how smooth combination is
+        public double sdfMergeStrength;    //  Weighting for how smooth the combination is
         public double colourMergeStrength;
         public comboType type;
         public Combination(double alpha, Shape shape1, Shape shape2, double sdfWeighting, comboType type, Vec3 diffuseComponent = null, double colourMergeStrength = 15, Vec3 specularComponent = null, Vec3 lightStrength = null, Vec3 position = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
@@ -324,12 +294,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
             {
                 signedDistance = -Math.Log(Math.Exp(-sdfMergeStrength * shape1Dist) + Math.Exp(-sdfMergeStrength * shape2Dist)) / sdfMergeStrength;
             }
-            else if (type == comboType.Intersection)
-            {
-                signedDistance = Math.Log(Math.Exp(sdfMergeStrength * shape1Dist) + Math.Exp(sdfMergeStrength * shape2Dist)) / sdfMergeStrength;
-
-
-            }
             else
             {
                 //  Only union is implemented so far
@@ -341,14 +305,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
 
             return signedDistance;
         }
-        private double f(double lt)
-        {
-            double v1 = lt * lt;
-            double v2 = Math.Sqrt(lt);
 
-            return v1;
-            //return lerpDoub(v1, v2, lt); // f(lt)
-        }
         private Vec3 lerp(Vec3 lP0, Vec3 lP1, double lt)
         {
             double newX = (1 - lt) * lP0.x + lt * lP1.x;
@@ -358,7 +315,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
             Vec3 lP2 = new Vec3(newX, newY, newZ);
             return lP2;
         }
-
         public override Vec3 FindNormal(Vec3 rayLocation)   //  Also calculates new shape colour at the point
         {
             Vec3 normal = FindNormalNumerically(rayLocation);
@@ -371,8 +327,6 @@ namespace RayTracer___Raymarching__Computing_NEA_
             return normal;
         }
 
-
-
     }
 
     class InfiniteSphere : Shape
@@ -381,7 +335,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         Vec3 repetitionDistancesVector;
         public InfiniteSphere(Vec3 position, Vec3 diffuseComponent, double alpha, double radius, Vec3 repetitionVector, Vec3 specularComponent = null, Vec3 lightStrength = null) : base(position, diffuseComponent, alpha, specularComponent, lightStrength)
         {
-            //  Only extra info that a sphere needs is the radius
+            //  The edge case where an object steps outside of it's boundary will currently cause artifacts
             this.radius = radius;
 
             this.repetitionDistancesVector = repetitionVector;
@@ -393,8 +347,7 @@ namespace RayTracer___Raymarching__Computing_NEA_
         {
             rayLocation = VecModulus(rayLocation, repetitionDistancesVector);
             double signedDistance = Math.Sqrt(Math.Pow((rayLocation.x - position.x), 2) + Math.Pow((rayLocation.y - position.y), 2) + Math.Pow((rayLocation.z - position.z), 2)) - radius;
-            //double signedDistance = rayLocation.x - position.x + rayLocation.y - position.y - radius; (Manhattan distance, didn't work)
-            return signedDistance;    //  Absolute should enable rendering from inside the sphere - Did not work, rays cannot intersect with shape they started in
+            return signedDistance;
         }
 
 
